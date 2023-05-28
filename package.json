@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:staged": ""
   },
   "author": "jhoni-giacomolli",
   "license": "ISC",
@@ -19,6 +19,7 @@
     "eslint-config-standard-with-typescript": "^34.0.1",
     "git-commit-msg-linter": "^5.0.4",
     "husky": "^8.0.3",
+    "lint-staged": "^13.2.2",
     "typescript": "^5.0.4"
   }
 }
