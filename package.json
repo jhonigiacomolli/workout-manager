@@ -11,6 +11,7 @@
   "author": "jhoni-giacomolli",
   "license": "ISC",
   "dependencies": {
+    "email-validator": "^2.0.4",
     "module-alias": "^2.2.2"
   },
   "devDependencies": {
