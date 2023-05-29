@@ -27,20 +27,27 @@ describe('Account Controller', () => {
     const { email, ...fakeAccountWithoutEmail } = fakeAccount
     const controller = sut.create({ email: '', ...fakeAccountWithoutEmail })
 
-    expect(controller).rejects.toThrowError(new InvalidParamError('email'))
+    expect(controller).resolves.toThrowError(new InvalidParamError('email'))
   })
   test('Should controller return 400 with password not provided', async () => {
     const { sut, fakeAccount } = makeSut()
     const { password, ...fakeAccountWithoutEmail } = fakeAccount
     const controller = sut.create({ password: '', ...fakeAccountWithoutEmail })
 
-    expect(controller).rejects.toThrowError(new InvalidParamError('password'))
+    expect(controller).resolves.toThrowError(new InvalidParamError('password'))
   })
   test('Should controller return 400 with password confimation not provided', async () => {
     const { sut, fakeAccount } = makeSut()
     const { passwordConfirmation, ...fakeAccountWithoutEmail } = fakeAccount
     const controller = sut.create({ passwordConfirmation: '', ...fakeAccountWithoutEmail })
 
-    expect(controller).rejects.toThrowError(new InvalidParamError('passwordConfirmation'))
+    expect(controller).resolves.toEqual(new InvalidParamError('passwordConfirmation'))
+  })
+  test('Should controller return 400 when password not equal to password confirmation', async () => {
+    const { sut, fakeAccount } = makeSut()
+    const { passwordConfirmation, ...fakeAccountWithoutEmail } = fakeAccount
+    const controller = await sut.create({ passwordConfirmation: 'other_password', ...fakeAccountWithoutEmail })
+
+    expect(controller).toEqual(new InvalidParamError('password'))
   })
 })
