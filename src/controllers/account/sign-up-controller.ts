@@ -7,9 +7,14 @@ export class SignUpController {
 
     for (let param of requiredParams) {
       if (!addAccount[param]) {
-        return Promise.reject(new InvalidParamError(param))
+        return Promise.resolve(new InvalidParamError(param))
       }
     }
+
+    if (addAccount.password !== addAccount.passwordConfirmation) {
+      return Promise.resolve(new InvalidParamError('password'))
+    }
+
     return Promise.resolve(addAccount)
   }
 }
