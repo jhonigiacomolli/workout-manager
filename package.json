@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --pass-with-no-tests",
-    "test:watch": "jest --pass-with-no-tests --watch",
-    "test:staged": "jest --pass-with-no-tests"
+    "test": "jest --pass-with-no-tests --runInBand --no-cache",
+    "test:watch": "yarn test --silent --watch",
+    "test:staged": "yarn test"
   },
   "author": "jhoni-giacomolli",
   "license": "ISC",
