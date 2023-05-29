@@ -4,7 +4,7 @@
 ✅
 1. ⛔️ Recebe uma requisição do tipo **POST** na rota **/api/signup**
 2. ✅ Valida dados obrigatórios: **name**, **email**, **password** e **passwordConfirmation**
-3. ⛔️ Valida que **password** e **passwordConfirmation** são iguais
+3. ✅ Valida que **password** e **passwordConfirmation** são iguais
 4. ⛔️ Valida que o campo **email** é um e-mail válido
 5. ⛔️ **Valida** se já existe um usuário com o email fornecido
 6. ⛔️ Gera uma senha **criptografada** (essa senha não pode ser descriptografada)
