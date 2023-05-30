@@ -14,10 +14,12 @@
   "author": "jhoni-giacomolli",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "email-validator": "^2.0.4",
     "module-alias": "^2.2.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.5.1",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
