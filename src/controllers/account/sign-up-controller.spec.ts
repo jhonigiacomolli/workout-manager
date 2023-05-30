@@ -69,4 +69,10 @@ describe('Account Controller', () => {
     const controller = sut.handle(fakeRequest)
     expect(controller).toEqual(httpError(400, `Invalid param: email`))
   })
+  test('Should call Email Validator with correct email param', async () => {
+    const { sut, emailValidatorStub, fakeRequest } = makeSut()
+    const validateSpy = jest.spyOn(emailValidatorStub, 'validate')
+    sut.handle(fakeRequest)
+    expect(validateSpy).toHaveBeenCalledWith('valid_email@mail.com')
+  })
 })
