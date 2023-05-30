@@ -1,4 +1,4 @@
-import { BcryptRepository } from "./bcrypt-repository"
+import { BcryptRepository } from "./bcrypt-hasher-repository"
 import bcrypt from 'bcrypt'
 
 const makeSut = () => ({
@@ -8,22 +8,22 @@ const makeSut = () => ({
 
 describe('Bcrypt Repository', () => {
   describe('Hash', () => {
-    test('Should Bcrypt Repository calls hash medthod with correct password', async () => {
+    test('Should Bcrypt Repository calls generate medthod with correct password', async () => {
       const { sut, salt } = makeSut()
       const hashSpy = jest.spyOn(bcrypt, 'hash')
-      await sut.hash('any_password')
+      await sut.generate('any_password')
       expect(hashSpy).toHaveBeenCalledWith('any_password', salt)
     })
     test('Should Bcrypt Repository return correct hash value', async () => {
       const { sut } = makeSut()
       jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => Promise.resolve('hashed_password'))
-      const hashResult = await sut.hash('any_password')
+      const hashResult = await sut.generate('any_password')
       expect(hashResult).toBe('hashed_password')
     })
     test('Should Bcrypt Repository throw if hash method throws', async () => {
       const { sut } = makeSut()
       jest.spyOn(bcrypt, 'hash').mockImplementationOnce(async () => Promise.reject(new Error()))
-      const hashResult = sut.hash('any_password')
+      const hashResult = sut.generate('any_password')
       expect(hashResult).rejects.toThrowError()
     })
   })
