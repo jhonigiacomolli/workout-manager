@@ -1,20 +1,23 @@
-import { InvalidParamError } from "@/helpers/errors/invalid-param";
-import { AddAccountModel } from "@/protocols/use-cases/add-account";
+import { httpError, httpReponse } from "@/helpers/http";
+import { Controller } from "@/protocols/models/controller";
+import { HTTPRequest, HTTPResponse } from "@/protocols/models/http";
 
-export class SignUpController {
-  create(addAccount: AddAccountModel): Promise<any> {
+export class SignUpController implements Controller {
+  handle(request: HTTPRequest): HTTPResponse {
     const requiredParams = ['email', 'password', 'passwordConfirmation']
 
+    const { password, passwordConfirmation } = request.body
+
     for (let param of requiredParams) {
-      if (!addAccount[param]) {
-        return Promise.resolve(new InvalidParamError(param))
+      if (!request.body[param]) {
+        return httpError(400, `Invalid param: ${param}`)
       }
     }
 
-    if (addAccount.password !== addAccount.passwordConfirmation) {
-      return Promise.resolve(new InvalidParamError('password'))
+    if (password !== passwordConfirmation) {
+      return (httpError(400, `Invalid param: password`))
     }
 
-    return Promise.resolve(addAccount)
+    return httpReponse(200, request)
   }
 }
