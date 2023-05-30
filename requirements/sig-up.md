@@ -7,9 +7,9 @@
 3. ✅ Valida que **password** e **passwordConfirmation** são iguais
 4. ✅ Valida que o campo **email** é um e-mail válido
 5. ✅ **Valida** se já existe um usuário com o email fornecido
-6. ⛔️ Gera uma senha **criptografada** (essa senha não pode ser descriptografada)
+6. ⛔️ Gera uma senha em formato HASH **criptografada** (essa senha não pode ser descriptografada)
 7. ⛔️ **Cria** uma conta para o usuário com os dados informados, **substituindo** a senha pela senha criptorafada
-8. ⛔️ Gera um **token** de acesso a partir do ID do usuário
+8. ⛔️ Gera um **token** de acesso a partir do email e senha do usuário
 9. ⛔️ **Atualiza** os dados do usuário com o token de acesso gerado
 10. ⛔️ Retorna **200** com o token de acesso e o nome do usuário
 

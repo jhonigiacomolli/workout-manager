@@ -42,6 +42,8 @@ export class SignUpController implements Controller {
         return (httpError(403, `E-mail already in use`))
       }
 
+      const hashedPassword = await this.dependencies.cryptography.hash(password)
+
       const accessToken = await this.dependencies.cryptography.encrypt(email, password)
 
       return httpReponse(200, request)
