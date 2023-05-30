@@ -1,9 +1,0 @@
-import { AccountModel } from "../models/account";
-
-export type AddAccountModel = Omit<AccountModel, 'id'> & {
-  passwordConfirmation: string
-}
-
-export interface AddAccount {
-  add(account: AddAccountModel): Promise<AccountModel>
-}
