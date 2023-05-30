@@ -1,10 +1,14 @@
 import { AccountModel } from "../models/account";
+import { HTTPResponse } from "../models/http";
 
-export type CreateAccountParams = Omit<AccountModel, 'id'> & {
+export type UpdateAccountModel = AccountModel & {
   accessToken: string
 }
 
+export type CreateAccountParams = Omit<AccountModel, 'id'>
+
 export interface Account {
-  create(account: CreateAccountParams): Promise<{ accessToken: string }>
+  create(account: CreateAccountParams): Promise<{ id: string }>
+  update(account: UpdateAccountModel): Promise<{ id: string }>
   checkEmailInUse(email: string): Promise<boolean>
 }

@@ -7,7 +7,7 @@ export const httpError = (statusCode: number, message: string): HTTPResponse => 
   }
 }
 
-export const httpReponse = (statusCode: number, body: any): HTTPResponse => {
+export const httpResponse = (statusCode: number, body: any): HTTPResponse => {
   return {
     statusCode,
     body,

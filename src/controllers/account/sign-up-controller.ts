@@ -1,14 +1,16 @@
-import { httpError, httpReponse } from "@/helpers/http";
+import { httpError, httpResponse } from "@/helpers/http";
+import { Account } from "@/protocols/use-cases/account";
+import { Hasher } from "@/protocols/cryptography/hashser";
 import { Controller } from "@/protocols/models/controller";
+import { Encrypter } from "@/protocols/cryptography/encrypter";
 import { HTTPRequest, HTTPResponse } from "@/protocols/models/http";
 import { EmailValidator } from "@/protocols/models/validator/email-validator";
-import { Account } from "@/protocols/use-cases/account";
-import { Cryptography } from "@/protocols/use-cases/cryptography";
 
 type ConstructorProps = {
   emailValidator: EmailValidator
   account: Account
-  cryptography: Cryptography
+  hasher: Hasher
+  encrypter: Encrypter
 }
 
 export class SignUpController implements Controller {
@@ -42,17 +44,26 @@ export class SignUpController implements Controller {
         return (httpError(403, `E-mail already in use`))
       }
 
-      const hashedPassword = await this.dependencies.cryptography.hash(password)
+      const hashedPassword = await this.dependencies.hasher.generate(password)
 
-      const encryptedToken = await this.dependencies.cryptography.encrypt(email, password)
 
-      const accessToken = await this.dependencies.account.create({
+      const { id } = await this.dependencies.account.create({
         ...request.body,
         password: hashedPassword,
-        accessToken: encryptedToken,
       })
 
-      return httpReponse(200, accessToken)
+      const accessToken = await this.dependencies.encrypter.encrypt(id)
+
+      if (!accessToken) throw new Error()
+
+      const { id: updatedId } = await this.dependencies.account.update({
+        ...request.body,
+        accessToken,
+      })
+
+      if (!updatedId) throw new Error()
+
+      return httpResponse(200, { accessToken })
     } catch {
       return httpError(500, 'Internal Server Error')
     }

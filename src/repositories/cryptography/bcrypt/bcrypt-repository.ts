@@ -1,4 +1,3 @@
-import { Cryptography } from "@/protocols/use-cases/cryptography";
 import { hash } from "bcrypt";
 
 export class BcryptRepository {

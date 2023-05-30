@@ -27,18 +27,4 @@ describe('Bcrypt Repository', () => {
       expect(hashResult).rejects.toThrowError()
     })
   })
-  // describe('Encrypt', () => {
-  //   test('Should Bcrypt Repository calls encrypt medthod with correct values', async () => {
-  //     const { sut, salt } = makeSut()
-  //     const hashSpy = jest.spyOn(bcrypt, '')
-  //     await sut.hash('any_password')
-  //     expect(hashSpy).toHaveBeenCalledWith('any_password', salt)
-  //   })
-  //   test('Should Bcrypt Repository return correct hash value', async () => {
-  //     const { sut, salt } = makeSut()
-  //     jest.spyOn(bcrypt, 'hash').mockImplementationOnce(() => Promise.resolve('hashed_password'))
-  //     const hashResult = await sut.hash('any_password')
-  //     expect(hashResult).toBe('hashed_password')
-  //   })
-  // })
 })

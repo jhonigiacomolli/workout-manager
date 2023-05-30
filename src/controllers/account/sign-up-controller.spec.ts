@@ -1,9 +1,10 @@
 import { SignUpController } from "./sign-up-controller"
 import { makeFakeAccount } from "@/mocks/account/make-fake-account"
-import { httpError, httpReponse, httpRequest } from "@/helpers/http"
+import { httpError, httpResponse, httpRequest } from "@/helpers/http"
 import { EmailValidator } from "@/protocols/models/validator/email-validator"
 import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
-import { Cryptography } from "@/protocols/use-cases/cryptography"
+import { Hasher } from "@/protocols/cryptography/hashser"
+import { Encrypter } from "@/protocols/cryptography/encrypter"
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -18,9 +19,14 @@ const makeSut = () => {
   }
 
   class AccountStub implements Account {
-    async create(): Promise<{ accessToken: string }> {
+    async create(): Promise<{ id: string }> {
       return Promise.resolve({
-        accessToken: 'any_token'
+        id: 'any_id'
+      })
+    }
+    async update(): Promise<{ id: string }> {
+      return Promise.resolve({
+        id: 'updated_id'
       })
     }
     async checkEmailInUse(): Promise<boolean> {
@@ -28,29 +34,36 @@ const makeSut = () => {
     }
   }
 
-  class CryptographyStub implements Cryptography {
+  class HasherStub implements Hasher {
+    generate(): Promise<string> {
+      return Promise.resolve('hashed_password')
+    }
+  }
+
+
+  class EncrypterStub implements Encrypter {
     encrypt(): Promise<string> {
       return Promise.resolve('encrypted_token')
-    }
-    hash(): Promise<string> {
-      return Promise.resolve('hashed_password')
     }
   }
 
   const emailValidatorStub = new EmailValidatorStub()
   const accountStub = new AccountStub()
-  const cryptographyStub = new CryptographyStub()
+  const hasherStub = new HasherStub()
+  const encrypterStub = new EncrypterStub()
 
   const sut = new SignUpController({
     emailValidator: emailValidatorStub,
     account: accountStub,
-    cryptography: cryptographyStub,
+    encrypter: encrypterStub,
+    hasher: hasherStub,
   })
 
   return {
     sut,
     accountStub,
-    cryptographyStub,
+    encrypterStub,
+    hasherStub,
     emailValidatorStub,
     fakeRequest,
   }
@@ -116,39 +129,26 @@ describe('Sign Up Controller', () => {
     expect(checkEmailSpy).toHaveBeenCalledWith('valid_email@mail.com')
   })
   test('Should Sign Up calls hash method with correct password', async () => {
-    const { sut, cryptographyStub, fakeRequest } = makeSut()
-    const hashSpy = jest.spyOn(cryptographyStub, 'hash')
+    const { sut, hasherStub, fakeRequest } = makeSut()
+    const hashSpy = jest.spyOn(hasherStub, 'generate')
     await sut.handle(fakeRequest)
     expect(hashSpy).toHaveBeenCalledWith(fakeRequest.body.password)
   })
   test('Should return 500 if cryptography hash mothod throws', async () => {
-    const { sut, cryptographyStub, fakeRequest } = makeSut()
-    jest.spyOn(cryptographyStub, 'hash').mockImplementationOnce(() => { throw new Error() })
-    const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
-  })
-  test('Should Sign Up calls cryptography with correct values', async () => {
-    const { sut, cryptographyStub, fakeRequest } = makeSut()
-    const encryptSpy = jest.spyOn(cryptographyStub, 'encrypt')
-    await sut.handle(fakeRequest)
-    expect(encryptSpy).toHaveBeenCalledWith(fakeRequest.body.email, fakeRequest.body.password)
-  })
-  test('Should return 500 if cryptography encrypt mothod throws', async () => {
-    const { sut, cryptographyStub, fakeRequest } = makeSut()
-    jest.spyOn(cryptographyStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
+    const { sut, hasherStub, fakeRequest } = makeSut()
+    jest.spyOn(hasherStub, 'generate').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpError(500, 'Internal Server Error'))
   })
   test('Should Sign Up calls account create method with correct values', async () => {
-    const { sut, accountStub, cryptographyStub, fakeRequest } = makeSut()
-    jest.spyOn(cryptographyStub, 'encrypt').mockReturnValueOnce(Promise.resolve('encrypted_token'))
-    jest.spyOn(cryptographyStub, 'hash').mockReturnValueOnce(Promise.resolve('hashed_password'))
+    const { sut, accountStub, hasherStub, encrypterStub, fakeRequest } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.resolve('encrypted_token'))
+    jest.spyOn(hasherStub, 'generate').mockReturnValueOnce(Promise.resolve('hashed_password'))
     const accountSpy = jest.spyOn(accountStub, 'create')
     await sut.handle(fakeRequest)
     expect(accountSpy).toHaveBeenCalledWith({
       ...fakeRequest.body,
       password: 'hashed_password',
-      accessToken: 'encrypted_token'
     })
   })
   test('Should return 500 if account create mothod throws', async () => {
@@ -157,15 +157,43 @@ describe('Sign Up Controller', () => {
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpError(500, 'Internal Server Error'))
   })
-  test('Should Sign Up Controller return acessToken if account create is successfull', async () => {
-    const { sut, accountStub, fakeRequest } = makeSut()
-    jest.spyOn(accountStub, 'create').mockReturnValueOnce(Promise.resolve({
-      accessToken: 'encrypted_token'
-    }))
-
+  test('Should return 500 if cryptography encrypt mothod throws', async () => {
+    const { sut, encrypterStub, fakeRequest } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
-
-    expect(controller).toEqual(httpReponse(200, {
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
+  test('Should Sign Up controller calls encrypt method with correct id', async () => {
+    const { sut, encrypterStub, fakeRequest } = makeSut()
+    const encrypterSpy = jest.spyOn(encrypterStub, 'encrypt')
+    await sut.handle(fakeRequest)
+    expect(encrypterSpy).toHaveBeenCalledWith('any_id')
+  })
+  test('Should return 400 if encrypt method fails', async () => {
+    const { sut, encrypterStub, fakeRequest } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.resolve(''))
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
+  test('Should Sign Up controller calls account update method with correct values', async () => {
+    const { sut, accountStub, fakeRequest } = makeSut()
+    const encrypterSpy = jest.spyOn(accountStub, 'update')
+    await sut.handle(fakeRequest)
+    expect(encrypterSpy).toHaveBeenCalledWith({
+      ...fakeRequest.body,
+      accessToken: 'encrypted_token'
+    })
+  })
+  test('Should return 500 if account update mothod fails', async () => {
+    const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'update').mockReturnValueOnce(Promise.resolve({ id: '' }))
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
+  test('Should return 200 if sign up succeeds', async () => {
+    const { sut, fakeRequest } = makeSut()
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpResponse(200, {
       accessToken: 'encrypted_token'
     }))
   })
