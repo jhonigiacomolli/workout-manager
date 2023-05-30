@@ -139,4 +139,10 @@ describe('Sign Up Controller', () => {
     await sut.handle(fakeRequest)
     expect(encryptSpy).toHaveBeenCalledWith(fakeRequest.body.email, fakeRequest.body.password)
   })
+  test('Should return 500 if cryptography encrypt mothod throws', async () => {
+    const { sut, cryptographyStub, fakeRequest } = makeSut()
+    jest.spyOn(cryptographyStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
 })
