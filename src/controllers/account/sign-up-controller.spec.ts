@@ -3,6 +3,7 @@ import { makeFakeAccount } from "@/mocks/account/make-fake-account"
 import { httpError, httpReponse, httpRequest } from "@/helpers/http"
 import { EmailValidator } from "@/protocols/models/validator/email-validator"
 import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
+import { Cryptography } from "@/protocols/use-cases/cryptography"
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -11,32 +12,42 @@ const makeSut = () => {
   })
 
   class EmailValidatorStub implements EmailValidator {
-    validate(email: string) {
+    validate() {
       return true
     }
   }
 
   class AccountStub implements Account {
-    async create(account: CreateAccountParams): Promise<{ accessToken: string }> {
+    async create(): Promise<{ accessToken: string }> {
       return Promise.resolve({
         accessToken: 'any_token'
       })
     }
-    async checkEmailInUse(email: string): Promise<boolean> {
+    async checkEmailInUse(): Promise<boolean> {
       return Promise.resolve(false)
     }
   }
+
+  class CryptographyStub implements Cryptography {
+    encrypt(): Promise<string> {
+      return Promise.resolve('encrypted_token')
+    }
+  }
+
   const emailValidatorStub = new EmailValidatorStub()
   const accountStub = new AccountStub()
+  const cryptographyStub = new CryptographyStub()
 
   const sut = new SignUpController({
     emailValidator: emailValidatorStub,
     account: accountStub,
+    cryptography: cryptographyStub,
   })
 
   return {
     sut,
     accountStub,
+    cryptographyStub,
     emailValidatorStub,
     fakeRequest,
   }
@@ -86,7 +97,7 @@ describe('Account Controller', () => {
   test('Should call Email Validator with correct email param', async () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()
     const validateSpy = jest.spyOn(emailValidatorStub, 'validate')
-    sut.handle(fakeRequest)
+    await sut.handle(fakeRequest)
     expect(validateSpy).toHaveBeenCalledWith('valid_email@mail.com')
   })
   test('Should return 500 if Email Validator throws', async () => {
@@ -104,7 +115,13 @@ describe('Account Controller', () => {
   test('Should Sign Up calls emailInUse with correct email', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
     const checkEmailSpy = jest.spyOn(accountStub, 'checkEmailInUse')
-    sut.handle(fakeRequest)
+    await sut.handle(fakeRequest)
     expect(checkEmailSpy).toHaveBeenCalledWith('valid_email@mail.com')
+  })
+  test('Should Sign Up calls cryptography with correct values', async () => {
+    const { sut, cryptographyStub, fakeRequest } = makeSut()
+    const encryptSpy = jest.spyOn(cryptographyStub, 'encrypt')
+    await sut.handle(fakeRequest)
+    expect(encryptSpy).toHaveBeenCalledWith(fakeRequest.body.email, fakeRequest.body.password)
   })
 })
