@@ -9,6 +9,12 @@ const makeSut = () => {
 }
 
 describe('Email Validator Repository', () => {
+  test('Should Repository calls validate method with correct values', () => {
+    const { sut } = makeSut()
+    const validateSpy = jest.spyOn(validator, 'validate')
+    sut.validate('any_email@mail.com')
+    expect(validateSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
   test('Should return false if invalid email is provided', () => {
     const { sut } = makeSut()
     jest.spyOn(validator, 'validate').mockReturnValueOnce(false)
