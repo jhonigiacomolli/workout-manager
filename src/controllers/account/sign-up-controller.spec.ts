@@ -127,6 +127,12 @@ describe('Sign Up Controller', () => {
     await sut.handle(fakeRequest)
     expect(hashSpy).toHaveBeenCalledWith(fakeRequest.body.password)
   })
+  test('Should return 500 if cryptography hash mothod throws', async () => {
+    const { sut, cryptographyStub, fakeRequest } = makeSut()
+    jest.spyOn(cryptographyStub, 'hash').mockImplementationOnce(() => { throw new Error() })
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
   test('Should Sign Up calls cryptography with correct values', async () => {
     const { sut, cryptographyStub, fakeRequest } = makeSut()
     const encryptSpy = jest.spyOn(cryptographyStub, 'encrypt')
