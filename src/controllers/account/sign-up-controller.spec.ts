@@ -57,12 +57,6 @@ const makeSut = () => {
 }
 
 describe('Sign Up Controller', () => {
-  test('Should controller called with correct values', async () => {
-    const { sut, fakeRequest } = makeSut()
-    const controller = await sut.handle(fakeRequest)
-
-    expect(controller).toEqual(httpReponse(200, fakeRequest))
-  })
   test('Should controller return 400 with e-mail not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.email = ''
@@ -144,5 +138,35 @@ describe('Sign Up Controller', () => {
     jest.spyOn(cryptographyStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
+  test('Should Sign Up calls account create method with correct values', async () => {
+    const { sut, accountStub, cryptographyStub, fakeRequest } = makeSut()
+    jest.spyOn(cryptographyStub, 'encrypt').mockReturnValueOnce(Promise.resolve('encrypted_token'))
+    jest.spyOn(cryptographyStub, 'hash').mockReturnValueOnce(Promise.resolve('hashed_password'))
+    const accountSpy = jest.spyOn(accountStub, 'create')
+    await sut.handle(fakeRequest)
+    expect(accountSpy).toHaveBeenCalledWith({
+      ...fakeRequest.body,
+      password: 'hashed_password',
+      accessToken: 'encrypted_token'
+    })
+  })
+  test('Should return 500 if account create mothod throws', async () => {
+    const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'create').mockImplementationOnce(() => { throw new Error() })
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
+  test('Should Sign Up Controller return acessToken if account create is successfull', async () => {
+    const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'create').mockReturnValueOnce(Promise.resolve({
+      accessToken: 'encrypted_token'
+    }))
+
+    const controller = await sut.handle(fakeRequest)
+
+    expect(controller).toEqual(httpReponse(200, {
+      accessToken: 'encrypted_token'
+    }))
   })
 })
