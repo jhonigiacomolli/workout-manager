@@ -44,9 +44,15 @@ export class SignUpController implements Controller {
 
       const hashedPassword = await this.dependencies.cryptography.hash(password)
 
-      const accessToken = await this.dependencies.cryptography.encrypt(email, password)
+      const encryptedToken = await this.dependencies.cryptography.encrypt(email, password)
 
-      return httpReponse(200, request)
+      const accessToken = await this.dependencies.account.create({
+        ...request.body,
+        password: hashedPassword,
+        accessToken: encryptedToken,
+      })
+
+      return httpReponse(200, accessToken)
     } catch {
       return httpError(500, 'Internal Server Error')
     }
