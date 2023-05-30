@@ -75,4 +75,10 @@ describe('Account Controller', () => {
     sut.handle(fakeRequest)
     expect(validateSpy).toHaveBeenCalledWith('valid_email@mail.com')
   })
+  test('Should return 500 if Email Validator throws', async () => {
+    const { sut, emailValidatorStub, fakeRequest } = makeSut()
+    jest.spyOn(emailValidatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
+    const controller = sut.handle(fakeRequest)
+    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+  })
 })
