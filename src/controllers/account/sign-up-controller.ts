@@ -1,9 +1,9 @@
 import { httpError, httpResponse } from "@/helpers/http";
 import { Account } from "@/protocols/use-cases/account";
-import { Hasher } from "@/protocols/cryptography/hashser";
 import { Controller } from "@/protocols/models/controller";
-import { Encrypter } from "@/protocols/cryptography/encrypter";
 import { HTTPRequest, HTTPResponse } from "@/protocols/models/http";
+import { Hasher } from "@/protocols/use-cases/cryptography/hashser";
+import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter";
 import { EmailValidator } from "@/protocols/models/validator/email-validator";
 
 type ConstructorProps = {
@@ -34,18 +34,13 @@ export class SignUpController implements Controller {
 
       const isValid = this.dependencies.emailValidator.validate(email)
 
-      if (!isValid) {
-        return (httpError(400, `Invalid param: email`))
-      }
+      if (!isValid) return (httpError(400, `Invalid param: email`))
 
       const emailInUse = await this.dependencies.account.checkEmailInUse(email)
 
-      if (emailInUse) {
-        return (httpError(403, `E-mail already in use`))
-      }
+      if (emailInUse) return (httpError(403, `E-mail already in use`))
 
       const hashedPassword = await this.dependencies.hasher.generate(password)
-
 
       const { id } = await this.dependencies.account.create({
         ...request.body,

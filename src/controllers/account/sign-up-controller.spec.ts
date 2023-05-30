@@ -1,10 +1,10 @@
 import { SignUpController } from "./sign-up-controller"
 import { makeFakeAccount } from "@/mocks/account/make-fake-account"
+import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
 import { httpError, httpResponse, httpRequest } from "@/helpers/http"
-import { EmailValidator } from "@/protocols/models/validator/email-validator"
+import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter"
 import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
-import { Hasher } from "@/protocols/cryptography/hashser"
-import { Encrypter } from "@/protocols/cryptography/encrypter"
+import { EmailValidator } from "@/protocols/models/validator/email-validator"
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
