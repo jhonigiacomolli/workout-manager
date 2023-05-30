@@ -3,10 +3,12 @@ import { Controller } from "@/protocols/models/controller";
 import { HTTPRequest, HTTPResponse } from "@/protocols/models/http";
 import { EmailValidator } from "@/protocols/models/validator/email-validator";
 import { Account } from "@/protocols/use-cases/account";
+import { Cryptography } from "@/protocols/use-cases/cryptography";
 
 type ConstructorProps = {
   emailValidator: EmailValidator
   account: Account
+  cryptography: Cryptography
 }
 
 export class SignUpController implements Controller {
@@ -39,6 +41,8 @@ export class SignUpController implements Controller {
       if (emailInUse) {
         return (httpError(403, `E-mail already in use`))
       }
+
+      const accessToken = await this.dependencies.cryptography.encrypt(email, password)
 
       return httpReponse(200, request)
     } catch {
