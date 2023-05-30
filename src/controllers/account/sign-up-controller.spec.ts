@@ -32,6 +32,9 @@ const makeSut = () => {
     encrypt(): Promise<string> {
       return Promise.resolve('encrypted_token')
     }
+    hash(): Promise<string> {
+      return Promise.resolve('hashed_password')
+    }
   }
 
   const emailValidatorStub = new EmailValidatorStub()
@@ -53,7 +56,7 @@ const makeSut = () => {
   }
 }
 
-describe('Account Controller', () => {
+describe('Sign Up Controller', () => {
   test('Should controller called with correct values', async () => {
     const { sut, fakeRequest } = makeSut()
     const controller = await sut.handle(fakeRequest)
@@ -117,6 +120,12 @@ describe('Account Controller', () => {
     const checkEmailSpy = jest.spyOn(accountStub, 'checkEmailInUse')
     await sut.handle(fakeRequest)
     expect(checkEmailSpy).toHaveBeenCalledWith('valid_email@mail.com')
+  })
+  test('Should Sign Up calls hash method with correct password', async () => {
+    const { sut, cryptographyStub, fakeRequest } = makeSut()
+    const hashSpy = jest.spyOn(cryptographyStub, 'hash')
+    await sut.handle(fakeRequest)
+    expect(hashSpy).toHaveBeenCalledWith(fakeRequest.body.password)
   })
   test('Should Sign Up calls cryptography with correct values', async () => {
     const { sut, cryptographyStub, fakeRequest } = makeSut()
