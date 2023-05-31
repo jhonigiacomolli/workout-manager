@@ -1,5 +1,4 @@
 import { AccountModel } from "../models/account";
-import { HTTPResponse } from "../models/http";
 
 export type UpdateAccountModel = AccountModel & {
   accessToken: string

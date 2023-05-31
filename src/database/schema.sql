@@ -1,14 +1,14 @@
 CREATE DATABASE workout;
 
-CREATE EXTENSION "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS  "uuid-ossp";
 
-CREATE TABLE teams(
+CREATE TABLE IF NOT EXISTS teams(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
   name VARCHAR NOT NULL,
   members VARCHAR[]
 );
 
-CREATE TABLE accounts(
+CREATE TABLE IF NOT EXISTS accounts(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
   name VARCHAR NOT NULL,
   email VARCHAR NOT NULL,
