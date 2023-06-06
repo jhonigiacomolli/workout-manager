@@ -7,7 +7,7 @@ export const makeFakeAccount = (): AccountModel => ({
   password: 'valid_password',
   address: 'valid_address',
   image: 'valid_image',
-  teamId: 'valid_team_id',
+  teamId: undefined,
   phone: 'valid_phone',
   boards: [],
   desktops: [],
