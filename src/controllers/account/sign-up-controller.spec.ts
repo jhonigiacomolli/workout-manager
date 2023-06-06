@@ -22,11 +22,7 @@ const makeSut = () => {
     async create(): Promise<boolean> {
       return Promise.resolve(true)
     }
-    async update(): Promise<{ id: string }> {
-      return Promise.resolve({
-        id: 'updated_id'
-      })
-    }
+
     async checkEmailInUse(): Promise<boolean> {
       return Promise.resolve(false)
     }

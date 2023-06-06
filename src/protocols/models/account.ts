@@ -5,7 +5,7 @@ export type AccountModel = {
   password: string
   phone: string
   address: string
-  teamId: string
+  teamId?: string
   responsability: string[]
   status: string[]
   permissions: string[]
