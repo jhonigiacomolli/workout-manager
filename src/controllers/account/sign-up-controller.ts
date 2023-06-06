@@ -1,10 +1,10 @@
-import { httpError, httpResponse } from "@/helpers/http";
-import { Account } from "@/protocols/use-cases/account";
-import { Controller } from "@/protocols/models/controller";
-import { HTTPRequest, HTTPResponse } from "@/protocols/models/http";
-import { Hasher } from "@/protocols/use-cases/cryptography/hashser";
-import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter";
-import { EmailValidator } from "@/protocols/models/validator/email-validator";
+import { Account } from "@/protocols/use-cases/account"
+import { httpError, httpResponse } from "@/helpers/http"
+import { Controller } from "@/protocols/models/controller"
+import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
+import { HTTPRequest, HTTPResponse } from "@/protocols/models/http"
+import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter"
+import { EmailValidator } from "@/protocols/models/validator/email-validator"
 
 type ConstructorProps = {
   emailValidator: EmailValidator
@@ -42,23 +42,12 @@ export class SignUpController implements Controller {
 
       const hashedPassword = await this.dependencies.hasher.generate(password)
 
-      const { id } = await this.dependencies.account.create({
+     await this.dependencies.account.create({
         ...request.body,
         password: hashedPassword,
       })
 
-      const accessToken = await this.dependencies.encrypter.encrypt(id)
-
-      if (!accessToken) throw new Error()
-
-      const { id: updatedId } = await this.dependencies.account.update({
-        ...request.body,
-        accessToken,
-      })
-
-      if (!updatedId) throw new Error()
-
-      return httpResponse(200, { accessToken })
+      return httpResponse(200, 'Successfully registered user')
     } catch {
       return httpError(500, 'Internal Server Error')
     }

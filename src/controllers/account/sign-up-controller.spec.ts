@@ -19,10 +19,8 @@ const makeSut = () => {
   }
 
   class AccountStub implements Account {
-    async create(): Promise<{ id: string }> {
-      return Promise.resolve({
-        id: 'any_id'
-      })
+    async create(): Promise<boolean> {
+      return Promise.resolve(true)
     }
     async update(): Promise<{ id: string }> {
       return Promise.resolve({
@@ -157,44 +155,9 @@ describe('Sign Up Controller', () => {
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpError(500, 'Internal Server Error'))
   })
-  test('Should return 500 if cryptography encrypt mothod throws', async () => {
-    const { sut, encrypterStub, fakeRequest } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
-    const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
-  })
-  test('Should Sign Up controller calls encrypt method with correct id', async () => {
-    const { sut, encrypterStub, fakeRequest } = makeSut()
-    const encrypterSpy = jest.spyOn(encrypterStub, 'encrypt')
-    await sut.handle(fakeRequest)
-    expect(encrypterSpy).toHaveBeenCalledWith('any_id')
-  })
-  test('Should return 400 if encrypt method fails', async () => {
-    const { sut, encrypterStub, fakeRequest } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.resolve(''))
-    const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
-  })
-  test('Should Sign Up controller calls account update method with correct values', async () => {
-    const { sut, accountStub, fakeRequest } = makeSut()
-    const encrypterSpy = jest.spyOn(accountStub, 'update')
-    await sut.handle(fakeRequest)
-    expect(encrypterSpy).toHaveBeenCalledWith({
-      ...fakeRequest.body,
-      accessToken: 'encrypted_token'
-    })
-  })
-  test('Should return 500 if account update mothod fails', async () => {
-    const { sut, accountStub, fakeRequest } = makeSut()
-    jest.spyOn(accountStub, 'update').mockReturnValueOnce(Promise.resolve({ id: '' }))
-    const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
-  })
   test('Should return 200 if sign up succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpResponse(200, {
-      accessToken: 'encrypted_token'
-    }))
+    expect(controller).toEqual(httpResponse(200, 'Successfully registered user'))
   })
 })
