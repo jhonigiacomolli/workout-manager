@@ -34,29 +34,19 @@ const makeSut = () => {
     }
   }
 
-
-  class EncrypterStub implements Encrypter {
-    encrypt(): Promise<string> {
-      return Promise.resolve('encrypted_token')
-    }
-  }
-
   const emailValidatorStub = new EmailValidatorStub()
   const accountStub = new AccountStub()
   const hasherStub = new HasherStub()
-  const encrypterStub = new EncrypterStub()
 
   const sut = new SignUpController({
     emailValidator: emailValidatorStub,
     account: accountStub,
-    encrypter: encrypterStub,
     hasher: hasherStub,
   })
 
   return {
     sut,
     accountStub,
-    encrypterStub,
     hasherStub,
     emailValidatorStub,
     fakeRequest,
@@ -135,8 +125,7 @@ describe('Sign Up Controller', () => {
     expect(controller).toEqual(httpError(500, 'Internal Server Error'))
   })
   test('Should Sign Up calls account create method with correct values', async () => {
-    const { sut, accountStub, hasherStub, encrypterStub, fakeRequest } = makeSut()
-    jest.spyOn(encrypterStub, 'encrypt').mockReturnValueOnce(Promise.resolve('encrypted_token'))
+    const { sut, accountStub, hasherStub, fakeRequest } = makeSut()
     jest.spyOn(hasherStub, 'generate').mockReturnValueOnce(Promise.resolve('hashed_password'))
     const accountSpy = jest.spyOn(accountStub, 'create')
     await sut.handle(fakeRequest)

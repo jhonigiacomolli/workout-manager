@@ -3,14 +3,12 @@ import { httpError, httpResponse } from "@/helpers/http"
 import { Controller } from "@/protocols/models/controller"
 import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
 import { HTTPRequest, HTTPResponse } from "@/protocols/models/http"
-import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter"
 import { EmailValidator } from "@/protocols/models/validator/email-validator"
 
 type ConstructorProps = {
   emailValidator: EmailValidator
   account: Account
   hasher: Hasher
-  encrypter: Encrypter
 }
 
 export class SignUpController implements Controller {
