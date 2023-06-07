@@ -1,5 +1,5 @@
+import { httpResponse } from "@/helpers/http"
 import { Account } from "@/protocols/use-cases/account"
-import { httpError, httpResponse } from "@/helpers/http"
 import { Controller } from "@/protocols/models/controller"
 import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
 import { HTTPRequest, HTTPResponse } from "@/protocols/models/http"
@@ -47,7 +47,7 @@ export class SignUpController implements Controller {
 
       return httpResponse(200, 'Successfully registered user')
     } catch {
-      return httpError(500, 'Internal Server Error')
+      return httpResponse(500, 'Internal Server Error')
     }
   }
 }

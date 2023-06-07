@@ -1,8 +1,7 @@
 import { SignUpController } from "./sign-up-controller"
+import { httpResponse, httpRequest } from "@/helpers/http"
 import { makeFakeAccount } from "@/mocks/account/make-fake-account"
 import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
-import { httpError, httpResponse, httpRequest } from "@/helpers/http"
-import { Encrypter } from "@/protocols/use-cases/cryptography/encrypter"
 import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
 import { EmailValidator } from "@/protocols/models/validator/email-validator"
 
@@ -105,7 +104,7 @@ describe('Sign Up Controller', () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()
     jest.spyOn(emailValidatorStub, 'validate').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+    expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should return 400 if e-mail already in use', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
@@ -129,7 +128,7 @@ describe('Sign Up Controller', () => {
     const { sut, hasherStub, fakeRequest } = makeSut()
     jest.spyOn(hasherStub, 'generate').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+    expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should Sign Up calls account create method with correct values', async () => {
     const { sut, accountStub, hasherStub, fakeRequest } = makeSut()
@@ -145,7 +144,7 @@ describe('Sign Up Controller', () => {
     const { sut, accountStub, fakeRequest } = makeSut()
     jest.spyOn(accountStub, 'create').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpError(500, 'Internal Server Error'))
+    expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should return 200 if sign up succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
