@@ -5,7 +5,7 @@ import { makeFakeAccount } from "@/mocks/account/make-fake-account";
 jest.mock('pg', () => {
   const mClient = {
     connect: jest.fn(),
-    query: jest.fn().mockReturnValueOnce({
+    query: () => ({
       rows: [],
       rowCount: 1,
     }),
@@ -35,6 +35,24 @@ describe('Postgree Account Repository', () => {
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
       const result = sut.create(params)
       expect(result).rejects.toThrowError()
+    });
+  });
+  describe('checkEmailInUse()', () => {
+    test('Should return true when email already registered on database', async () => {
+      const {sut, params} = makeSut()
+      const result = await sut.checkEmailInUse(params.email)
+      expect(result).toBeTruthy()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 2 }))
+
+      const newResult = await sut.checkEmailInUse(params.email)
+      expect(newResult).toBeTruthy()
+    });
+    test('Should return false when email already registered on database', async () => {
+      const {sut, params} = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 0 }))
+      const result = await sut.checkEmailInUse(params.email)
+      expect(result).toBeFalsy()
     });
   });
 });
