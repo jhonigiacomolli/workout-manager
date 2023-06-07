@@ -13,3 +13,4 @@ export const client = new Client({
 // client.connect()
 // client.query('INSERT INTO accounts(name, email, password) VALUES($1, $2, $3)', ['Jhoni', 'edicao@microsite.net.br', '123456']).then(result => console.log('db', result.rows))
 // client.query('DELETE FROM accounts').then(result => console.log(result.rows))
+// client.query('SELECT * FROM accounts').then(result => console.log(`Select: `, result.rows))

@@ -1,7 +1,7 @@
 import { client } from "@/database"
-import { CreateAccountParams } from "@/protocols/use-cases/account"
+import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
 
-export class PgAccountRepository {
+export class PgAccountRepository implements Account {
   async create(account: CreateAccountParams): Promise<boolean> {
     client.connect()
 
@@ -37,5 +37,15 @@ export class PgAccountRepository {
 
     client.end()
     return Promise.resolve(rowCount > 0)
+  }
+
+  async checkEmailInUse(email: string): Promise<boolean> {
+    client.connect()
+
+    const result = await client.query('SELECT id FROM accounts WHERE email=$1',[email])
+
+    client.end()
+
+    return result.rowCount > 0
   }
 }
