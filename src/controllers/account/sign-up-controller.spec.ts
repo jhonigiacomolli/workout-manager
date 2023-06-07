@@ -54,6 +54,13 @@ const makeSut = () => {
 }
 
 describe('Sign Up Controller', () => {
+  test('Should controller return 400 with name not provided', async () => {
+    const { sut, fakeRequest } = makeSut()
+    fakeRequest.body.name = ''
+    const controller = await sut.handle(fakeRequest)
+
+    expect(controller).toEqual(httpResponse(400, `Empty param: name is required`))
+  })
   test('Should controller return 400 with e-mail not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.email = ''
