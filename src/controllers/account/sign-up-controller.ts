@@ -22,21 +22,21 @@ export class SignUpController implements Controller {
 
       for (let param of requiredParams) {
         if (!request.body[param]) {
-          return httpError(400, `Invalid param: ${param}`)
+          return httpResponse(400, `Empty param: ${param} is required`)
         }
       }
 
       if (password !== passwordConfirmation) {
-        return (httpError(400, `Invalid param: password`))
+        return httpResponse(400, `password and passwordConfirmation must be equal`)
       }
 
       const isValid = this.dependencies.emailValidator.validate(email)
 
-      if (!isValid) return (httpError(400, `Invalid param: email`))
+      if (!isValid) return httpResponse(400, `Invalid param: email`)
 
       const emailInUse = await this.dependencies.account.checkEmailInUse(email)
 
-      if (emailInUse) return (httpError(403, `E-mail already in use`))
+      if (emailInUse) return (httpResponse(403, `E-mail already in use`))
 
       const hashedPassword = await this.dependencies.hasher.generate(password)
 

@@ -3,7 +3,6 @@ import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
 
 export class PgAccountRepository implements Account {
   async create(account: CreateAccountParams): Promise<boolean> {
-    client.connect()
 
     const { rowCount } = await client.query(`INSERT INTO accounts(
       name,
@@ -32,19 +31,15 @@ export class PgAccountRepository implements Account {
       account.responsability,
       account.status,
       account.tasks,
-      'ashu',
+      account.teamId,
     ])
-
-    client.end()
     return Promise.resolve(rowCount > 0)
   }
 
   async checkEmailInUse(email: string): Promise<boolean> {
-    client.connect()
 
     const result = await client.query('SELECT id FROM accounts WHERE email=$1',[email])
 
-    client.end()
 
     return result.rowCount > 0
   }
