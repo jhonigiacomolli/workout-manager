@@ -12,15 +12,21 @@ const app = express()
 app.use(json())
 
 app.post('/sign-up', async (req, res) => {
-  const params = req.body
-  const account = new PgAccountRepository()
-  const emailValidator = new EmailValidatorRepository()
-  const hasher = new BcryptRepository(12)
-  console.log('Params: ',  params)
-  const controller = new SignUpController({ account, emailValidator, hasher })
+  const controller = new SignUpController({
+    account: new PgAccountRepository(),
+    emailValidator: new EmailValidatorRepository(),
+    hasher: new BcryptRepository(12)
+  })
+
   const httpResponse = await controller.handle(req || {})
 
-  res.status(httpResponse.statusCode).json(httpResponse.body)
+  if(httpResponse.statusCode >=200 && httpResponse.statusCode < 300) {
+    res.status(httpResponse.statusCode).json(httpResponse.body)
+  }else {
+    res.status(httpResponse.statusCode).json({
+      error: httpResponse.body.message
+    })
+  }
 })
 
 app.listen(3008, () => console.log('Server is running on https://localhost:3008'))

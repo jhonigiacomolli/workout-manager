@@ -16,7 +16,7 @@ export class SignUpController implements Controller {
   }
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
-      const requiredParams = ['email', 'password', 'passwordConfirmation']
+      const requiredParams = ['name', 'email', 'password', 'passwordConfirmation']
 
       const { email, password, passwordConfirmation } = request.body
 
