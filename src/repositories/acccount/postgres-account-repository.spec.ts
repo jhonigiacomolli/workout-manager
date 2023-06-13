@@ -37,6 +37,22 @@ describe('Postgree Account Repository', () => {
       return expect(result).rejects.toThrow()
     })
   })
+  describe('getUserByEmail()', () => {
+    test('Should return an account model if succeeds', async () => {
+      const { sut, params } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [params] }))
+
+      const newResult = await sut.getUserByEmail(params.email)
+      expect(newResult).toEqual(params)
+    })
+    test('Should return 500 when account query fails', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.getUserByEmail(params.email)
+      return expect(result).rejects.toThrow()
+    })
+  })
   describe('checkEmailInUse()', () => {
     test('Should return true when email already registered on database', async () => {
       const { sut, params } = makeSut()
