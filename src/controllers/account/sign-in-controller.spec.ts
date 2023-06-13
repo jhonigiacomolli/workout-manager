@@ -17,7 +17,7 @@ const makeSut = () => {
       return await Promise.resolve(true)
     }
 
-    async getUserByEmail(): Promise<AccountModel> {
+    async getUserByEmail(): Promise<AccountModel | undefined> {
       return await Promise.resolve(makeFakeAccount())
     }
   }
@@ -86,6 +86,12 @@ describe('Sign in', () => {
   test('Should return 404 if username is not registed', async () => {
     const { sut, fakeRequest, accountStub } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(false))
+    const response = await sut.handle(fakeRequest)
+    expect(response).toEqual(httpResponse(404, 'user not found'))
+  })
+  test('Should return 404 if user not found on get email by emai method', async () => {
+    const { sut, fakeRequest, accountStub } = makeSut()
+    jest.spyOn(accountStub, 'getUserByEmail').mockReturnValueOnce(Promise.resolve(undefined))
     const response = await sut.handle(fakeRequest)
     expect(response).toEqual(httpResponse(404, 'user not found'))
   })
