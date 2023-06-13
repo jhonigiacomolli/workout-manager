@@ -1,10 +1,9 @@
-import { type Account } from '@/protocols/use-cases/account'
-import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
 
 import { SignUpController } from './sign-up-controller'
-import { AccountModel } from '@/protocols/models/account'
 import { httpResponse, httpRequest } from '@/helpers/http'
+import { AccountStub } from '@/mocks/account/account-stub'
+import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 
 const makeSut = () => {
@@ -16,24 +15,6 @@ const makeSut = () => {
   class EmailValidatorStub implements EmailValidator {
     validate() {
       return true
-    }
-  }
-
-  class AccountStub implements Account {
-    getUserByEmail: (email: string) => Promise<AccountModel>
-    async create(): Promise<boolean> {
-      return await Promise.resolve(true)
-    }
-
-    async checkEmailInUse(): Promise<boolean> {
-      return await Promise.resolve(false)
-    }
-  }
-
-  class HasherStub implements Hasher {
-    compare: (password: string, hash: string) => Promise<boolean>
-    async generate(): Promise<string> {
-      return await Promise.resolve('hashed_password')
     }
   }
 
@@ -111,8 +92,7 @@ describe('Sign Up Controller', () => {
     expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should return 400 if e-mail already in use', async () => {
-    const { sut, accountStub, fakeRequest } = makeSut()
-    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(true) })
+    const { sut, fakeRequest } = makeSut()
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpResponse(403, 'E-mail already in use'))
   })
@@ -123,19 +103,22 @@ describe('Sign Up Controller', () => {
     expect(checkEmailSpy).toHaveBeenCalledWith('valid_email@mail.com')
   })
   test('Should Sign Up calls hash method with correct password', async () => {
-    const { sut, hasherStub, fakeRequest } = makeSut()
+    const { sut, accountStub, hasherStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     const hashSpy = jest.spyOn(hasherStub, 'generate')
     await sut.handle(fakeRequest)
     expect(hashSpy).toHaveBeenCalledWith(fakeRequest.body.password)
   })
   test('Should return 500 if cryptography hash mothod throws', async () => {
-    const { sut, hasherStub, fakeRequest } = makeSut()
+    const { sut, accountStub, hasherStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     jest.spyOn(hasherStub, 'generate').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should Sign Up calls account create method with correct values', async () => {
     const { sut, accountStub, hasherStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     jest.spyOn(hasherStub, 'generate').mockReturnValueOnce(Promise.resolve('hashed_password'))
     const accountSpy = jest.spyOn(accountStub, 'create')
     await sut.handle(fakeRequest)
@@ -146,12 +129,14 @@ describe('Sign Up Controller', () => {
   })
   test('Should return 500 if account create mothod throws', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     jest.spyOn(accountStub, 'create').mockImplementationOnce(() => { throw new Error() })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should return 200 if sign up succeeds', async () => {
-    const { sut, fakeRequest } = makeSut()
+    const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpResponse(200, 'Successfully registered user'))
   })

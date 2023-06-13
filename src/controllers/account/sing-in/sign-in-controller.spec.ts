@@ -1,37 +1,11 @@
-import { type Account } from '@/protocols/use-cases/account'
-import { type AccountModel } from '@/protocols/models/account'
-import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
 import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 
 import { SignInController } from './sign-in-controller'
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { AccountStub } from '@/mocks/account/account-stub'
+import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 
 const makeSut = () => {
-  class AccountStub implements Account {
-    async create(): Promise<boolean> {
-      return await Promise.resolve(true)
-    }
-
-    async checkEmailInUse(): Promise<boolean> {
-      return await Promise.resolve(true)
-    }
-
-    async getUserByEmail(): Promise<AccountModel | undefined> {
-      return await Promise.resolve(makeFakeAccount())
-    }
-  }
-
-  class HasherStub implements Hasher {
-    async generate(): Promise<string> {
-      return await Promise.resolve('hashed_password')
-    }
-
-    async compare(): Promise<boolean> {
-      return await Promise.resolve(true)
-    }
-  }
-
   class EncrypterStub implements Encrypter {
     async encrypt(): Promise<string> {
       return await Promise.resolve('encrypted_token')
