@@ -55,9 +55,23 @@ describe('http', () => {
       jest.clearAllMocks()
     })
 
-    it('should return successful response if statusCode is between 200 and 299', async () => {
+    it('should return successful response if statusCode is between 200', async () => {
       const httpResponse = {
         statusCode: 200,
+        body: { data: 'Success' },
+      }
+      controller.handle.mockResolvedValue(httpResponse)
+
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
+      expect(res.json).toHaveBeenCalledWith(httpResponse.body)
+    })
+
+    it('should return successful response if statusCode is between 299', async () => {
+      const httpResponse = {
+        statusCode: 299,
         body: { data: 'Success' },
       }
       controller.handle.mockResolvedValue(httpResponse)
