@@ -12,9 +12,9 @@ interface ConstructorProps {
 }
 
 export class SignInController implements Controller {
-  constructor (private readonly dependencies: ConstructorProps) { }
+  constructor(private readonly dependencies: ConstructorProps) { }
 
-  async handle (request: HTTPRequest): Promise<HTTPResponse> {
+  async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
       const requiredParams = ['username', 'password']
 
@@ -31,7 +31,12 @@ export class SignInController implements Controller {
       if (!isValidUser) {
         return httpResponse(404, 'user not found')
       }
+
       const user = await this.dependencies.account.getUserByEmail(username)
+
+      if (!user) {
+        return httpResponse(404, 'user not found')
+      }
 
       const isCorrectPassword = await this.dependencies.hasher.compare(password, user.password)
 
