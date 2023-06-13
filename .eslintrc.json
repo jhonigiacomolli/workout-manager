@@ -4,14 +4,15 @@
     "es2021": true
   },
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "standard-with-typescript"
+    "plugin:jest/recommended",
+    "standard",
+    "plugin:@typescript-eslint/recommended"
   ],
   "overrides": [],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
   "plugins": [
     "@typescript-eslint"
@@ -35,10 +36,13 @@
       "error",
       "single"
     ],
+    "space-before-function-paren": "off",
     "no-undef": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-pascal-case": "off",
     "no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-useless-constructor": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",

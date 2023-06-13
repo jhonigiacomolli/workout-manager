@@ -11,4 +11,4 @@ app.use(json())
 
 app.post('/sign-up', useRouteController(makeSignUpController()))
 
-app.listen(3008, () => console.log('Server is running on https://localhost:3008'))
+app.listen(3008, () => { console.log('Server is running on https://localhost:3008') })

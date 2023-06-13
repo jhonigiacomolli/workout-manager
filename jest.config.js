@@ -6,18 +6,18 @@ module.exports = {
   coverageProvider: 'v8',
   preset: 'ts-jest',
   transform: {
-    '.+\\.ts$': 'ts-jest'
+    '.+\\.ts$': 'ts-jest',
   },
   modulePathIgnorePatterns: [
     '<rootDir>/dist/',
     '<rootDir>/src/domain',
     '<rootDir>/src/protocols',
-    '<rootDir>/src/configurations'
+    '<rootDir>/src/configurations',
   ],
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
   setupFiles: [
-    'dotenv/config'
-  ]
+    'dotenv/config',
+  ],
 }

@@ -1,4 +1,4 @@
-import { AccountModel } from "@/protocols/models/account";
+import { type AccountModel } from '@/protocols/models/account'
 
 export const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',

@@ -1,4 +1,4 @@
-import { httpRequest, httpResponse, useRouteController } from './http';
+import { httpRequest, httpResponse, useRouteController } from './http'
 
 describe('http', () => {
   describe('httpRequest', () => {
@@ -6,11 +6,11 @@ describe('http', () => {
       const response = httpRequest({ message: 'any_content' })
       expect(response).toEqual({
         body: {
-          message: 'any_content'
-        }
+          message: 'any_content',
+        },
       })
-    });
-  });
+    })
+  })
 
   describe('httpResponse', () => {
     test('Should return a valid http response value', () => {
@@ -18,70 +18,69 @@ describe('http', () => {
       expect(response).toEqual({
         statusCode: 200,
         body: {
-          message: 'success_message'
-        }
+          message: 'success_message',
+        },
       })
-    });
+    })
     test('Should return a valid http response value on error cases', () => {
       const response = httpResponse(500, 'error_message')
       expect(response).toEqual({
         statusCode: 500,
         body: {
-          message: 'error_message'
-        }
+          message: 'error_message',
+        },
       })
-    });
-  });
+    })
+  })
 
   describe('useRouteController', () => {
-    let controller: any;
-    let req: any;
-    let res: any;
+    let controller: any
+    let req: any
+    let res: any
 
     beforeEach(() => {
       controller = {
         handle: jest.fn(),
-      };
+      }
       req = {
         // mock your req object properties and methods here
-      };
+      }
       res = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn(),
-      };
-    });
+      }
+    })
 
     afterEach(() => {
-      jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
     it('should return successful response if statusCode is between 200 and 299', async () => {
       const httpResponse = {
         statusCode: 200,
         body: { data: 'Success' },
-      };
-      controller.handle.mockResolvedValue(httpResponse);
+      }
+      controller.handle.mockResolvedValue(httpResponse)
 
-      const routeController = useRouteController(controller);
-      await routeController(req, res);
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
 
-      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode);
-      expect(res.json).toHaveBeenCalledWith(httpResponse.body);
-    });
+      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
+      expect(res.json).toHaveBeenCalledWith(httpResponse.body)
+    })
 
     it('should return error response if statusCode is greather then 299', async () => {
       const httpResponse = {
         statusCode: 400,
         body: { message: 'Bad Request' },
-      };
-      controller.handle.mockResolvedValue(httpResponse);
+      }
+      controller.handle.mockResolvedValue(httpResponse)
 
-      const routeController = useRouteController(controller);
-      await routeController(req, res);
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
 
-      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode);
-      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body.message });
-    });
-  });
-
+      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
+      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body.message })
+    })
+  })
 })

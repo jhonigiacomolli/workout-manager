@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { JsonwebtokenRepository } from "./jsonwebtoken-repository"
+import { JsonwebtokenRepository } from './jsonwebtoken-repository'
 
 const makeSut = () => new JsonwebtokenRepository()
 
@@ -16,8 +16,8 @@ describe('Json WebToken Repository', () => {
   })
 
   test('Should Repository return 500 with secret is not set', async () => {
-    const sut = makeSut();
+    const sut = makeSut()
     delete process.env.JWT_SECURE_KEY
-    await expect(sut.encrypt('any_id')).rejects.toThrowError('')
+    await expect(sut.encrypt('any_id')).rejects.toThrow('')
   })
 })

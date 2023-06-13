@@ -1,10 +1,10 @@
-import { EmailValidatorRepository } from "./email-validator-repository"
+import { EmailValidatorRepository } from './email-validator-repository'
 import validator from 'email-validator'
 
 const makeSut = () => {
   const sut = new EmailValidatorRepository()
   return {
-    sut
+    sut,
   }
 }
 
@@ -27,4 +27,3 @@ describe('Email Validator Repository', () => {
     expect(isValid).toBe(true)
   })
 })
-

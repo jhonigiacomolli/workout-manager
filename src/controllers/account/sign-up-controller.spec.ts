@@ -1,9 +1,10 @@
-import { SignUpController } from "./sign-up-controller"
-import { httpResponse, httpRequest } from "@/helpers/http"
-import { makeFakeAccount } from "@/mocks/account/make-fake-account"
-import { Hasher } from "@/protocols/use-cases/cryptography/hashser"
-import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
-import { EmailValidator } from "@/protocols/models/validator/email-validator"
+import { SignUpController } from './sign-up-controller'
+import { httpResponse, httpRequest } from '@/helpers/http'
+import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
+import { type Account } from '@/protocols/use-cases/account'
+import { type EmailValidator } from '@/protocols/models/validator/email-validator'
+import { AccountModel } from '@/protocols/models/account'
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -12,24 +13,26 @@ const makeSut = () => {
   })
 
   class EmailValidatorStub implements EmailValidator {
-    validate() {
+    validate () {
       return true
     }
   }
 
   class AccountStub implements Account {
-    async create(): Promise<boolean> {
-      return Promise.resolve(true)
+    getUserByEmail: (email: string) => Promise<AccountModel>
+    async create (): Promise<boolean> {
+      return await Promise.resolve(true)
     }
 
-    async checkEmailInUse(): Promise<boolean> {
-      return Promise.resolve(false)
+    async checkEmailInUse (): Promise<boolean> {
+      return await Promise.resolve(false)
     }
   }
 
   class HasherStub implements Hasher {
-    generate(): Promise<string> {
-      return Promise.resolve('hashed_password')
+    compare: (password: string, hash: string) => Promise<boolean>
+    async generate (): Promise<string> {
+      return await Promise.resolve('hashed_password')
     }
   }
 
@@ -58,41 +61,41 @@ describe('Sign Up Controller', () => {
     fakeRequest.body.name = ''
     const controller = await sut.handle(fakeRequest)
 
-    expect(controller).toEqual(httpResponse(400, `Empty param: name is required`))
+    expect(controller).toEqual(httpResponse(400, 'Empty param: name is required'))
   })
   test('Should controller return 400 with e-mail not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.email = ''
     const controller = await sut.handle(fakeRequest)
 
-    expect(controller).toEqual(httpResponse(400, `Empty param: email is required`))
+    expect(controller).toEqual(httpResponse(400, 'Empty param: email is required'))
   })
   test('Should controller return 400 with password not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.password = ''
     const controller = await sut.handle(fakeRequest)
 
-    expect(controller).toEqual(httpResponse(400, `Empty param: password is required`))
+    expect(controller).toEqual(httpResponse(400, 'Empty param: password is required'))
   })
   test('Should controller return 400 with password confimation not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.passwordConfirmation = ''
     const controller = await sut.handle(fakeRequest)
 
-    expect(controller).toEqual(httpResponse(400, `Empty param: passwordConfirmation is required`))
+    expect(controller).toEqual(httpResponse(400, 'Empty param: passwordConfirmation is required'))
   })
   test('Should controller return 400 when password not equal to password confirmation', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.passwordConfirmation = 'other_password'
     const controller = await sut.handle(fakeRequest)
 
-    expect(controller).toEqual(httpResponse(400, `password and passwordConfirmation must be equal`))
+    expect(controller).toEqual(httpResponse(400, 'password and passwordConfirmation must be equal'))
   })
   test('Should controller return 400 when email is invalid', async () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()
     jest.spyOn(emailValidatorStub, 'validate').mockReturnValueOnce(false)
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpResponse(400, `Invalid param: email`))
+    expect(controller).toEqual(httpResponse(400, 'Invalid param: email'))
   })
   test('Should call Email Validator with correct email param', async () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()
@@ -108,7 +111,7 @@ describe('Sign Up Controller', () => {
   })
   test('Should return 400 if e-mail already in use', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
-    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(() => { return Promise.resolve(true) })
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(true) })
     const controller = await sut.handle(fakeRequest)
     expect(controller).toEqual(httpResponse(403, 'E-mail already in use'))
   })

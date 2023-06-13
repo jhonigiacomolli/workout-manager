@@ -1,9 +1,10 @@
-import { client } from "@/database"
-import { Account, CreateAccountParams } from "@/protocols/use-cases/account"
+import { client } from '@/database'
+import { type AccountModel } from '@/protocols/models/account'
+import { type Account, type CreateAccountParams } from '@/protocols/use-cases/account'
 
 export class PgAccountRepository implements Account {
-  async create(account: CreateAccountParams): Promise<boolean> {
-
+  getUserByEmail: (email: string) => Promise<AccountModel>
+  async create (account: CreateAccountParams): Promise<boolean> {
     const { rowCount } = await client.query(`INSERT INTO accounts(
       name,
       email,
@@ -33,13 +34,11 @@ export class PgAccountRepository implements Account {
       account.tasks,
       account.teamId,
     ])
-    return Promise.resolve(rowCount > 0)
+    return await Promise.resolve(rowCount > 0)
   }
 
-  async checkEmailInUse(email: string): Promise<boolean> {
-
-    const result = await client.query('SELECT id FROM accounts WHERE email=$1',[email])
-
+  async checkEmailInUse (email: string): Promise<boolean> {
+    const result = await client.query('SELECT id FROM accounts WHERE email=$1', [email])
 
     return result.rowCount > 0
   }

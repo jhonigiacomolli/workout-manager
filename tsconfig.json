@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "target": "ES2019",
     "esModuleInterop": true,
+    "lib": ["es2015"],
     "allowJs": true,
     "strictNullChecks": true,
     "baseUrl": ".",
