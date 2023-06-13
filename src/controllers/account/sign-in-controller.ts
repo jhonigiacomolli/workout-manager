@@ -1,9 +1,10 @@
-import { httpResponse } from '@/helpers/http'
-import { type Controller } from '@/protocols/models/controller'
-import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type Account } from '@/protocols/use-cases/account'
-import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
+import { type Controller } from '@/protocols/models/controller'
 import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
+import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
+import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
+
+import { httpResponse } from '@/helpers/http'
 
 interface ConstructorProps {
   account: Account
@@ -16,9 +17,9 @@ export class SignInController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
-      const requiredParams = ['username', 'password']
+      const requiredParams = ['email', 'password']
 
-      const { username, password } = request.body
+      const { email, password } = request.body
 
       for (const param of requiredParams) {
         if (!request.body[param]) {
@@ -26,13 +27,13 @@ export class SignInController implements Controller {
         }
       }
 
-      const isValidUser = await this.dependencies.account.checkEmailInUse(username)
+      const isValidUser = await this.dependencies.account.checkEmailInUse(email)
 
       if (!isValidUser) {
         return httpResponse(404, 'user not found')
       }
 
-      const user = await this.dependencies.account.getUserByEmail(username)
+      const user = await this.dependencies.account.getUserByEmail(email)
 
       if (!user) {
         return httpResponse(404, 'user not found')

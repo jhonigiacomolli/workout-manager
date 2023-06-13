@@ -48,7 +48,7 @@ const makeSut = () => {
     encrypter: encryptStub,
   })
   const fakeRequest = httpRequest({
-    username: 'any_username',
+    email: 'any_email',
     password: 'any_password',
   })
   return {
@@ -61,16 +61,16 @@ const makeSut = () => {
 }
 
 describe('Sign in', () => {
-  test('Should return 400 if no username is provided', async () => {
+  test('Should return 400 if no email is provided', async () => {
     const { sut, fakeRequest } = makeSut()
     const response = await sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
-        username: '',
+        email: '',
       },
     })
-    expect(response).toEqual(httpResponse(400, 'Empty param: username is required'))
+    expect(response).toEqual(httpResponse(400, 'Empty param: email is required'))
   })
   test('Should return 400 if no passwrod is provided', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -83,7 +83,7 @@ describe('Sign in', () => {
     })
     expect(response).toEqual(httpResponse(400, 'Empty param: password is required'))
   })
-  test('Should return 404 if username is not registed', async () => {
+  test('Should return 404 if email is not registed', async () => {
     const { sut, fakeRequest, accountStub } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(false))
     const response = await sut.handle(fakeRequest)
