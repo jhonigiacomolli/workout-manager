@@ -1,10 +1,11 @@
+import { type Account } from '@/protocols/use-cases/account'
+import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
+import { type EmailValidator } from '@/protocols/models/validator/email-validator'
+
 import { SignUpController } from './sign-up-controller'
+import { AccountModel } from '@/protocols/models/account'
 import { httpResponse, httpRequest } from '@/helpers/http'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
-import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
-import { type Account } from '@/protocols/use-cases/account'
-import { type EmailValidator } from '@/protocols/models/validator/email-validator'
-import { AccountModel } from '@/protocols/models/account'
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -13,25 +14,25 @@ const makeSut = () => {
   })
 
   class EmailValidatorStub implements EmailValidator {
-    validate () {
+    validate() {
       return true
     }
   }
 
   class AccountStub implements Account {
     getUserByEmail: (email: string) => Promise<AccountModel>
-    async create (): Promise<boolean> {
+    async create(): Promise<boolean> {
       return await Promise.resolve(true)
     }
 
-    async checkEmailInUse (): Promise<boolean> {
+    async checkEmailInUse(): Promise<boolean> {
       return await Promise.resolve(false)
     }
   }
 
   class HasherStub implements Hasher {
     compare: (password: string, hash: string) => Promise<boolean>
-    async generate (): Promise<string> {
+    async generate(): Promise<string> {
       return await Promise.resolve('hashed_password')
     }
   }

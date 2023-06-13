@@ -1,9 +1,10 @@
-import { httpResponse } from '@/helpers/http'
 import { type Account } from '@/protocols/use-cases/account'
 import { type Controller } from '@/protocols/models/controller'
 import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
 import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
+
+import { httpResponse } from '@/helpers/http'
 
 interface ConstructorProps {
   emailValidator: EmailValidator
@@ -12,10 +13,10 @@ interface ConstructorProps {
 }
 
 export class SignUpController implements Controller {
-  constructor (private readonly dependencies: ConstructorProps) {
+  constructor(private readonly dependencies: ConstructorProps) {
   }
 
-  async handle (request: HTTPRequest): Promise<HTTPResponse> {
+  async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
       const requiredParams = ['name', 'email', 'password', 'passwordConfirmation']
 

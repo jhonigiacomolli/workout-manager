@@ -1,8 +1,8 @@
 import { type Account } from '@/protocols/use-cases/account'
 import { type Controller } from '@/protocols/models/controller'
 import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
-import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
+import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 
 import { httpResponse } from '@/helpers/http'
 
