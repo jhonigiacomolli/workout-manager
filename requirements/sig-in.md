@@ -5,7 +5,7 @@
 1. ✅ Valida dados obrigatórios: **username** e **password**
 2. ✅ Valide se existe uma conta para o usuário informado.
 3. ✅ Valide se a senha é igual a armazenada no banco de dados para este usuário.
-4. ⛔️ Retorna um token de acesso.
+4. ✅ Retorna um token de acesso.
 
 > ## Exceções
 
