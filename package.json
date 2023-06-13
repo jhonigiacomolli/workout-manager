@@ -14,7 +14,8 @@
     "test:unit": "yarn test --watch -c jest-config-unit.js",
     "test:integration": "yarn test --watch -c jest-config-integration.js",
     "test:staged": "yarn test --findRelatedTests",
-    "test:ci": "yarn test --coverage"
+    "test:ci": "yarn test --coverage",
+    "prepare": "husky install"
   },
   "author": "jhoni-giacomolli",
   "license": "ISC",
