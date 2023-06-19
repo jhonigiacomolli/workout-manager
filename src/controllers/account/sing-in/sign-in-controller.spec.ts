@@ -4,14 +4,9 @@ import { SignInController } from './sign-in-controller'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
+import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
 
 const makeSut = () => {
-  class EncrypterStub implements Encrypter {
-    async encrypt(): Promise<string> {
-      return await Promise.resolve('encrypted_token')
-    }
-  }
-
   const accountStub = new AccountStub()
   const hasherStub = new HasherStub()
   const encryptStub = new EncrypterStub()
