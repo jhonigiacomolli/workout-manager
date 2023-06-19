@@ -24,6 +24,24 @@ const makeSut = () => {
 }
 
 describe('Postgree Account Repository', () => {
+  describe('checkEmailInUse()', () => {
+    test('Should return true when email already registered on database', async () => {
+      const { sut, params } = makeSut()
+      const result = await sut.checkEmailInUse(params.email)
+      expect(result).toBeTruthy()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 2 }))
+
+      const newResult = await sut.checkEmailInUse(params.email)
+      expect(newResult).toBeTruthy()
+    })
+    test('Should return false when email already registered on database', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 0 }))
+      const result = await sut.checkEmailInUse(params.email)
+      expect(result).toBeFalsy()
+    })
+  })
   describe('create()', () => {
     test('Should return true when account register succeeds', async () => {
       const { sut, params } = makeSut()
@@ -53,22 +71,17 @@ describe('Postgree Account Repository', () => {
       return expect(result).rejects.toThrow()
     })
   })
-  describe('checkEmailInUse()', () => {
-    test('Should return true when email already registered on database', async () => {
+  describe('setuserById()', () => {
+    test('Should return true when account updated succeeds', async () => {
       const { sut, params } = makeSut()
-      const result = await sut.checkEmailInUse(params.email)
+      const result = await sut.setUserById(params)
       expect(result).toBeTruthy()
-
-      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 2 }))
-
-      const newResult = await sut.checkEmailInUse(params.email)
-      expect(newResult).toBeTruthy()
     })
-    test('Should return false when email already registered on database', async () => {
+    test('Should throws if account updated fails', async () => {
       const { sut, params } = makeSut()
-      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rowCount: 0 }))
-      const result = await sut.checkEmailInUse(params.email)
-      expect(result).toBeFalsy()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.setUserById(params)
+      return expect(result).rejects.toThrow()
     })
   })
 })
