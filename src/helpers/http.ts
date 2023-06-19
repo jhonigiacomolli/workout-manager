@@ -24,7 +24,7 @@ export const httpRequest = (content: any, header?: any): HTTPRequest => {
 
 export const useRouteController = (controller: Controller) => {
   return async (req: Request, res: Response) => {
-    const httpResponse = await controller.handle({ ...req })
+    const httpResponse = await controller.handle({ headers: req.headers, body: req.body })
 
     if (httpResponse.statusCode >= 200 && httpResponse.statusCode < 300) {
       res.status(httpResponse.statusCode).json(httpResponse.body)
