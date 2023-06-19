@@ -14,4 +14,8 @@ export class AccountStub implements Account {
   async checkEmailInUse(): Promise<boolean> {
     return await Promise.resolve(true)
   }
+
+  async setUserById(): Promise<boolean> {
+    return await Promise.resolve(true)
+  }
 }

@@ -6,4 +6,5 @@ export interface Account {
   create: (account: CreateAccountParams) => Promise<boolean>
   checkEmailInUse: (email: string) => Promise<boolean>
   getUserByEmail: (email: string) => Promise<AccountModel | undefined>
+  setUserById: (account: AccountModel) => Promise<boolean>
 }
