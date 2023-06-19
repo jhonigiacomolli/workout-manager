@@ -11,8 +11,11 @@ export const httpResponse = (statusCode: number, message: string | string[] | ob
   }
 }
 
-export const httpRequest = (content: any): HTTPRequest => {
+export const httpRequest = (content: any, header?: any): HTTPRequest => {
   return {
+    headers: {
+      ...header,
+    },
     body: {
       ...content,
     },

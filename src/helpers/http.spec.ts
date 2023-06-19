@@ -5,6 +5,7 @@ describe('http', () => {
     test('Should return a valid http request value', () => {
       const response = httpRequest({ message: 'any_content' })
       expect(response).toEqual({
+        headers: {},
         body: {
           message: 'any_content',
         },
