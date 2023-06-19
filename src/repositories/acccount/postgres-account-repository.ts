@@ -47,4 +47,38 @@ export class PgAccountRepository implements Account {
 
     return result.rowCount > 0
   }
+
+  async setUserById(account: AccountModel): Promise<boolean> {
+    const { rowCount } = await client.query(`UPDATE accounts(
+      name,
+      email,
+      password,
+      image,
+      permissions,
+      phone,
+      address,
+      boards,
+      desktops,
+      responsability,
+      status,
+      tasks,
+      teamId
+    ) VALUES($2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) WHERE id=$1`, [
+      account.id,
+      account.name,
+      account.email,
+      account.password,
+      account.image,
+      account.permissions,
+      account.phone,
+      account.address,
+      account.boards,
+      account.desktops,
+      account.responsability,
+      account.status,
+      account.tasks,
+      account.teamId,
+    ])
+    return await Promise.resolve(rowCount > 0)
+  }
 }
