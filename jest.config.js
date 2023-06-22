@@ -10,9 +10,9 @@ module.exports = {
   },
   modulePathIgnorePatterns: [
     '<rootDir>/dist/',
-    '<rootDir>/src/domain',
-    '<rootDir>/src/protocols',
-    '<rootDir>/src/configurations',
+    '<rootDir>/src/mocks/',
+    '<rootDir>/src/protocols/',
+    '<rootDir>/src/configurations/',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
