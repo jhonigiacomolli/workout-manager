@@ -45,10 +45,12 @@ export class SignInController implements Controller {
         return httpResponse(403, 'wrong password')
       }
 
-      const accessToken = await this.dependencies.encrypter.encrypt(user.id)
+      const accessToken = await this.dependencies.encrypter.encrypt(user.id, { expire: 30 })
+      const refreshToken = await this.dependencies.encrypter.encrypt(user.id, { expire: 86400 })
 
       return await Promise.resolve(httpResponse(200, {
         accessToken,
+        refreshToken,
       }))
     } catch {
       return httpResponse(500, 'Internal Server Error')
