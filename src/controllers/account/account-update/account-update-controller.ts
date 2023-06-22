@@ -22,7 +22,7 @@ export class AccountUdateController implements Controller {
         return httpResponse(401, 'Unauthorized')
       }
 
-      const { id } = await this.dependencies.encrypter.decrypt(request.headers.authorization)
+      const { id } = await this.dependencies.encrypter.decrypt<{ id: string }>(request.headers.authorization)
 
       if (!id) {
         return httpResponse(401, 'Unauthorized')
@@ -43,7 +43,8 @@ export class AccountUdateController implements Controller {
       }
 
       return httpResponse(201, 'User updated successfully')
-    } catch {
+    } catch (err) {
+      console.log(err)
       return httpResponse(500, 'Internal Server Error')
     }
   }
