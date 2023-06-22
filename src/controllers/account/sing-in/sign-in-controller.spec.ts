@@ -1,5 +1,3 @@
-import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
-
 import { SignInController } from './sign-in-controller'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
@@ -89,10 +87,18 @@ describe('Sign in', () => {
     expect(response4).toEqual(httpResponse(500, 'Internal Server Error'))
   })
   test('Should return accessToken if proccess succeeds', async () => {
-    const { sut, fakeRequest } = makeSut()
+    const { sut, encryptStub, fakeRequest } = makeSut()
+    const mockedEncrypt = jest.fn()
+    mockedEncrypt.mockReturnValueOnce('encrypted_access_token')
+    mockedEncrypt.mockReturnValueOnce('encrypted_refresh_token')
+    jest.spyOn(encryptStub, 'encrypt').mockImplementation(mockedEncrypt)
     const response = await sut.handle(fakeRequest)
+    expect(mockedEncrypt).toHaveBeenCalledTimes(2)
+    expect(mockedEncrypt).toHaveBeenCalledWith('valid_id', { expire: 30 })
+    expect(mockedEncrypt).toHaveBeenCalledWith('valid_id', { expire: 86400 })
     expect(response).toEqual(httpResponse(200, {
-      accessToken: 'encrypted_token',
+      accessToken: 'encrypted_access_token',
+      refreshToken: 'encrypted_refresh_token',
     }))
   })
 })
