@@ -19,8 +19,30 @@ describe('Json WebToken Repository', () => {
     test('Should Repository is called with correct value', async () => {
       const sut = makeSut()
       const jsonSpy = jest.spyOn(jwt, 'sign')
+      const options = {
+        expire: 3600,
+        issuer: 'any_host',
+      }
+      const token = await sut.encrypt('any_id', options)
+      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', {
+        expiresIn: options.expire,
+        issuer: options.issuer,
+      })
+      expect(typeof token).toBe('string')
+      expect(token).not.toBe('')
+
+      const newToken = await sut.encrypt('any_id', { expire: 86400 })
+      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', { expiresIn: 86400, issuer: undefined })
+      expect(typeof newToken).toBe('string')
+      expect(newToken).not.toBe('')
+    })
+    test('Should Repository is called with correct value but options is not provided', async () => {
+      const sut = makeSut()
+      const jsonSpy = jest.spyOn(jwt, 'sign')
       const token = await sut.encrypt('any_id')
-      expect(jsonSpy).toHaveBeenCalledWith('any_id', 'secret-key')
+      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', {
+        expiresIn: 3600,
+      })
       expect(typeof token).toBe('string')
       expect(token).not.toBe('')
     })
