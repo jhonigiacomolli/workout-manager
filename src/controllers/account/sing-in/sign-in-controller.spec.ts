@@ -94,7 +94,7 @@ describe('Sign in', () => {
     jest.spyOn(encryptStub, 'encrypt').mockImplementation(mockedEncrypt)
     const response = await sut.handle(fakeRequest)
     expect(mockedEncrypt).toHaveBeenCalledTimes(2)
-    expect(mockedEncrypt).toHaveBeenCalledWith('valid_id', { expire: 30 })
+    expect(mockedEncrypt).toHaveBeenCalledWith('valid_id', { expire: 3600 })
     expect(mockedEncrypt).toHaveBeenCalledWith('valid_id', { expire: 86400 })
     expect(response).toEqual(httpResponse(200, {
       accessToken: 'encrypted_access_token',
