@@ -5,7 +5,7 @@ export class EncrypterStub implements Encrypter {
     return await Promise.resolve('encrypted_token')
   }
 
-  async decrypt(): Promise<{ id: string }> {
+  async decrypt(): Promise<any> {
     return await Promise.resolve({ id: 'decrupted_id' })
   }
 }

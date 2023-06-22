@@ -5,5 +5,5 @@ export type EncryptOptions = {
 
 export interface Encrypter {
   encrypt: (id: string, options?: EncryptOptions) => Promise<string>
-  decrypt: (hash: string) => Promise<{ id: string }>
+  decrypt: <Type>(hash: string) => Promise<Type>
 }
