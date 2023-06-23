@@ -1,6 +1,6 @@
 import { env } from 'process'
 import { JwtPayload, sign, verify } from 'jsonwebtoken'
-import { EncryptOptions, type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
+import { EncryptOptions, EncryptReturnStatus, type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 
 type JWTEncryptOptions = {
   expiresIn: number
@@ -27,13 +27,39 @@ export class JsonwebtokenRepository implements Encrypter {
     return await Promise.resolve(encrypted)
   }
 
-  async decrypt(hash: string): Promise<any> {
+  async decrypt(hash: string): Promise<{ data: any, status: EncryptReturnStatus }> {
     const secret = env.JWT_SECURE_KEY
 
-    if (!secret) throw new Error('')
+    if (!secret) {
+      return Promise.resolve({
+        data: undefined,
+        status: {
+          success: false,
+          message: 'Internal Server Error',
+        },
+      })
+    }
 
-    const decrypted = verify(hash, secret) as JwtPayload
+    try {
+      const decrypted = verify(hash, secret) as JwtPayload
+      return await Promise.resolve({
+        data: decrypted.data,
+        status: {
+          success:
+            true,
+          message: '',
+        },
+      })
+    } catch (err) {
+      const message = err.message === 'jwt expired' ? 'Expired token' : 'Invalid token'
 
-    return await Promise.resolve(decrypted.data)
+      return await Promise.resolve({
+        data: undefined,
+        status: {
+          success: false,
+          message,
+        },
+      })
+    }
   }
 }
