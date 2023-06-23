@@ -2,6 +2,7 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 import { AccountUdateController } from './account-update-controller'
+import { TeamStub } from '@/mocks/teams/team-stub'
 
 const makeSut = () => {
   const body = {
@@ -14,14 +15,17 @@ const makeSut = () => {
   const fakeRequest = httpRequest(body, headers)
 
   const accountStub = new AccountStub()
+  const teamStub = new TeamStub()
 
   const sut = new AccountUdateController({
     account: accountStub,
+    team: teamStub,
   })
 
   return {
     sut,
     accountStub,
+    teamStub,
     fakeRequest,
   }
 }
@@ -85,6 +89,20 @@ describe('Account Update Controller', () => {
     })
 
     expect(result).toEqual(httpResponse(400, 'Empty param: email is required'))
+  })
+  test('Should return 400 if teamId is invalid', async () => {
+    const { sut, fakeRequest, teamStub } = makeSut()
+
+    jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
+    const result = await sut.handle({
+      ...fakeRequest,
+      body: {
+        ...fakeRequest.body,
+        teamId: 'invalid_team_id',
+      },
+    })
+
+    expect(result).toEqual(httpResponse(400, 'Invalid param: teamId'))
   })
   test('Should return 200 when update successfull', async () => {
     const { sut, fakeRequest } = makeSut()
