@@ -7,7 +7,7 @@ type JWTEncryptOptions = {
   issuer?: string
 }
 export class JsonwebtokenRepository implements Encrypter {
-  async encrypt(id: string, options?: EncryptOptions): Promise<string> {
+  async encrypt(data: any, options?: EncryptOptions): Promise<string> {
     const secret = env.JWT_SECURE_KEY
     const encriptOtions: JWTEncryptOptions = {
       expiresIn: 3600,
@@ -22,7 +22,7 @@ export class JsonwebtokenRepository implements Encrypter {
 
     if (!secret) throw new Error('')
 
-    const encrypted = sign({ data: { id } }, secret, encriptOtions)
+    const encrypted = sign({ data }, secret, encriptOtions)
 
     return await Promise.resolve(encrypted)
   }
