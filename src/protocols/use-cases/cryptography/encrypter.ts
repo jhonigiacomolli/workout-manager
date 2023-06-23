@@ -10,5 +10,5 @@ export type EncryptReturnStatus = {
 
 export interface Encrypter {
   encrypt: (data: any, options?: EncryptOptions) => Promise<string>
-  decrypt: (hash: string) => Promise<{ data: any, status: EncryptReturnStatus }>
+  decrypt: (hash: string, issuer: string) => Promise<{ data: any, status: EncryptReturnStatus }>
 }

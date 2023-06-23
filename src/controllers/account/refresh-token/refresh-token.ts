@@ -18,7 +18,9 @@ export class RefreshTokenController implements Controller {
         return httpResponse(403, 'Empty param: refreshToken is required')
       }
 
-      const { data, status } = await this.dependencies.encrypter.decrypt(refrehToken)
+      const host = request.headers.host || 'http://localhost'
+
+      const { data, status } = await this.dependencies.encrypter.decrypt(refrehToken, host)
 
       if (!status.success) {
         return httpResponse(403, status.message)

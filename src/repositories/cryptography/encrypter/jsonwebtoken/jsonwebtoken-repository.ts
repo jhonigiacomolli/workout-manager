@@ -27,7 +27,7 @@ export class JsonwebtokenRepository implements Encrypter {
     return await Promise.resolve(encrypted)
   }
 
-  async decrypt(hash: string): Promise<{ data: any, status: EncryptReturnStatus }> {
+  async decrypt(hash: string, issuer: string): Promise<{ data: any, status: EncryptReturnStatus }> {
     const secret = env.JWT_SECURE_KEY
 
     if (!secret) {
@@ -41,7 +41,7 @@ export class JsonwebtokenRepository implements Encrypter {
     }
 
     try {
-      const decrypted = verify(hash, secret) as JwtPayload
+      const decrypted = verify(hash, secret, { issuer }) as JwtPayload
       return await Promise.resolve({
         data: decrypted.data,
         status: {

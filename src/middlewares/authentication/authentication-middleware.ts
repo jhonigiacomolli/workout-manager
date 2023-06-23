@@ -5,12 +5,14 @@ import { Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 export const authenticate = async (request: Request, response: Response, next: NextFunction, account: Account, encrypter: Encrypter): Promise<void> => {
   const { authorization } = request.headers
 
-  if (!authorization) {
+  if (!authorization || !authorization.toLocaleLowerCase().includes('bearer')) {
     response.status(401).json({ error: 'Unauthorized' })
     return
   }
 
-  const { data, status } = await encrypter.decrypt(authorization.split(' ')[0])
+  const host = request.headers.host || 'http://localhost'
+
+  const { data, status } = await encrypter.decrypt(authorization.split(' ')[1], host)
 
   if (!status.success) {
     response.status(401).json({ error: status.message })
