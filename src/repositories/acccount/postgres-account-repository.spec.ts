@@ -23,7 +23,7 @@ const makeSut = () => {
   }
 }
 
-describe('Postgree Account Repository', () => {
+describe('Postgres Account Repository', () => {
   describe('checkEmailInUse()', () => {
     test('Should return true when email already registered on database', async () => {
       const { sut, params } = makeSut()
