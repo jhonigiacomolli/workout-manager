@@ -1,5 +1,6 @@
 export interface HTTPRequest {
   body?: any
+  params?: any
   headers?: any
   header?: any
 }
