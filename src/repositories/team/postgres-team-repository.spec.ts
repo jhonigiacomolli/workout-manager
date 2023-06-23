@@ -33,13 +33,13 @@ describe('Postgres Team Repository', () => {
       const newResult = await sut.getTeamByID(params.id)
       expect(newResult).toEqual(params)
     })
-    test('Should return 500 when account query fails', async () => {
+    test('Should return undefined when account query fails', async () => {
       const { sut, params } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-      const result = sut.getTeamByID(params.id)
-      return expect(result).rejects.toThrow()
+      const result = await sut.getTeamByID(params.id)
+      expect(result).toBe(undefined)
     })
   })
 })
