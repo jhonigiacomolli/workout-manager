@@ -3,9 +3,11 @@ import { type Controller } from '@/protocols/models/controller'
 import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 
 import { httpResponse } from '@/helpers/http'
+import { Team } from '@/protocols/use-cases/team'
 
 interface ConstructorProps {
   account: Account
+  team: Team
 }
 
 export class AccountUdateController implements Controller {
@@ -22,6 +24,16 @@ export class AccountUdateController implements Controller {
         }
       }
 
+      if (request.body.teamId) {
+        const team = await this.dependencies.team.getTeamByID(request.body.teamId)
+
+        if (!team) {
+          return httpResponse(400, 'Invalid param: teamId')
+        }
+      } else {
+        request.body.teamId = undefined
+      }
+
       const success = await this.dependencies.account.setUserById(request.body)
 
       if (!success) {
@@ -29,7 +41,7 @@ export class AccountUdateController implements Controller {
       }
 
       return httpResponse(201, 'User updated successfully')
-    } catch {
+    } catch (err) {
       return httpResponse(500, 'Internal Server Error')
     }
   }
