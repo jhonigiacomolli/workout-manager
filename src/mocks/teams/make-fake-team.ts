@@ -1,7 +1,7 @@
 import { TeamModel } from '@/protocols/models/team'
 
 export const makeFakeTeam = (): TeamModel => ({
-  id: 'valid_id',
-  title: 'valid_name',
+  id: 'valid_team_id',
+  title: 'any_title',
   members: [],
 })

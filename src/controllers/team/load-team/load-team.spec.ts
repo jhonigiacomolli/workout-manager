@@ -44,9 +44,10 @@ describe('LoadTeamController', () => {
   test('Should return 200 with team data if succeeds', async () => {
     const { sut } = makeSut()
     const result = await sut.handle(fakeValidRequest)
+
     expect(result).toEqual(httpResponse(200, {
       data: {
-        id: 'any_team_id',
+        id: 'valid_team_id',
         title: 'any_title',
         members: [],
       },
