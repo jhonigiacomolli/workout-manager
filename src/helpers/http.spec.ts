@@ -6,6 +6,7 @@ describe('http', () => {
       const response = httpRequest({ message: 'any_content' })
       expect(response).toEqual({
         headers: {},
+        params: {},
         body: {
           message: 'any_content',
         },

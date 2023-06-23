@@ -11,10 +11,13 @@ export const httpResponse = (statusCode: number, message: string | string[] | ob
   }
 }
 
-export const httpRequest = (content: any, header?: any): HTTPRequest => {
+export const httpRequest = (content: any, header?: any, params?: any): HTTPRequest => {
   return {
     headers: {
       ...header,
+    },
+    params: {
+      ...params,
     },
     body: {
       ...content,

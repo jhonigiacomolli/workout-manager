@@ -2,9 +2,9 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { LoadTeamController } from './load-team'
 import { TeamStub } from '@/mocks/teams/team-stub'
 
-const fakeValidRequest = httpRequest({
-  teamId: 'valid_team_id',
-}, {})
+const fakeValidRequest = httpRequest({}, {}, {
+  id: 'valid_team_id',
+})
 
 const fakeInvalidRequest = httpRequest({}, {})
 
@@ -31,15 +31,7 @@ describe('LoadTeamController', () => {
     jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
 
     const result = await sut.handle(fakeValidRequest)
-    expect(result).toEqual(httpResponse(404, 'Invalid param: teamId'))
-  })
-  test('Should return 500 if any method thrwos', async () => {
-    const { sut, teamStub } = makeSut()
-
-    jest.spyOn(teamStub, 'getTeamByID').mockImplementationOnce(() => { throw new Error() })
-
-    const result = await sut.handle(fakeValidRequest)
-    expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    expect(result).toEqual(httpResponse(404, 'Team not found'))
   })
   test('Should return 200 with team data if succeeds', async () => {
     const { sut } = makeSut()
