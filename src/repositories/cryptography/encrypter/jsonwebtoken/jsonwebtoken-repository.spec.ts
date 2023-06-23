@@ -59,9 +59,9 @@ describe('Json WebToken Repository', () => {
 
       const sut = makeSut()
       const jsonSpy = jest.spyOn(jwt, 'verify')
-      const token = await sut.decrypt('hashed_token')
+      const token = await sut.decrypt('hashed_token', 'localhost')
 
-      expect(jsonSpy).toHaveBeenCalledWith('hashed_token', 'secret-key')
+      expect(jsonSpy).toHaveBeenCalledWith('hashed_token', 'secret-key', { issuer: 'localhost' })
       expect(token).not.toBe('')
     })
 
@@ -70,9 +70,9 @@ describe('Json WebToken Repository', () => {
 
       const sut = makeSut()
       const jsonSpy = jest.spyOn(jwt, 'verify').mockImplementationOnce(() => { throw new Error('jwt expired') })
-      const token = await sut.decrypt('expirade_token')
+      const token = await sut.decrypt('expirade_token', 'localhost')
 
-      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key')
+      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key', { issuer: 'localhost' })
       expect(token).toEqual({
         data: undefined,
         status: {
@@ -87,9 +87,9 @@ describe('Json WebToken Repository', () => {
 
       const sut = makeSut()
       const jsonSpy = jest.spyOn(jwt, 'verify').mockImplementationOnce(() => { throw new Error('invalid secret') })
-      const token = await sut.decrypt('expirade_token')
+      const token = await sut.decrypt('expirade_token', 'localhost')
 
-      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key')
+      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key', { issuer: 'localhost' })
       expect(token).toEqual({
         data: undefined,
         status: {
@@ -102,7 +102,7 @@ describe('Json WebToken Repository', () => {
     test('Should Repository return a fails values of decrypt', async () => {
       const sut = makeSut()
       delete process.env.JWT_SECURE_KEY
-      const result = await sut.decrypt('hashed_token')
+      const result = await sut.decrypt('hashed_token', 'localhost')
       expect(result).toEqual({
         data: undefined,
         status: {
