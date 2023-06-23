@@ -65,10 +65,51 @@ describe('Json WebToken Repository', () => {
       expect(token).not.toBe('')
     })
 
-    test('Should Repository throws id secret is not set', async () => {
+    test('Should Repository returns if a correct value if a expired token as provided', async () => {
+      process.env.JWT_SECURE_KEY = 'secret-key'
+
+      const sut = makeSut()
+      const jsonSpy = jest.spyOn(jwt, 'verify').mockImplementationOnce(() => { throw new Error('jwt expired') })
+      const token = await sut.decrypt('expirade_token')
+
+      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key')
+      expect(token).toEqual({
+        data: undefined,
+        status: {
+          success: false,
+          message: 'Expired token',
+        },
+      })
+    })
+
+    test('Should Repository returns if a correct value if a invalid token as provided', async () => {
+      process.env.JWT_SECURE_KEY = 'secret-key'
+
+      const sut = makeSut()
+      const jsonSpy = jest.spyOn(jwt, 'verify').mockImplementationOnce(() => { throw new Error('invalid secret') })
+      const token = await sut.decrypt('expirade_token')
+
+      expect(jsonSpy).toHaveBeenCalledWith('expirade_token', 'secret-key')
+      expect(token).toEqual({
+        data: undefined,
+        status: {
+          success: false,
+          message: 'Invalid token',
+        },
+      })
+    })
+
+    test('Should Repository return a fails values of decrypt', async () => {
       const sut = makeSut()
       delete process.env.JWT_SECURE_KEY
-      await expect(sut.decrypt('hashed_token')).rejects.toThrow('')
+      const result = await sut.decrypt('hashed_token')
+      expect(result).toEqual({
+        data: undefined,
+        status: {
+          success: false,
+          message: 'Internal Server Error',
+        },
+      })
     })
   })
 })
