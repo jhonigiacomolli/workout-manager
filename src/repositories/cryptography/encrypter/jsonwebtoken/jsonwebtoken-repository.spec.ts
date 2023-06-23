@@ -24,7 +24,7 @@ describe('Json WebToken Repository', () => {
         issuer: 'any_host',
       }
       const token = await sut.encrypt('any_id', options)
-      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', {
+      expect(jsonSpy).toHaveBeenCalledWith({ data: 'any_id' }, 'secret-key', {
         expiresIn: options.expire,
         issuer: options.issuer,
       })
@@ -32,7 +32,7 @@ describe('Json WebToken Repository', () => {
       expect(token).not.toBe('')
 
       const newToken = await sut.encrypt('any_id', { expire: 86400 })
-      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', { expiresIn: 86400, issuer: undefined })
+      expect(jsonSpy).toHaveBeenCalledWith({ data: 'any_id' }, 'secret-key', { expiresIn: 86400, issuer: undefined })
       expect(typeof newToken).toBe('string')
       expect(newToken).not.toBe('')
     })
@@ -40,7 +40,7 @@ describe('Json WebToken Repository', () => {
       const sut = makeSut()
       const jsonSpy = jest.spyOn(jwt, 'sign')
       const token = await sut.encrypt('any_id')
-      expect(jsonSpy).toHaveBeenCalledWith({ data: { id: 'any_id' } }, 'secret-key', {
+      expect(jsonSpy).toHaveBeenCalledWith({ data: 'any_id' }, 'secret-key', {
         expiresIn: 3600,
       })
       expect(typeof token).toBe('string')
