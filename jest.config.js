@@ -8,6 +8,12 @@ module.exports = {
   transform: {
     '.+\\.ts$': 'ts-jest',
   },
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/index.ts',
+    '!src/helpers/factories/**/*ts',
+    '!src/mocks/**/*ts',
+  ],
   modulePathIgnorePatterns: [
     '<rootDir>/dist/',
     '<rootDir>/src/mocks/',

@@ -53,7 +53,6 @@ export class SignInController implements Controller {
         refreshToken,
       }))
     } catch (err) {
-      console.log(err)
       return httpResponse(500, 'Internal Server Error')
     }
   }
