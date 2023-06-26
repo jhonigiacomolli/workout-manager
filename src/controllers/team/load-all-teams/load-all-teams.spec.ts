@@ -1,0 +1,70 @@
+import { TeamStub } from '@/mocks/teams/team-stub'
+import { LoadAllTeamsController } from './load-all-teams'
+import { httpRequest, httpResponse } from '@/helpers/http'
+import { makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+
+const fakeRequest = httpRequest({}, {})
+
+const makeSut = () => {
+  const teamStub = new TeamStub()
+  const sut = new LoadAllTeamsController({
+    team: teamStub,
+  })
+
+  return {
+    sut,
+    teamStub,
+  }
+}
+
+describe('LoadAllTeamsController', () => {
+  test('Should return a list of teams', async () => {
+    const { sut } = makeSut()
+
+    const result = await sut.handle(fakeRequest)
+
+    expect(result).toEqual(httpResponse(200, makeFakeTeamList()))
+  })
+  test('Should return a empty list of teams if not have entries on db', async () => {
+    const { sut, teamStub } = makeSut()
+
+    jest.spyOn(teamStub, 'getAllTeams').mockReturnValueOnce(Promise.resolve([]))
+
+    const result = await sut.handle(fakeRequest)
+
+    expect(result).toEqual(httpResponse(200, []))
+  })
+  test('Should getAllTeams to have been called with correct params', async () => {
+    const { sut, teamStub } = makeSut()
+
+    const methodSpy = jest.spyOn(teamStub, 'getAllTeams')
+    await sut.handle(fakeRequest)
+
+    expect(methodSpy).toHaveBeenCalledWith({
+      limit: '10',
+      page: '1',
+      order: 'desc',
+      sort: 'id',
+    })
+
+    fakeRequest.params.limit = '4'
+    fakeRequest.params.page = '1'
+
+    await sut.handle(fakeRequest)
+
+    expect(methodSpy).toHaveBeenCalledWith({
+      ...fakeRequest.params,
+      order: 'desc',
+      sort: 'id',
+    })
+  })
+  test('Should return 500 if loadAll method throws', async () => {
+    const { sut, teamStub } = makeSut()
+
+    jest.spyOn(teamStub, 'getAllTeams').mockImplementationOnce(() => { throw new Error() })
+
+    const result = await sut.handle(fakeRequest)
+
+    await expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+  })
+})

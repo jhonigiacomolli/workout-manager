@@ -24,6 +24,9 @@ describe('LoadTeamController', () => {
     const { sut } = makeSut()
     const result = await sut.handle(fakeInvalidRequest)
     expect(result).toEqual(httpResponse(400, 'Required param teamId is not provided'))
+
+    const newResult = await sut.handle(fakeInvalidRequest)
+    expect(newResult).toEqual(httpResponse(400, 'Required param teamId is not provided'))
   })
   test('Should return 404 if teamId is a invalid teamId', async () => {
     const { sut, teamStub } = makeSut()
@@ -40,7 +43,7 @@ describe('LoadTeamController', () => {
     expect(result).toEqual(httpResponse(200, {
       data: {
         id: 'valid_team_id',
-        title: 'any_title',
+        name: 'any_name',
         members: [],
       },
     }))
