@@ -8,10 +8,9 @@ export type HTTPRequestParams = {
 }
 
 export type HTTPRequest = {
-  body?: any
-  params?: HTTPRequestParams
-  headers?: any
-  header?: any
+  body: any
+  params: HTTPRequestParams
+  headers: any
 }
 
 export type HTTPResponse = {
