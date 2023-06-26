@@ -1,5 +1,5 @@
 export interface TeamModel {
   id: string
-  title: string
+  name: string
   members: string[]
 }
