@@ -3,7 +3,14 @@ import { LoadAllTeamsController } from './load-all-teams'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeTeamList } from '@/mocks/teams/make-fake-team'
 
-const fakeRequest = httpRequest({}, {})
+const fakeRequest = httpRequest({}, {}, {}, {
+  pagination: {
+    limit: '10',
+    page: '1',
+    order: 'desc',
+    sort: 'id',
+  },
+})
 
 const makeSut = () => {
   const teamStub = new TeamStub()
@@ -23,7 +30,10 @@ describe('LoadAllTeamsController', () => {
 
     const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(200, makeFakeTeamList()))
+    expect(result).toEqual({
+      statusCode: 200,
+      body: makeFakeTeamList(),
+    })
   })
   test('Should return a empty list of teams if not have entries on db', async () => {
     const { sut, teamStub } = makeSut()
@@ -32,7 +42,10 @@ describe('LoadAllTeamsController', () => {
 
     const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(200, []))
+    expect(result).toEqual({
+      statusCode: 200,
+      body: [],
+    })
   })
   test('Should getAllTeams to have been called with correct params', async () => {
     const { sut, teamStub } = makeSut()
@@ -47,13 +60,13 @@ describe('LoadAllTeamsController', () => {
       sort: 'id',
     })
 
-    fakeRequest.params.limit = '4'
-    fakeRequest.params.page = '1'
+    fakeRequest.query.pagination.limit = '4'
+    fakeRequest.query.pagination.page = '1'
 
     await sut.handle(fakeRequest)
 
     expect(methodSpy).toHaveBeenCalledWith({
-      ...fakeRequest.params,
+      ...fakeRequest.query.pagination,
       order: 'desc',
       sort: 'id',
     })
