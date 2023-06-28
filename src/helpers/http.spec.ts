@@ -7,6 +7,7 @@ describe('http', () => {
       expect(response).toEqual({
         headers: {},
         params: {},
+        query: {},
         body: {
           message: 'any_content',
         },
