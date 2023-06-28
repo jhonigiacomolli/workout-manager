@@ -1,5 +1,5 @@
 export type HTTPRequestParams = {
-  [key: string]: string | undefined
+  [key: string]: any
   host?: string
   page?: string
   limit?: string
@@ -7,9 +7,19 @@ export type HTTPRequestParams = {
   order?: string
 }
 
+export type HTTPPaginationAndOrderParams = {
+  page?: string
+  limit?: string
+  sort?: string
+  order?: string
+  startAt?: string
+  startEnd?: string
+}
+
 export type HTTPRequest = {
   body: any
   params: HTTPRequestParams
+  query: HTTPRequestParams
   headers: any
 }
 
