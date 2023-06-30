@@ -1,4 +1,4 @@
-import { validateNumberParams, validateTextParams } from './sanitize'
+import { validateNumberParams, validateOrderParams, validateTextParams } from './sanitize'
 
 describe('Sanitize', () => {
   test('validateNumberParams()', () => {
@@ -23,5 +23,15 @@ describe('Sanitize', () => {
 
     const falseResultWithSpecial = validateTextParams('1234;;;d56')
     expect(falseResultWithSpecial).toBeFalsy()
+  })
+  test('validateOrderParams()', () => {
+    const result = validateOrderParams('wrong-order')
+    expect(result).toBe('DESC')
+
+    const ascResult = validateOrderParams('asc')
+    expect(ascResult).toBe('ASC')
+
+    const descResult = validateOrderParams('desc')
+    expect(descResult).toBe('DESC')
   })
 })
