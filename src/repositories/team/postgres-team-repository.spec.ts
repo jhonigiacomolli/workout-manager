@@ -18,6 +18,7 @@ const fakeRequestParams = {
   host: 'localhost',
   page: '1',
   limit: '10',
+  offset: '0',
   order: 'DESC',
   orderBy: 'name',
 }
@@ -78,19 +79,21 @@ describe('Postgres Team Repository', () => {
 
       await sut.getAllTeams(fakeRequestParams)
 
-      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 0])
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '0'])
 
       fakeRequestParams.page = '2'
+      fakeRequestParams.offset = '10'
 
       await sut.getAllTeams(fakeRequestParams)
 
-      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 10])
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '10'])
 
       fakeRequestParams.page = '5'
+      fakeRequestParams.offset = '40'
 
       await sut.getAllTeams(fakeRequestParams)
 
-      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 40])
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
     })
     test('Should return an empty list when account query fails', async () => {
       const { sut } = makeSut()

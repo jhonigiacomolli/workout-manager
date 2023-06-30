@@ -7,6 +7,7 @@ const fakeRequest = httpRequest({}, {}, {}, {
   pagination: {
     limit: '10',
     page: '1',
+    offset: '0',
     order: 'DESC',
     orderBy: 'id',
   },
@@ -56,12 +57,14 @@ describe('LoadAllTeamsController', () => {
     expect(methodSpy).toHaveBeenCalledWith({
       limit: '10',
       page: '1',
+      offset: '0',
       order: 'DESC',
       orderBy: 'id',
     })
 
     fakeRequest.query.pagination.limit = '4'
     fakeRequest.query.pagination.page = '1'
+    fakeRequest.query.pagination.offset = '0'
 
     await sut.handle(fakeRequest)
 
