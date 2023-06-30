@@ -44,9 +44,9 @@ export class PgAccountRepository implements Account {
   }
 
   async checkEmailInUse(email: string): Promise<boolean> {
-    const result = await client.query('SELECT id FROM accounts WHERE email=$1', [email])
+    const { rowCount } = await client.query('SELECT id FROM accounts WHERE email=$1', [email])
 
-    return result.rowCount > 0
+    return rowCount > 0
   }
 
   async setUserById(account: AccountModel): Promise<boolean> {
@@ -85,5 +85,18 @@ export class PgAccountRepository implements Account {
     ])
 
     return rowCount > 0
+  }
+
+  async delete(accountId: string): Promise<boolean> {
+    try {
+      const { rowCount } = await client.query(
+        'DELETE FROM accounts WHERE ID=$1',
+        [accountId],
+      )
+
+      return rowCount > 0
+    } catch {
+      return false
+    }
   }
 }
