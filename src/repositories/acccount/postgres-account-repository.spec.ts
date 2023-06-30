@@ -74,13 +74,15 @@ describe('Postgres Account Repository', () => {
   describe('setuserById()', () => {
     test('Should return true when account updated succeeds', async () => {
       const { sut, params } = makeSut()
-      const result = await sut.setUserById(params)
+      const { id, ...data } = params
+      const result = await sut.setUserById(id, data)
       expect(result).toBeTruthy()
     })
     test('Should throws if account updated fails', async () => {
       const { sut, params } = makeSut()
+      const { id, ...data } = params
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
-      const result = sut.setUserById(params)
+      const result = sut.setUserById(id, data)
       return expect(result).rejects.toThrow()
     })
   })

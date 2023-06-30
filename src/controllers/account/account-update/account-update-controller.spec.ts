@@ -12,7 +12,7 @@ const makeSut = () => {
   const headers = {
     authorization: 'valid_access_token',
   }
-  const fakeRequest = httpRequest(body, headers)
+  const fakeRequest = httpRequest(body, headers, { id: 'any_team_id' })
 
   const accountStub = new AccountStub()
   const teamStub = new TeamStub()
@@ -51,16 +51,14 @@ describe('Account Update Controller', () => {
 
     expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
   })
-  test('Should return 400 if id is not provided on body', async () => {
+  test('Should return 400 if id is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle({
-      ...fakeRequest,
-      body: {
-        ...fakeRequest.body,
-        id: '',
-      },
-    })
+    const worngRequest = { ...fakeRequest }
+
+    worngRequest.params = {}
+
+    const result = await sut.handle(worngRequest)
 
     expect(result).toEqual(httpResponse(400, 'Empty param: id is required'))
   })
