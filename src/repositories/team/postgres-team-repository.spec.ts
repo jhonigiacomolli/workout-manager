@@ -1,6 +1,6 @@
-import { makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
-import { PgTeamRepository } from './postgres-team-repository'
 import { client } from '@/database'
+import { PgTeamRepository } from './postgres-team-repository'
+import { makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
 
 jest.mock('pg', () => {
   const mClient = {
@@ -13,6 +13,26 @@ jest.mock('pg', () => {
   }
   return { Client: jest.fn(() => mClient) }
 })
+
+const fakeRequestParams = {
+  host: 'localhost',
+  page: '1',
+  limit: '10',
+  order: 'DESC',
+  orderBy: 'name',
+}
+
+const querySql = `
+        SELECT
+        id,
+        name,
+        created_at,
+        COALESCE(members, ARRAY[]::text[]) AS members
+        FROM teams
+        ORDER BY name DESC
+        LIMIT $1
+        OFFSET $2::integer * $1::integer
+      `
 
 const makeSut = () => {
   const sut = new PgTeamRepository()
@@ -48,15 +68,36 @@ describe('Postgres Team Repository', () => {
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: makeFakePostgresTeamList() }))
 
-      const newResult = await sut.getAllTeams({})
+      const newResult = await sut.getAllTeams(fakeRequestParams)
       expect(newResult).toEqual(makeFakeTeamList())
+    })
+    test('Should query is called with correct values', async () => {
+      const { sut } = makeSut()
+
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: makeFakePostgresTeamList() }))
+
+      await sut.getAllTeams(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 0])
+
+      fakeRequestParams.page = '2'
+
+      await sut.getAllTeams(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 10])
+
+      fakeRequestParams.page = '5'
+
+      await sut.getAllTeams(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', 40])
     })
     test('Should return an empty list when account query fails', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-      const result = await sut.getAllTeams({})
+      const result = await sut.getAllTeams(fakeRequestParams)
       expect(result).toEqual([])
     })
   })
