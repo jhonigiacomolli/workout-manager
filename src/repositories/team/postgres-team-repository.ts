@@ -17,14 +17,24 @@ export class PgTeamRepository implements Team {
   async getAllTeams(params: HTTPRequestParams): Promise<TeamModel[]> {
     try {
       const { rows } = await client.query(`
-      SELECT
-      id,
-      name,
-      COALESCE(members, ARRAY[]::text[]) AS members
-      FROM teams LIMIT $1`, [params.limit])
+        SELECT
+        id,
+        name,
+        created_at,
+        COALESCE(members, ARRAY[]::text[]) AS members
+        FROM teams
+        ORDER BY ${params.sort} ${params.order}
+        LIMIT $1
+      `, [params.limit])
 
-      return rows
-    } catch {
+      return rows.map(row => ({
+        id: row.id,
+        createdAt: row.created_at,
+        name: row.name,
+        members: row.members,
+      }))
+    } catch (errr) {
+      console.log('Error: ', errr)
       return []
     }
   }
