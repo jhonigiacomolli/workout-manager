@@ -15,16 +15,16 @@ export class LoadAllTeamsController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
-      const { limit, page, sort, order } = request.query.pagination
+      const { limit, page, orderBy, order } = request.query.pagination
 
       const fields: TeamKeys[] = ['id', 'name', 'members']
 
-      const sortField = fields.includes(sort) ? sort : 'name'
+      const orderByField = fields.includes(orderBy) ? orderBy : 'name'
 
       const teams = await this.dependencies.team.getAllTeams({
         limit,
         page,
-        sort: sortField,
+        orderBy: orderByField,
         order,
       })
 

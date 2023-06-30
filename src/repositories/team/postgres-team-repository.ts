@@ -23,7 +23,7 @@ export class PgTeamRepository implements Team {
         created_at,
         COALESCE(members, ARRAY[]::text[]) AS members
         FROM teams
-        ORDER BY ${params.sort} ${params.order}
+        ORDER BY ${params.orderBy} ${params.order}
         LIMIT $1
       `, [params.limit])
 

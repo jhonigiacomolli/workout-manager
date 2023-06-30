@@ -3,14 +3,14 @@ export type HTTPRequestParams = {
   host?: string
   page?: string
   limit?: string
-  sort?: string
+  orderBy?: string
   order?: string
 }
 
 export type HTTPPaginationAndOrderParams = {
   page?: string
   limit?: string
-  sort?: string
+  orderBy?: string
   order?: string
   startAt?: string
   startEnd?: string
