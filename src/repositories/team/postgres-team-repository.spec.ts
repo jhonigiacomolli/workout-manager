@@ -1,4 +1,4 @@
-import { makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+import { makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
 import { PgTeamRepository } from './postgres-team-repository'
 import { client } from '@/database'
 
@@ -46,7 +46,7 @@ describe('Postgres Team Repository', () => {
     test('Should return an account model list if succeeds', async () => {
       const { sut } = makeSut()
 
-      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: makeFakeTeamList() }))
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: makeFakePostgresTeamList() }))
 
       const newResult = await sut.getAllTeams({})
       expect(newResult).toEqual(makeFakeTeamList())
