@@ -14,8 +14,9 @@ export class PgTeamRepository implements Team {
     }
   }
 
-  async getAllTeams(params: HTTPRequestParams): Promise<TeamModel[]> {
+  async getAllTeams(params: Required<HTTPRequestParams>): Promise<TeamModel[]> {
     try {
+      const offset = (Number(params.page) - 1) * Number(params.limit)
       const { rows } = await client.query(`
         SELECT
         id,
@@ -25,7 +26,8 @@ export class PgTeamRepository implements Team {
         FROM teams
         ORDER BY ${params.orderBy} ${params.order}
         LIMIT $1
-      `, [params.limit])
+        OFFSET $2::integer * $1::integer
+      `, [params.limit, offset])
 
       return rows.map(row => ({
         id: row.id,
