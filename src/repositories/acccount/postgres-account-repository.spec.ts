@@ -1,6 +1,6 @@
 import { client } from '@/database'
 import { PgAccountRepository } from './postgres-account-repository'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount, makePostgresFakeAccount } from '@/mocks/account/make-fake-account'
 
 jest.mock('pg', () => {
   const mClient = {
@@ -13,6 +13,37 @@ jest.mock('pg', () => {
   }
   return { Client: jest.fn(() => mClient) }
 })
+
+const fakeRequestParams = {
+  host: 'localhost',
+  page: '1',
+  limit: '10',
+  offset: '0',
+  order: 'DESC',
+  orderBy: 'name',
+}
+
+const querySql = `
+        SELECT
+        name,
+        created_at,
+        email,
+        password,
+        image,
+        permissions,
+        phone,
+        address,
+        boards,
+        desktops,
+        responsability,
+        status,
+        tasks,
+        teamId
+        FROM accounts
+        ORDER BY name DESC
+        LIMIT $1
+        OFFSET $2::integer * $1::integer
+      `
 
 const makeSut = () => {
   const sut = new PgAccountRepository()
@@ -69,6 +100,47 @@ describe('Postgres Account Repository', () => {
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
       const result = sut.getUserByEmail(params.email)
       return expect(result).rejects.toThrow()
+    })
+  })
+  describe('getAllAccounts()', () => {
+    test('Should return an account model list if succeeds', async () => {
+      const { sut } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makePostgresFakeAccount()] }))
+
+      const newResult = await sut.getAllAccounts(fakeRequestParams)
+      expect(newResult).toEqual([makeFakeAccount()])
+    })
+    test('Should query is called with correct values', async () => {
+      const { sut } = makeSut()
+
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makePostgresFakeAccount()] }))
+
+      await sut.getAllAccounts(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '0'])
+
+      fakeRequestParams.page = '2'
+      fakeRequestParams.offset = '10'
+
+      await sut.getAllAccounts(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '10'])
+
+      fakeRequestParams.page = '5'
+      fakeRequestParams.offset = '40'
+
+      await sut.getAllAccounts(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
+    })
+    test('Should return an empty list when account query fails', async () => {
+      const { sut } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+
+      const result = await sut.getAllAccounts(fakeRequestParams)
+      expect(result).toEqual([])
     })
   })
   describe('setuserById()', () => {
