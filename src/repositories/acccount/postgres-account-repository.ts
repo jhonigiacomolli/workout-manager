@@ -1,5 +1,6 @@
 import { client } from '@/database'
 import { type AccountModel } from '@/protocols/models/account'
+import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { type Account, type CreateAccountParams } from '@/protocols/use-cases/account'
 
 export class PgAccountRepository implements Account {
@@ -41,6 +42,44 @@ export class PgAccountRepository implements Account {
     const { rows } = await client.query('SELECT * FROM accounts WHERE email=$1', [email])
 
     return rows[0]
+  }
+
+  async getAllAccounts(params: HTTPPaginationAndOrderParams): Promise<AccountModel[]> {
+    try {
+      const { rows } = await client.query(`
+        SELECT
+        name,
+        created_at,
+        email,
+        password,
+        image,
+        permissions,
+        phone,
+        address,
+        boards,
+        desktops,
+        responsability,
+        status,
+        tasks,
+        teamId
+        FROM accounts
+        ORDER BY ${params.orderBy} ${params.order}
+        LIMIT $1
+        OFFSET $2::integer * $1::integer
+      `, [params.limit, params.offset])
+
+      return rows.map(row => {
+        // eslint-disable-next-line
+        const { created_at, ...rowItems } = row
+        return {
+          ...rowItems,
+          // eslint-disable-next-line
+          createdAt: created_at,
+        }
+      })
+    } catch {
+      return []
+    }
   }
 
   async checkEmailInUse(email: string): Promise<boolean> {

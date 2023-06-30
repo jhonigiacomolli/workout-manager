@@ -1,3 +1,4 @@
+import { HTTPRequestParams } from '../models/http'
 import { type AccountModel } from '../models/account'
 
 export type CreateAccountParams = Omit<AccountModel, 'id'>
@@ -7,5 +8,6 @@ export interface Account {
   delete: (accountId: string) => Promise<boolean>
   checkEmailInUse: (email: string) => Promise<boolean>
   getUserByEmail: (email: string) => Promise<AccountModel | undefined>
+  getAllAccounts: (params?: HTTPRequestParams) => Promise<AccountModel[]>
   setUserById: (accountId: string, data: CreateAccountParams) => Promise<boolean>
 }

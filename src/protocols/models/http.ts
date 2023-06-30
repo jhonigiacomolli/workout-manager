@@ -8,10 +8,10 @@ export type HTTPRequestParams = {
 }
 
 export type HTTPPaginationAndOrderParams = {
-  page?: string
-  limit?: string
-  orderBy?: string
-  order?: string
+  limit: string
+  orderBy: string
+  order: string
+  offset: string
   startAt?: string
   startEnd?: string
 }

@@ -22,4 +22,8 @@ export class AccountStub implements Account {
   async delete(): Promise<boolean> {
     return await Promise.resolve(true)
   }
+
+  async getAllAccounts(): Promise<AccountModel[]> {
+    return await Promise.resolve([makeFakeAccount()])
+  }
 }

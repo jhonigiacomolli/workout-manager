@@ -11,6 +11,7 @@ import { makeRefreshTokenController } from './helpers/factories/controllers/make
 import { makeLoadAllTeamsController } from './helpers/factories/controllers/make-load-all-teams.controller'
 import { pagination } from './middlewares/pagination/pagination-middleware'
 import { makeAccountRemoveController } from './helpers/factories/controllers/make-accoun-remove-controller'
+import { makeLoadAllAccountsController } from './helpers/factories/controllers/make-load=all-uaccounts-controller'
 
 const app = express()
 
@@ -20,6 +21,7 @@ app.use(pagination)
 app.post('/sign-up', useRouteController(makeSignUpController()))
 app.post('/sign-in', useRouteController(makeSignInController()))
 app.post('/refresh-token', useRouteController(makeRefreshTokenController()))
+app.get('/accounts', authentication, useRouteController(makeLoadAllAccountsController()))
 app.put('/accounts/:id', authentication, useRouteController(makeAccountUpdateController()))
 app.delete('/accounts/:id', authentication, useRouteController(makeAccountRemoveController()))
 app.get('/teams/:id', authentication, useRouteController(makeLoadTeamController()))
