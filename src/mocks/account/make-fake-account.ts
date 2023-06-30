@@ -2,6 +2,7 @@ import { type AccountModel } from '@/protocols/models/account'
 
 export const makeFakeAccount = (): AccountModel => ({
   id: 'valid_id',
+  createdAt: '2023-06-30T03:00:00.000Z',
   name: 'valid_name',
   email: 'valid_email@mail.com',
   password: 'valid_password',

@@ -6,6 +6,7 @@ export class PgAccountRepository implements Account {
   async create(account: CreateAccountParams): Promise<boolean> {
     const { rowCount } = await client.query(`INSERT INTO accounts(
       name,
+      created_at,
       email,
       password,
       image,
@@ -18,7 +19,7 @@ export class PgAccountRepository implements Account {
       status,
       tasks,
       teamId
-    ) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
+    ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
       account.name,
       account.email,
       account.password,
@@ -33,7 +34,7 @@ export class PgAccountRepository implements Account {
       account.tasks,
       account.teamId,
     ])
-    return await Promise.resolve(rowCount > 0)
+    return rowCount > 0
   }
 
   async getUserByEmail(email: string): Promise<AccountModel> {
