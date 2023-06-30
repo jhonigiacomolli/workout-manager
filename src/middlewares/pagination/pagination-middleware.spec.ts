@@ -21,8 +21,8 @@ describe('PaginationMiddleWare', () => {
         pagination: {
           limit: '10',
           page: '1',
-          order: 'desc',
-          sort: 'id',
+          order: 'DESC',
+          orderBy: 'id',
         },
       },
     })
@@ -32,8 +32,8 @@ describe('PaginationMiddleWare', () => {
     fakeRequest.query = {
       limit: '20',
       page: '2',
-      order: 'asc',
-      sort: 'name',
+      order: 'ASC',
+      orderBy: 'name',
     }
 
     await pagination(fakeRequest as Request, fakeResponse as Response, fakeNext)
@@ -45,8 +45,8 @@ describe('PaginationMiddleWare', () => {
         pagination: {
           limit: '20',
           page: '2',
-          order: 'asc',
-          sort: 'name',
+          order: 'ASC',
+          orderBy: 'name',
         },
       },
     })
@@ -65,8 +65,8 @@ describe('PaginationMiddleWare', () => {
         pagination: {
           limit: undefined,
           page: '1',
-          order: 'desc',
-          sort: 'id',
+          order: 'DESC',
+          orderBy: 'id',
         },
       },
     })
