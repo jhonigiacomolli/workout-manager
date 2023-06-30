@@ -8,7 +8,7 @@ const fakeRequest = httpRequest({}, {}, {}, {
     limit: '10',
     page: '1',
     order: 'DESC',
-    sort: 'id',
+    orderBy: 'id',
   },
 })
 
@@ -57,7 +57,7 @@ describe('LoadAllTeamsController', () => {
       limit: '10',
       page: '1',
       order: 'DESC',
-      sort: 'id',
+      orderBy: 'id',
     })
 
     fakeRequest.query.pagination.limit = '4'
@@ -68,16 +68,16 @@ describe('LoadAllTeamsController', () => {
     expect(methodSpy).toHaveBeenCalledWith({
       ...fakeRequest.query.pagination,
       order: 'DESC',
-      sort: 'id',
+      orderBy: 'id',
     })
 
-    fakeRequest.query.pagination.sort = 'wrong_field'
+    fakeRequest.query.pagination.orderBy = 'wrong_field'
 
     await sut.handle(fakeRequest)
 
     expect(methodSpy).toHaveBeenCalledWith({
       ...fakeRequest.query.pagination,
-      sort: 'name',
+      orderBy: 'name',
     })
   })
   test('Should return 500 if loadAll method throws', async () => {
