@@ -84,4 +84,17 @@ describe('Postgres Account Repository', () => {
       return expect(result).rejects.toThrow()
     })
   })
+  describe('delete()', () => {
+    test('Should return true when account updated succeeds', async () => {
+      const { sut, params } = makeSut()
+      const result = await sut.delete(params.id)
+      expect(result).toBeTruthy()
+    })
+    test('Should throws if account updated fails', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = await sut.delete(params.id)
+      return expect(result).toBeFalsy()
+    })
+  })
 })
