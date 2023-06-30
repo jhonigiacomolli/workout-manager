@@ -1,5 +1,5 @@
 import { client } from '@/database'
-import { HTTPRequestParams } from '@/protocols/models/http'
+import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { TeamModel } from '@/protocols/models/team'
 import { Team } from '@/protocols/use-cases/team'
 
@@ -14,9 +14,8 @@ export class PgTeamRepository implements Team {
     }
   }
 
-  async getAllTeams(params: Required<HTTPRequestParams>): Promise<TeamModel[]> {
+  async getAllTeams(params: HTTPPaginationAndOrderParams): Promise<TeamModel[]> {
     try {
-      const offset = (Number(params.page) - 1) * Number(params.limit)
       const { rows } = await client.query(`
         SELECT
         id,
@@ -27,7 +26,7 @@ export class PgTeamRepository implements Team {
         ORDER BY ${params.orderBy} ${params.order}
         LIMIT $1
         OFFSET $2::integer * $1::integer
-      `, [params.limit, offset])
+      `, [params.limit, params.offset])
 
       return rows.map(row => ({
         id: row.id,

@@ -15,7 +15,7 @@ export class LoadAllTeamsController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
-      const { limit, page, orderBy, order } = request.query.pagination
+      const { limit, page, offset, orderBy, order } = request.query.pagination
 
       const fields: TeamKeys[] = ['id', 'name', 'members']
 
@@ -24,6 +24,7 @@ export class LoadAllTeamsController implements Controller {
       const teams = await this.dependencies.team.getAllTeams({
         limit,
         page,
+        offset,
         orderBy: orderByField,
         order,
       })
@@ -32,7 +33,8 @@ export class LoadAllTeamsController implements Controller {
         statusCode: 200,
         body: teams,
       }
-    } catch {
+    } catch (err) {
+      console.log('Err: ', err)
       return httpResponse(500, 'Internal Server Error')
     }
   }
