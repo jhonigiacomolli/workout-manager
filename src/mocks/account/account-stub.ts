@@ -18,4 +18,8 @@ export class AccountStub implements Account {
   async setUserById(): Promise<boolean> {
     return await Promise.resolve(true)
   }
+
+  async delete(): Promise<boolean> {
+    return await Promise.resolve(true)
+  }
 }
