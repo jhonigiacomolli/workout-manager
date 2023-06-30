@@ -7,5 +7,5 @@ export interface Account {
   delete: (accountId: string) => Promise<boolean>
   checkEmailInUse: (email: string) => Promise<boolean>
   getUserByEmail: (email: string) => Promise<AccountModel | undefined>
-  setUserById: (account: AccountModel) => Promise<boolean>
+  setUserById: (accountId: string, data: CreateAccountParams) => Promise<boolean>
 }

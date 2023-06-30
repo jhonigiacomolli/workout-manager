@@ -49,7 +49,7 @@ export class PgAccountRepository implements Account {
     return rowCount > 0
   }
 
-  async setUserById(account: AccountModel): Promise<boolean> {
+  async setUserById(accountId: string, data: CreateAccountParams): Promise<boolean> {
     const { rowCount } = await client.query(`
     UPDATE accounts
     SET
@@ -68,20 +68,20 @@ export class PgAccountRepository implements Account {
       teamId=$14
     WHERE id=$1
   `, [
-      account.id,
-      account.name,
-      account.email,
-      account.password,
-      account.image,
-      account.permissions,
-      account.phone,
-      account.address,
-      account.boards,
-      account.desktops,
-      account.responsability,
-      account.status,
-      account.tasks,
-      account.teamId,
+      accountId,
+      data.name,
+      data.email,
+      data.password,
+      data.image,
+      data.permissions,
+      data.phone,
+      data.address,
+      data.boards,
+      data.desktops,
+      data.responsability,
+      data.status,
+      data.tasks,
+      data.teamId,
     ])
 
     return rowCount > 0

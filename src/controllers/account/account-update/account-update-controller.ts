@@ -16,7 +16,13 @@ export class AccountUdateController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     try {
-      const requiredParams = ['id', 'name', 'email']
+      const id = request.params.id
+
+      if (!id) {
+        return httpResponse(400, 'Empty param: id is required')
+      }
+
+      const requiredParams = ['name', 'email']
 
       for (const param of requiredParams) {
         if (!request.body[param]) {
@@ -34,7 +40,7 @@ export class AccountUdateController implements Controller {
         request.body.teamId = undefined
       }
 
-      const success = await this.dependencies.account.setUserById(request.body)
+      const success = await this.dependencies.account.setUserById(id, request.body)
 
       if (!success) {
         return httpResponse(400, 'Account update fails')
