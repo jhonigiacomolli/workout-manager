@@ -1,7 +1,7 @@
-export const deleteAccountPath = {
-  delete: {
+export const accountUpdatePath = {
+  put: {
     tags: ['Account'],
-    summary: 'Remove an account by ID',
+    summary: 'Update an account',
     parameters: [
       {
         name: 'id',
@@ -11,9 +11,19 @@ export const deleteAccountPath = {
         },
       },
     ],
+    requestBody: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/accountModel',
+          },
+        },
+      },
+    },
     responses: {
       204: {
-        description: 'Account removed successfully',
+        description: 'Account update successfully',
       },
       400: {
         description: 'Bad Request',

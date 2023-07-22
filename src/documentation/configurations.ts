@@ -1,4 +1,5 @@
-import { deleteAccountPath } from './paths/accounts/delete-account-path'
+import { accountRemovePath, accountUpdatePath } from './paths/accounts'
+import { accountModelSchema } from './schemas/accounts/account.model-schema'
 import { errorSchema } from './schemas/error-schema'
 
 export const swaggerConfigurations = {
@@ -11,9 +12,13 @@ export const swaggerConfigurations = {
     'Account',
   ],
   paths: {
-    '/accounts/{id}': deleteAccountPath,
+    '/accounts/{id}': {
+      ...accountRemovePath,
+      ...accountUpdatePath,
+    },
   },
   schemas: {
     error: errorSchema,
+    accountModel: accountModelSchema,
   },
 }
