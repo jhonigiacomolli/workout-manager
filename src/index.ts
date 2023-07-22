@@ -2,19 +2,22 @@ import 'dotenv/config'
 import './configurations/module-alias'
 
 import express, { json } from 'express'
+import { serve, setup } from 'swagger-ui-express'
 import { useRouteController } from './helpers/http'
-import { makeAccountUpdateController, makeSignUpController } from './helpers/factories/controllers'
+import { swaggerNoCache } from './middlewares/cache/swagger-no-cache'
+import { pagination } from './middlewares/pagination/pagination-middleware'
 import { makeSignInController } from './helpers/factories/controllers/make-sign-in-controller'
 import { authentication } from './helpers/factories/middlewares/make-authentication-middleware'
 import { makeLoadTeamController } from './helpers/factories/controllers/make-load-team.controller'
+import { makeAccountUpdateController, makeSignUpController } from './helpers/factories/controllers'
 import { makeRefreshTokenController } from './helpers/factories/controllers/make-refresh-token-controller'
 import { makeLoadAllTeamsController } from './helpers/factories/controllers/make-load-all-teams.controller'
-import { pagination } from './middlewares/pagination/pagination-middleware'
 import { makeAccountRemoveController } from './helpers/factories/controllers/make-accoun-remove-controller'
 import { makeLoadAllAccountsController } from './helpers/factories/controllers/make-load=all-uaccounts-controller'
+import { swaggerConfigurations } from './documentation/configurations'
 
-const app = express()
-
+export const app = express()
+app.use('/docs', swaggerNoCache, serve, setup(swaggerConfigurations))
 app.use(json())
 app.use(pagination)
 
