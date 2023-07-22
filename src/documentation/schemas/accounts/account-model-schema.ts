@@ -1,6 +1,9 @@
 export const accountModelSchema = {
   type: 'object',
   properties: {
+    id: {
+      type: 'string',
+    },
     name: {
       type: 'string',
     },
@@ -59,5 +62,4 @@ export const accountModelSchema = {
       type: 'string',
     },
   },
-  required: ['name', 'email', 'password'],
 }

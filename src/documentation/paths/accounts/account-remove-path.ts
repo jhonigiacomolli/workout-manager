@@ -6,6 +6,7 @@ export const accountRemovePath = {
       {
         name: 'id',
         required: true,
+        in: 'path',
         schema: {
           type: 'string',
         },

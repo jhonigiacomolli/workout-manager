@@ -13,10 +13,11 @@ export const accountUpdatePath = {
     ],
     requestBody: {
       required: true,
+      in: 'path',
       content: {
         'application/json': {
           schema: {
-            $ref: '#/schemas/accountModel',
+            $ref: '#/schemas/accountUpdateParams',
           },
         },
       },
