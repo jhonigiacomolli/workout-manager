@@ -48,6 +48,7 @@ export class PgAccountRepository implements Account {
     try {
       const { rows } = await client.query(`
         SELECT
+        id,
         name,
         created_at,
         email,
