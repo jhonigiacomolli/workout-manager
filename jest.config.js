@@ -19,6 +19,7 @@ module.exports = {
     '<rootDir>/src/mocks/',
     '<rootDir>/src/protocols/',
     '<rootDir>/src/configurations/',
+    '<rootDir>/src/documentation/',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
