@@ -13,6 +13,7 @@ export const signUpPath = {
         },
       },
     },
+    security: [],
     responses: {
       200: {
         description: 'Account created successfully',

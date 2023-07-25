@@ -20,6 +20,7 @@ export const signInPath = {
         },
       },
     },
+    security: [],
     responses: {
       200: {
         description: 'User logged successfully',

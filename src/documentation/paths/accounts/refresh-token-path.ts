@@ -17,6 +17,7 @@ export const refreshTokenPath = {
         },
       },
     },
+    security: [],
     responses: {
       200: {
         description: 'Access token revalidate successfully',
