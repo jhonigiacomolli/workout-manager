@@ -1,7 +1,7 @@
-export const accountListPath = {
+export const teamsListPath = {
   get: {
-    tags: ['Account'],
-    summary: 'List accounts',
+    tags: ['Team'],
+    summary: 'List teams',
     parameters: [
       {
         name: 'limit',
@@ -33,13 +33,13 @@ export const accountListPath = {
     ],
     responses: {
       200: {
-        description: 'Account list successfully',
+        description: 'Teams listed successfully',
         content: {
           'application/json': {
             schema: {
               type: 'array',
               items: {
-                $ref: '#/schemas/accountModel',
+                $ref: '#/schemas/teamModel',
               },
             },
           },

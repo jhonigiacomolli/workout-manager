@@ -1,5 +1,5 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
-import { teamGetPath } from './paths/teams/team-get-path'
+import { teamGetPath, teamsListPath } from './paths/teams'
 import { accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
 
 export const swaggerConfigurations = {
@@ -21,7 +21,8 @@ export const swaggerConfigurations = {
       ...accountRemovePath,
       ...accountUpdatePath,
     },
-    '/team/{id}': teamGetPath,
+    '/teams': teamsListPath,
+    '/teams/{id}': teamGetPath,
   },
   schemas: {
     error: errorSchema,
