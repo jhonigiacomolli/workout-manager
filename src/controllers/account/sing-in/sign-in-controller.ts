@@ -48,10 +48,10 @@ export class SignInController implements Controller {
       const accessToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 3600, issuer: request.headers.host })
       const refreshToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 86400, issuer: request.headers.host })
 
-      return await Promise.resolve(httpResponse(200, {
+      return httpResponse(200, {
         accessToken,
         refreshToken,
-      }))
+      })
     } catch (err) {
       return httpResponse(500, 'Internal Server Error')
     }

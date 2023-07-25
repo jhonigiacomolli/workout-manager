@@ -1,4 +1,5 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath } from './paths/accounts'
+import { signInPath } from './paths/accounts/sign-in-path'
 import { accountModelSchema } from './schemas/accounts/account-model-schema'
 import { accountUpdateParamsSchema } from './schemas/accounts/update-account-params-schema'
 import { errorSchema } from './schemas/error-schema'
@@ -15,6 +16,7 @@ export const swaggerConfigurations = {
   ],
   paths: {
     '/sign-up': signUpPath,
+    '/sign-in': signInPath,
     '/accounts': accountListPath,
     '/accounts/{id}': {
       ...accountRemovePath,
