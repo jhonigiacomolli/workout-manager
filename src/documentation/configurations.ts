@@ -1,10 +1,5 @@
-import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath } from './paths/accounts'
-import { refreshTokenPath } from './paths/accounts/refresh-token-path'
-import { signInPath } from './paths/accounts/sign-in-path'
-import { accountModelSchema } from './schemas/accounts/account-model-schema'
-import { accountUpdateParamsSchema } from './schemas/accounts/update-account-params-schema'
-import { errorSchema } from './schemas/error-schema'
-import { messageSchema } from './schemas/message-schema'
+import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
+import { accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema } from './schemas'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
