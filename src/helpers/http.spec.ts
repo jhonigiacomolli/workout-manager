@@ -20,18 +20,14 @@ describe('http', () => {
       const response = httpResponse(200, 'success_message')
       expect(response).toEqual({
         statusCode: 200,
-        body: {
-          message: 'success_message',
-        },
+        body: 'success_message',
       })
     })
     test('Should return a valid http response value on error cases', () => {
       const response = httpResponse(500, 'error_message')
       expect(response).toEqual({
         statusCode: 500,
-        body: {
-          message: 'error_message',
-        },
+        body: 'error_message',
       })
     })
   })
@@ -72,6 +68,20 @@ describe('http', () => {
       expect(res.json).toHaveBeenCalledWith(httpResponse.body)
     })
 
+    it('should return error response if message prop when status code is lower then 400 and body is a string', async () => {
+      const httpResponse = {
+        statusCode: 200,
+        body: 'Success message',
+      }
+      controller.handle.mockResolvedValue(httpResponse)
+
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
+      expect(res.json).toHaveBeenCalledWith({ message: httpResponse.body })
+    })
+
     it('should return successful response if statusCode is between 299', async () => {
       const httpResponse = {
         statusCode: 299,
@@ -97,7 +107,7 @@ describe('http', () => {
       await routeController(req, res)
 
       expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
-      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body.message })
+      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body })
     })
 
     it('should return error response if statusCode is greather then 400', async () => {
@@ -111,7 +121,7 @@ describe('http', () => {
       await routeController(req, res)
 
       expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
-      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body.message })
+      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body })
     })
   })
 })
