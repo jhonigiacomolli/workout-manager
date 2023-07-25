@@ -1,5 +1,6 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
-import { accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema } from './schemas'
+import { teamGetPath } from './paths/teams/team-get-path'
+import { accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -9,6 +10,7 @@ export const swaggerConfigurations = {
   },
   tags: [
     'Account',
+    'Team',
   ],
   paths: {
     '/sign-up': signUpPath,
@@ -19,11 +21,13 @@ export const swaggerConfigurations = {
       ...accountRemovePath,
       ...accountUpdatePath,
     },
+    '/team/{id}': teamGetPath,
   },
   schemas: {
     error: errorSchema,
     message: messageSchema,
     accountModel: accountModelSchema,
     accountUpdateParams: accountUpdateParamsSchema,
+    teamModel: teamModelSchema,
   },
 }
