@@ -6,7 +6,7 @@ jest.mock('pg', () => {
   const mClient = {
     connect: jest.fn(),
     query: () => ({
-      rows: [],
+      rows: [makeFakeAccount()],
       rowCount: 1,
     }),
     end: jest.fn(),
@@ -78,7 +78,7 @@ describe('Postgres Account Repository', () => {
     test('Should return true when account register succeeds', async () => {
       const { sut, params } = makeSut()
       const result = await sut.create(params)
-      expect(result).toBeTruthy()
+      expect(result).toEqual(makeFakeAccount())
     })
     test('Should return 500 when account register fails', async () => {
       const { sut, params } = makeSut()

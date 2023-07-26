@@ -138,6 +138,9 @@ describe('Sign Up Controller', () => {
     const { sut, accountStub, fakeRequest } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
     const controller = await sut.handle(fakeRequest)
-    expect(controller).toEqual(httpResponse(200, 'Successfully registered user'))
+    expect(controller).toEqual(httpResponse(200, {
+      message: 'Successfully registered user',
+      data: makeFakeAccount(),
+    }))
   })
 })
