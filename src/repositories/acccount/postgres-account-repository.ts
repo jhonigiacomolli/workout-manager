@@ -4,8 +4,8 @@ import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { type Account, type CreateAccountParams } from '@/protocols/use-cases/account'
 
 export class PgAccountRepository implements Account {
-  async create(account: CreateAccountParams): Promise<boolean> {
-    const { rowCount } = await client.query(`INSERT INTO accounts(
+  async create(account: CreateAccountParams): Promise<AccountModel> {
+    const result = await client.query(`INSERT INTO accounts(
       name,
       created_at,
       email,
@@ -20,7 +20,19 @@ export class PgAccountRepository implements Account {
       status,
       tasks,
       teamId
-    ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`, [
+    ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING
+      COALESCE(name, '') as name,
+      COALESCE(email, '') as email,
+      COALESCE(image, '') as image,
+      COALESCE(phone, '') as phone,
+      COALESCE(address, '') as address,
+      COALESCE(boards, ARRAY[]::text[]) AS boards,
+      COALESCE(responsability, ARRAY[]::text[]) AS responsability,
+      COALESCE(status, ARRAY[]::text[]) AS status,
+      COALESCE(desktops, ARRAY[]::text[]) AS desktops,
+      COALESCE(tasks, ARRAY[]::text[]) AS tasks,
+      COALESCE(permissions, ARRAY[]::text[]) AS permissions
+    `, [
       account.name,
       account.email,
       account.password,
@@ -35,7 +47,9 @@ export class PgAccountRepository implements Account {
       account.tasks,
       account.teamId,
     ])
-    return rowCount > 0
+
+    console.log('Data: ', result)
+    return result.rows[0]
   }
 
   async getUserByEmail(email: string): Promise<AccountModel> {

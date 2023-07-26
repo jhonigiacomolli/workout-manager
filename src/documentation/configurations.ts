@@ -1,6 +1,6 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
 import { teamGetPath, teamsListPath } from './paths/teams'
-import { accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
+import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -29,6 +29,7 @@ export const swaggerConfigurations = {
     message: messageSchema,
     accountModel: accountModelSchema,
     accountUpdateParams: accountUpdateParamsSchema,
+    accountCreateReturns: accountCreateReturnSchema,
     teamModel: teamModelSchema,
   },
   components: {

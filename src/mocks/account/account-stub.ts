@@ -7,8 +7,8 @@ export class AccountStub implements Account {
     return Promise.resolve(makeFakeAccount())
   }
 
-  async create(): Promise<boolean> {
-    return await Promise.resolve(true)
+  async create(): Promise<AccountModel> {
+    return await Promise.resolve(makeFakeAccount())
   }
 
   async checkEmailInUse(): Promise<boolean> {

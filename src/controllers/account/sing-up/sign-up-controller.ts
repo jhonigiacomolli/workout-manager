@@ -42,13 +42,17 @@ export class SignUpController implements Controller {
 
       const hashedPassword = await this.dependencies.hasher.generate(password)
 
-      await this.dependencies.account.create({
+      const result = await this.dependencies.account.create({
         ...request.body,
         password: hashedPassword,
       })
 
-      return httpResponse(200, 'Successfully registered user')
-    } catch {
+      return httpResponse(200, {
+        message: 'Successfully registered user',
+        data: result || {},
+      })
+    } catch (err) {
+      console.log('err: ', err)
       return httpResponse(500, 'Internal Server Error')
     }
   }
