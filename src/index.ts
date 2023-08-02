@@ -15,6 +15,7 @@ import { makeLoadAllTeamsController } from './helpers/factories/controllers/make
 import { makeAccountRemoveController } from './helpers/factories/controllers/make-accoun-remove-controller'
 import { makeLoadAllAccountsController } from './helpers/factories/controllers/make-load=all-uaccounts-controller'
 import { swaggerConfigurations } from './documentation/configurations'
+import { makeCreateTeamController } from './helpers/factories/controllers/make-create-teams.controller copy'
 
 export const app = express()
 app.use('/docs', swaggerNoCache, serve, setup(swaggerConfigurations))
@@ -29,5 +30,6 @@ app.put('/accounts/:id', authentication, useRouteController(makeAccountUpdateCon
 app.delete('/accounts/:id', authentication, useRouteController(makeAccountRemoveController()))
 app.get('/teams/:id', authentication, useRouteController(makeLoadTeamController()))
 app.get('/teams', authentication, useRouteController(makeLoadAllTeamsController()))
+app.post('/teams', authentication, useRouteController(makeCreateTeamController()))
 
 app.listen(3008, () => { console.log('Server is running on https://localhost:3008') })

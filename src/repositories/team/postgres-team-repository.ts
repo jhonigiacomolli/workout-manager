@@ -11,6 +11,7 @@ export class PgTeamRepository implements Team {
       members
     ) VALUES($1, CURRENT_TIMESTAMP , $2) RETURNING
       id,
+      created_at,
       COALESCE(name, '') as name,
       COALESCE(members, ARRAY[]::text[]) AS members
     `, [
