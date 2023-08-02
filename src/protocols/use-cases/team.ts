@@ -6,4 +6,5 @@ export type CreateTeamParams = Omit<TeamModel, 'id'>
 export interface Team {
   getTeamByID: (id: string) => Promise<TeamModel | undefined>
   getAllTeams: (params?: HTTPRequestParams) => Promise<TeamModel[]>
+  create: (params: CreateTeamParams) => Promise<TeamModel>
 }

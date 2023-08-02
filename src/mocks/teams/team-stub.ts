@@ -10,4 +10,8 @@ export class TeamStub implements Team {
   async getAllTeams(): Promise<TeamModel[]> {
     return Promise.resolve(makeFakeTeamList())
   }
+
+  async create(): Promise<TeamModel> {
+    return Promise.resolve(makeFakeTeam())
+  }
 }
