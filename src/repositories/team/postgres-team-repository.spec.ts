@@ -6,7 +6,7 @@ jest.mock('pg', () => {
   const mClient = {
     connect: jest.fn(),
     query: () => ({
-      rows: [],
+      rows: [makeFakeTeam()],
       rowCount: 1,
     }),
     end: jest.fn(),
@@ -45,6 +45,19 @@ const makeSut = () => {
 }
 
 describe('Postgres Team Repository', () => {
+  describe('create()', () => {
+    test('Should return true when account register succeeds', async () => {
+      const { sut, params } = makeSut()
+      const result = await sut.create(params)
+      expect(result).toEqual(makeFakeTeam())
+    })
+    test('Should return 500 when account register fails', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.create(params)
+      return expect(result).rejects.toThrow()
+    })
+  })
   describe('getTeamByID()', () => {
     test('Should return an account model if succeeds', async () => {
       const { sut, params } = makeSut()
