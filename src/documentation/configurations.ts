@@ -1,6 +1,8 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
 import { teamGetPath, teamsListPath } from './paths/teams'
+import { teamCreatePath } from './paths/teams/team-create-path'
 import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
+import { teamModelParamsSchema } from './schemas/teams/team-model--params-schema'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -18,10 +20,13 @@ export const swaggerConfigurations = {
     'refresh-token': refreshTokenPath,
     '/accounts': accountListPath,
     '/accounts/{id}': {
-      ...accountRemovePath,
-      ...accountUpdatePath,
+      delete: accountRemovePath,
+      put: accountUpdatePath,
     },
-    '/teams': teamsListPath,
+    '/teams': {
+      get: teamsListPath,
+      post: teamCreatePath,
+    },
     '/teams/{id}': teamGetPath,
   },
   schemas: {
@@ -31,6 +36,7 @@ export const swaggerConfigurations = {
     accountUpdateParams: accountUpdateParamsSchema,
     accountCreateReturns: accountCreateReturnSchema,
     teamModel: teamModelSchema,
+    teamModelParams: teamModelParamsSchema,
   },
   components: {
     securitySchemes: {
