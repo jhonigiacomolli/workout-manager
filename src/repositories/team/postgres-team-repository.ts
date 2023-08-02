@@ -1,9 +1,26 @@
 import { client } from '@/database'
 import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { TeamModel } from '@/protocols/models/team'
-import { Team } from '@/protocols/use-cases/team'
+import { CreateTeamParams, Team } from '@/protocols/use-cases/team'
 
 export class PgTeamRepository implements Team {
+  async create(props: CreateTeamParams): Promise<TeamModel> {
+    const result = await client.query(`INSERT INTO teams(
+      name,
+      created_at,
+      members
+    ) VALUES($1, CURRENT_TIMESTAMP , $2) RETURNING
+      id,
+      COALESCE(name, '') as name,
+      COALESCE(members, ARRAY[]::text[]) AS members
+    `, [
+      props.name,
+      props.members,
+    ])
+
+    return result.rows[0]
+  }
+
   async getTeamByID(id: string): Promise<TeamModel | undefined> {
     try {
       const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])

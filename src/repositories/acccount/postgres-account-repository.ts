@@ -48,7 +48,6 @@ export class PgAccountRepository implements Account {
       account.teamId,
     ])
 
-    console.log('Data: ', result)
     return result.rows[0]
   }
 
