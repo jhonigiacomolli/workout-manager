@@ -53,7 +53,6 @@ export class PgTeamRepository implements Team {
         members: row.members,
       }))
     } catch (errr) {
-      console.log('Error: ', errr)
       return []
     }
   }

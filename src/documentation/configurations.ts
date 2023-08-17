@@ -2,6 +2,7 @@ import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, sign
 import { teamGetPath, teamsListPath } from './paths/teams'
 import { teamCreatePath } from './paths/teams/team-create-path'
 import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
+import { accountCreateParamsSchema } from './schemas/accounts/create-account-parms-schema'
 import { teamModelParamsSchema } from './schemas/teams/team-model--params-schema'
 
 export const swaggerConfigurations = {
@@ -33,8 +34,9 @@ export const swaggerConfigurations = {
     error: errorSchema,
     message: messageSchema,
     accountModel: accountModelSchema,
-    accountUpdateParams: accountUpdateParamsSchema,
+    accountCreateParams: accountCreateParamsSchema,
     accountCreateReturns: accountCreateReturnSchema,
+    accountUpdateParams: accountUpdateParamsSchema,
     teamModel: teamModelSchema,
     teamModelParams: teamModelParamsSchema,
   },

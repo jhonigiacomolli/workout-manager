@@ -34,7 +34,6 @@ export class LoadAllTeamsController implements Controller {
         body: teams,
       }
     } catch (err) {
-      console.log('Err: ', err)
       return httpResponse(500, 'Internal Server Error')
     }
   }

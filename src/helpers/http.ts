@@ -28,7 +28,6 @@ export const httpRequest = (content: any, header?: any, params?: any, query?: an
 
 export const useRouteController = (controller: Controller) => {
   return async (req: Request, res: Response) => {
-    console.log('Query: ', req.query)
     const httpResponse = await controller.handle({
       headers: { ...req.headers },
       params: { ...req.params },

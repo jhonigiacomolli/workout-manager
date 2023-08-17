@@ -52,7 +52,6 @@ export class SignUpController implements Controller {
         data: result || {},
       })
     } catch (err) {
-      console.log('err: ', err)
       return httpResponse(500, 'Internal Server Error')
     }
   }

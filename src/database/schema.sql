@@ -1,11 +1,10 @@
-CREATE DATABASE workout;
-
 CREATE EXTENSION IF NOT EXISTS  "uuid-ossp";
 
 CREATE TABLE IF NOT EXISTS teams(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
   name VARCHAR NOT NULL,
-  members VARCHAR[]
+  members VARCHAR[],
+  created_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS accounts(
@@ -23,5 +22,6 @@ CREATE TABLE IF NOT EXISTS accounts(
   tasks VARCHAR[],
   image VARCHAR,
   teamId UUID,
-  FOREIGN KEY (teamId) REFERENCES teams(id)
+  FOREIGN KEY (teamId) REFERENCES teams(id),
+  created_at TIMESTAMP
 );
