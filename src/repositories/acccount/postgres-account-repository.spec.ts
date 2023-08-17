@@ -26,19 +26,18 @@ const fakeRequestParams = {
 const querySql = `
         SELECT
         id,
-        name,
+        COALESCE(name, '') as name,
         created_at,
-        email,
-        password,
-        image,
-        permissions,
-        phone,
-        address,
-        boards,
-        desktops,
-        responsability,
-        status,
-        tasks,
+        COALESCE(email, '') as email,
+        COALESCE(image, '') as image,
+        COALESCE(permissions, ARRAY[]::text[]) AS permissions,
+        COALESCE(phone, '') as phone,
+        COALESCE(address, '') as address,
+        COALESCE(boards, ARRAY[]::text[]) AS boards,
+        COALESCE(desktops, ARRAY[]::text[]) AS desktops,
+        COALESCE(responsability, ARRAY[]::text[]) AS responsability,
+        COALESCE(status, ARRAY[]::text[]) AS status,
+        COALESCE(tasks, ARRAY[]::text[]) AS tasks,
         teamId
         FROM accounts
         ORDER BY name DESC

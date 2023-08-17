@@ -13,10 +13,12 @@ module.exports = {
     '!src/index.ts',
     '!src/helpers/factories/**/*ts',
     '!src/mocks/**/*ts',
+    '!src/database/**/*ts',
   ],
   modulePathIgnorePatterns: [
     '<rootDir>/dist/',
     '<rootDir>/src/mocks/',
+    '<rootDir>/src/database/',
     '<rootDir>/src/protocols/',
     '<rootDir>/src/configurations/',
     '<rootDir>/src/documentation/',
