@@ -143,4 +143,14 @@ describe('Sign Up Controller', () => {
       data: makeFakeAccount(),
     }))
   })
+  test('Should return 200 and sign in succeeds and return a empty object case repository return dont have value', async () => {
+    const { sut, accountStub, fakeRequest } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(async () => { return await Promise.resolve(false) })
+    jest.spyOn(accountStub, 'create').mockImplementationOnce(async () => { return await Promise.resolve(undefined as any) })
+    const controller = await sut.handle(fakeRequest)
+    expect(controller).toEqual(httpResponse(200, {
+      message: 'Successfully registered user',
+      data: {},
+    }))
+  })
 })
