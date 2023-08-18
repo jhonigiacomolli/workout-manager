@@ -12,10 +12,9 @@
   </span>
 </p>
 
+[![Coverage Status](https://coveralls.io/repos/github/jhonigiacomolli/workout-manager/badge.svg?branch=)](https://coveralls.io/github/jhonigiacomolli/workout-manager?branch=)
 </div>
 Notion with project requirements
 
-[![Build Status](https://app.travis-ci.com/jhonigiacomolli/workout-manager.svg?branch=main)](https://app.travis-ci.com/jhonigiacomolli/workout-manager)
-[![Coverage Status](https://coveralls.io/repos/github/jhonigiacomolli/workout-manager/badge.svg?branch=)](https://coveralls.io/github/jhonigiacomolli/workout-manager?branch=)
 
 [View Project on Notion](https://elastic-tangelo-d0a.notion.site/Workout-Manager-11eb94ca063b4ebca048cc7c773be3a2?pvs=4)

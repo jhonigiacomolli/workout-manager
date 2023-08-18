@@ -17,7 +17,6 @@
     "test:integration": "yarn test --watch -c jest-config-integration.js",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage",
-    "test:coveralls": "npm run test:ci && coveralls < coverage/lcov.info",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
     "prepare": "husky install"
   },

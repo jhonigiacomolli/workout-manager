@@ -24,8 +24,11 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
 
+      - name: Run Code Linting
+        run: npm run lint 'src/**'
+
       - name: Run Jest
-        run: yarn test --coverage
+        run: npm run test:ci
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
