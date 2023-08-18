@@ -13,6 +13,7 @@
 </p>
 
 [![Coverage Status](https://coveralls.io/repos/github/jhonigiacomolli/workout-manager/badge.svg?branch=)](https://coveralls.io/github/jhonigiacomolli/workout-manager?branch=)
+![example workflow](https://github.com/jhonigiacomolli/workout-manager/actions/workflows/ci.yml/badge.svg)
 </div>
 Notion with project requirements
 

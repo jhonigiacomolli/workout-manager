@@ -1,4 +1,4 @@
-name: CI
+name: Automated Tests
 
 on: ['push', 'pull_request']
 
@@ -23,9 +23,6 @@ jobs:
 
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-
-      - name: Run Code Linting
-        run: npm run lint 'src/**'
 
       - name: Run Jest
         run: npm run test:ci
