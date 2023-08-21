@@ -23,6 +23,13 @@ export const authenticate = async (request: Request, response: Response, next: N
     return
   }
 
+  const isUser = await account.getUserById(data.id)
+
+  if (!isUser) {
+    response.status(401).json({ error: 'Unauthorized' })
+    return
+  }
+
   request.params.userId = data.id
 
   next()
