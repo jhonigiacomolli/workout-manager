@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { authenticate } from './authentication-middleware'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
+import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 
 const fakeRequest = {
   headers: {
@@ -70,11 +71,19 @@ describe('Authentication Middleware', () => {
       error: 'Unauthorized',
     })
   })
+  test('Should return 401 if id included on token not to belong a any user', async () => {
+    jest.spyOn(accountStub, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined))
+
+    await authenticate(fakeRequest, fakeResponse, fakeNext, accountStub, encrypterStub)
+
+    expect(accountStub.getUserById).toHaveBeenCalled()
+    expect(accountStub.getUserById).toHaveBeenCalledWith(makeFakeAccount().id)
+    expect(fakeResponse.status).toHaveBeenCalledWith(401)
+    expect(fakeResponse.json).toHaveBeenCalledWith({
+      error: 'Unauthorized',
+    })
+  })
   test('Should return 200 if access token is authenticated', async () => {
-    jest.spyOn(encrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve({
-      data: { id: 'valid_id' },
-      status: { success: true, message: '' },
-    }))
     await authenticate(fakeRequest, fakeResponse, fakeNext, accountStub, encrypterStub)
 
     expect(fakeNext).toHaveBeenCalled()
