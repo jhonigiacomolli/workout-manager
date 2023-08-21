@@ -102,6 +102,22 @@ describe('Postgres Account Repository', () => {
       return expect(result).rejects.toThrow()
     })
   })
+  describe('getUserById()', () => {
+    test('Should return an account model if succeeds', async () => {
+      const { sut, params } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [params] }))
+
+      const newResult = await sut.getUserById(params.id)
+      expect(newResult).toEqual(params)
+    })
+    test('Should return 500 when account query fails', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.getUserByEmail(params.email)
+      return expect(result).rejects.toThrow()
+    })
+  })
   describe('getAllAccounts()', () => {
     test('Should return an account model list if succeeds', async () => {
       const { sut } = makeSut()
