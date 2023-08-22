@@ -1,10 +1,5 @@
-type Input = {
-  statusCode: number,
-  date: string,
-  message: string
-  stack: string
-}
+import { ErrorLogInput } from '@/protocols/models/log/error-log'
 
 export interface ErrorLog {
-  save: (input: Input) => Promise<void>
+  save: (input: ErrorLogInput) => Promise<void>
 }
