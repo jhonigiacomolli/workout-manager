@@ -6,6 +6,8 @@ class ErrorLogRepositoryStub implements ErrorLog {
   async save() { console.log() }
 }
 
+jest.useFakeTimers().setSystemTime(new Date('8/22/2023, 12:00:00 AM'))
+
 const errorLogrepositoryStub = new ErrorLogRepositoryStub()
 
 describe('LogController', () => {
@@ -18,7 +20,7 @@ describe('LogController', () => {
 
     expect(repositorySpy).toHaveBeenCalledWith({
       statusCode: 500,
-      date: new Date().toLocaleString(),
+      date: '8/22/2023, 12:00:00 AM',
       message: error.message,
       stack: error.stack?.split('at')[1].trim(),
     })
@@ -32,7 +34,7 @@ describe('LogController', () => {
 
     expect(repositorySpy).toHaveBeenCalledWith({
       statusCode: 404,
-      date: new Date().toLocaleString(),
+      date: '8/22/2023, 12:00:00 AM',
       message: notfoundError.message,
       stack: notfoundError.stack?.split('at')[1].trim(),
     })
@@ -43,7 +45,7 @@ describe('LogController', () => {
 
     expect(repositorySpy).toHaveBeenCalledWith({
       statusCode: 401,
-      date: new Date().toLocaleString(),
+      date: '8/22/2023, 12:00:00 AM',
       message: unautorizedError.message,
       stack: unautorizedError.stack?.split('at')[1].trim(),
     })
@@ -59,7 +61,7 @@ describe('LogController', () => {
 
     expect(repositorySpy).toHaveBeenCalledWith({
       statusCode: 404,
-      date: new Date().toLocaleString(),
+      date: '8/22/2023, 12:00:00 AM',
       message: notfoundError.message,
       stack: '',
     })
