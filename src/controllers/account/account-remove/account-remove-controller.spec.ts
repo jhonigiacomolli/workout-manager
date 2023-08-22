@@ -1,6 +1,7 @@
 import { AccountStub } from '@/mocks/account/account-stub'
 import { AccountRemoveController } from './account-remove-controller'
 import { httpRequest, httpResponse } from '@/helpers/http'
+import { BadRequestError } from '@/helpers/errors'
 
 const body = {}
 const headers = {
@@ -34,25 +35,26 @@ describe('Account Remove Controller', () => {
     const wrongFakeRequest = { ...fakeRequest }
     wrongFakeRequest.params = {}
 
-    const result = await sut.handle(wrongFakeRequest)
+    const result = sut.handle(wrongFakeRequest)
 
-    expect(result).toEqual(httpResponse(400, 'Empty param: id is required'))
+    await expect(result).rejects.toThrow(new BadRequestError('Empty param: id is required'))
   })
   test('Should return 400 if no account delete method return false', async () => {
     const { sut, accountStub } = makeSut()
 
     jest.spyOn(accountStub, 'delete').mockReturnValueOnce(Promise.resolve(false))
-    const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(400, 'User removal failed'))
+    const result = sut.handle(fakeRequest)
+
+    await expect(result).rejects.toThrow(new BadRequestError('User removal failed'))
   })
   test('Should return 500 if any method throws', async () => {
     const { sut, accountStub } = makeSut()
 
     jest.spyOn(accountStub, 'delete').mockImplementationOnce(() => { throw new Error() })
 
-    const result = await sut.handle(fakeRequest)
+    const result = sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    await expect(result).rejects.toThrow()
   })
 })
