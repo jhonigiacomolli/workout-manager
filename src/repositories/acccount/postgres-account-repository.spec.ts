@@ -150,13 +150,13 @@ describe('Postgres Account Repository', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
     })
-    test('Should return an empty list when account query fails', async () => {
+    test('Should thorws an erro when account query fails', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-      const result = await sut.getAllAccounts(fakeRequestParams)
-      expect(result).toEqual([])
+      const result = sut.getAllAccounts(fakeRequestParams)
+      await expect(result).rejects.toThrow()
     })
   })
   describe('setuserById()', () => {
@@ -183,8 +183,8 @@ describe('Postgres Account Repository', () => {
     test('Should throws if account updated fails', async () => {
       const { sut, params } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
-      const result = await sut.delete(params.id)
-      return expect(result).toBeFalsy()
+      const result = sut.delete(params.id)
+      await expect(result).rejects.toThrow()
     })
   })
 })
