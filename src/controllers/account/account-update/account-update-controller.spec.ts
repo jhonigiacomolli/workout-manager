@@ -3,6 +3,7 @@ import { AccountStub } from '@/mocks/account/account-stub'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 import { AccountUdateController } from './account-update-controller'
 import { TeamStub } from '@/mocks/teams/team-stub'
+import { BadRequestError } from '@/helpers/errors'
 
 const makeSut = () => {
   const body = {
@@ -36,9 +37,9 @@ describe('Account Update Controller', () => {
 
     jest.spyOn(accountStub, 'setUserById').mockReturnValueOnce(Promise.resolve(false))
 
-    const result = await sut.handle(fakeRequest)
+    const result = sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(400, 'Account update fails'))
+    await expect(result).rejects.toThrow(new BadRequestError('Account update fails'))
   })
   test('Should return 500 if setUserById method throws', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
@@ -47,9 +48,9 @@ describe('Account Update Controller', () => {
       throw new Error()
     })
 
-    const result = await sut.handle(fakeRequest)
+    const result = sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    await expect(result).rejects.toThrow()
   })
   test('Should return 400 if id is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -58,14 +59,14 @@ describe('Account Update Controller', () => {
 
     worngRequest.params = {}
 
-    const result = await sut.handle(worngRequest)
+    const result = sut.handle(worngRequest)
 
-    expect(result).toEqual(httpResponse(400, 'Empty param: id is required'))
+    await expect(result).rejects.toThrow(new BadRequestError('Empty param: id is required'))
   })
   test('Should return 400 if name is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle({
+    const result = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -73,12 +74,12 @@ describe('Account Update Controller', () => {
       },
     })
 
-    expect(result).toEqual(httpResponse(400, 'Empty param: name is required'))
+    await expect(result).rejects.toThrow(new BadRequestError('Empty param: name is required'))
   })
   test('Should return 400 if email is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle({
+    const result = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -86,13 +87,14 @@ describe('Account Update Controller', () => {
       },
     })
 
-    expect(result).toEqual(httpResponse(400, 'Empty param: email is required'))
+    await expect(result).rejects.toThrow(new BadRequestError('Empty param: email is required'))
   })
   test('Should return 400 if teamId is invalid', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
     jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
-    const result = await sut.handle({
+
+    const result = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -100,7 +102,7 @@ describe('Account Update Controller', () => {
       },
     })
 
-    expect(result).toEqual(httpResponse(400, 'Invalid param: teamId'))
+    await expect(result).rejects.toThrow(new BadRequestError('Invalid param: teamId'))
   })
   test('Should return 200 when update successfull', async () => {
     const { sut, fakeRequest } = makeSut()
