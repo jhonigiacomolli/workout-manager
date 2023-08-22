@@ -3,6 +3,7 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
+import { BadRequestError, ForbiddenError, NotFoundError } from '@/helpers/errors'
 
 const makeSut = () => {
   const accountStub = new AccountStub()
@@ -30,61 +31,61 @@ const makeSut = () => {
 describe('Sign in', () => {
   test('Should return 400 if no email is provided', async () => {
     const { sut, fakeRequest } = makeSut()
-    const response = await sut.handle({
+    const response = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
         email: '',
       },
     })
-    expect(response).toEqual(httpResponse(400, 'Empty param: email is required'))
+    await expect(response).rejects.toThrow(new BadRequestError('Empty param: email is required'))
   })
   test('Should return 400 if no passwrod is provided', async () => {
     const { sut, fakeRequest } = makeSut()
-    const response = await sut.handle({
+    const response = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
         password: '',
       },
     })
-    expect(response).toEqual(httpResponse(400, 'Empty param: password is required'))
+    await expect(response).rejects.toThrow(new BadRequestError('Empty param: password is required'))
   })
   test('Should return 404 if email is not registed', async () => {
     const { sut, fakeRequest, accountStub } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(false))
-    const response = await sut.handle(fakeRequest)
-    expect(response).toEqual(httpResponse(404, 'user not found'))
+    const response = sut.handle(fakeRequest)
+    await expect(response).rejects.toThrow(new NotFoundError('user not found'))
   })
   test('Should return 404 if user not found on get email by emai method', async () => {
     const { sut, fakeRequest, accountStub } = makeSut()
     jest.spyOn(accountStub, 'getUserByEmail').mockReturnValueOnce(Promise.resolve(undefined))
-    const response = await sut.handle(fakeRequest)
-    expect(response).toEqual(httpResponse(404, 'user not found'))
+    const response = sut.handle(fakeRequest)
+    await expect(response).rejects.toThrow(new NotFoundError('user not found'))
   })
   test('Should return 403 if wrong password is provided', async () => {
     const { sut, fakeRequest, hasherStub } = makeSut()
     jest.spyOn(hasherStub, 'compare').mockReturnValueOnce(Promise.resolve(false))
-    const response = await sut.handle(fakeRequest)
-    expect(response).toEqual(httpResponse(403, 'wrong password'))
+    const response = sut.handle(fakeRequest)
+    await expect(response).rejects.toThrow(new ForbiddenError('wrong password'))
   })
   test('Should return 500 if any controller method throws', async () => {
     const { sut, fakeRequest, accountStub, hasherStub, encryptStub } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockImplementationOnce(() => { throw new Error() })
-    const response = await sut.handle(fakeRequest)
-    expect(response).toEqual(httpResponse(500, 'Internal Server Error'))
+    const response = sut.handle(fakeRequest)
+    await expect(response).rejects.toThrow()
 
     jest.spyOn(accountStub, 'getUserByEmail').mockImplementationOnce(() => { throw new Error() })
-    const response2 = await sut.handle(fakeRequest)
-    expect(response2).toEqual(httpResponse(500, 'Internal Server Error'))
+    const response2 = sut.handle(fakeRequest)
+    await expect(response2).rejects.toThrow()
 
     jest.spyOn(hasherStub, 'compare').mockImplementationOnce(() => { throw new Error() })
-    const response3 = await sut.handle(fakeRequest)
-    expect(response3).toEqual(httpResponse(500, 'Internal Server Error'))
+    const response3 = sut.handle(fakeRequest)
+    await expect(response3).rejects.toThrow()
 
     jest.spyOn(encryptStub, 'encrypt').mockImplementationOnce(() => { throw new Error() })
-    const response4 = await sut.handle(fakeRequest)
-    expect(response4).toEqual(httpResponse(500, 'Internal Server Error'))
+    const response4 = sut.handle(fakeRequest)
+    await expect(response4).rejects.toThrow()
   })
   test('Should return accessToken if proccess succeeds', async () => {
     const { sut, encryptStub, fakeRequest } = makeSut()
