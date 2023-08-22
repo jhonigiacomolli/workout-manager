@@ -6,6 +6,7 @@ export const teamGetPath = {
       {
         name: 'id',
         in: 'path',
+        required: true,
         schema: {
           type: 'string',
         },

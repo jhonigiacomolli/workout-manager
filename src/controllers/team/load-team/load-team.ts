@@ -12,6 +12,7 @@ export class LoadTeamController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const teamId = request.params.id
+
     if (!teamId) {
       throw new BadRequestError('Required param teamId is not provided')
     }

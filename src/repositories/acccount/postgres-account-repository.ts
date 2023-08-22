@@ -107,19 +107,19 @@ export class PgAccountRepository implements Account {
     const { rowCount } = await client.query(`
     UPDATE accounts
     SET
-      name=$2,
-      email=$3,
-      password=$4,
-      image=$5,
-      permissions=$6,
-      phone=$7,
-      address=$8,
-      boards=$9,
-      desktops=$10,
-      responsability=$11,
-      status=$12,
-      tasks=$13,
-      teamId=$14
+      name=COALESCE($2,name),
+      email=COALESCE($3,email),
+      password=COALESCE($4, password),
+      image=COALESCE($5,image),
+      permissions=COALESCE($6,permissions),
+      phone=COALESCE($7,phone),
+      address=COALESCE($8,address),
+      boards=COALESCE($9,boards),
+      desktops=COALESCE($10,desktops),
+      responsability=COALESCE($11,responsability),
+      status=COALESCE($12,status),
+      tasks=COALESCE($13,tasks),
+      teamId=COALESCE($14,teamId)
     WHERE id=$1
   `, [
       accountId,
