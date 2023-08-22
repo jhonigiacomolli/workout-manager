@@ -31,10 +31,7 @@ describe('LoadAllTeamsController', () => {
 
     const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual({
-      statusCode: 200,
-      body: makeFakeTeamList(),
-    })
+    expect(result).toEqual(httpResponse(200, makeFakeTeamList()))
   })
   test('Should return a empty list of teams if not have entries on db', async () => {
     const { sut, teamStub } = makeSut()
@@ -43,10 +40,7 @@ describe('LoadAllTeamsController', () => {
 
     const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual({
-      statusCode: 200,
-      body: [],
-    })
+    expect(result).toEqual(httpResponse(200, []))
   })
   test('Should getAllTeams to have been called with correct params', async () => {
     const { sut, teamStub } = makeSut()
@@ -88,8 +82,8 @@ describe('LoadAllTeamsController', () => {
 
     jest.spyOn(teamStub, 'getAllTeams').mockImplementationOnce(() => { throw new Error() })
 
-    const result = await sut.handle(fakeRequest)
+    const result = sut.handle(fakeRequest)
 
-    await expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    await expect(result).rejects.toThrow()
   })
 })
