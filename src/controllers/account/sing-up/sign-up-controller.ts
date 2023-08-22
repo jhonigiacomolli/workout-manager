@@ -5,6 +5,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
 
 import { httpResponse } from '@/helpers/http'
+import { BadRequestError, ForbiddenError } from '@/helpers/errors'
 
 interface ConstructorProps {
   emailValidator: EmailValidator
@@ -17,42 +18,42 @@ export class SignUpController implements Controller {
   }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
-    try {
-      const requiredParams = ['name', 'email', 'password', 'passwordConfirmation']
+    const requiredParams = ['name', 'email', 'password', 'passwordConfirmation']
 
-      const { email, password, passwordConfirmation } = request.body
+    const { email, password, passwordConfirmation } = request.body
 
-      for (const param of requiredParams) {
-        if (!request.body[param]) {
-          return httpResponse(400, `Empty param: ${param} is required`)
-        }
+    for (const param of requiredParams) {
+      if (!request.body[param]) {
+        throw new BadRequestError(`Empty param: ${param} is required`)
       }
-
-      if (password !== passwordConfirmation) {
-        return httpResponse(400, 'password and passwordConfirmation must be equal')
-      }
-
-      const isValid = this.dependencies.emailValidator.validate(email)
-
-      if (!isValid) return httpResponse(400, 'Invalid param: email')
-
-      const emailInUse = await this.dependencies.account.checkEmailInUse(email)
-
-      if (emailInUse) return (httpResponse(403, 'E-mail already in use'))
-
-      const hashedPassword = await this.dependencies.hasher.generate(password)
-
-      const result = await this.dependencies.account.create({
-        ...request.body,
-        password: hashedPassword,
-      })
-
-      return httpResponse(200, {
-        message: 'Successfully registered user',
-        data: result || {},
-      })
-    } catch (err) {
-      return httpResponse(500, 'Internal Server Error')
     }
+
+    if (password !== passwordConfirmation) {
+      throw new BadRequestError('password and passwordConfirmation must be equal')
+    }
+
+    const isValid = this.dependencies.emailValidator.validate(email)
+
+    if (!isValid) {
+      throw new BadRequestError('Invalid param: email')
+    }
+
+    const emailInUse = await this.dependencies.account.checkEmailInUse(email)
+
+    if (emailInUse) {
+      throw new ForbiddenError('E-mail already in use')
+    }
+
+    const hashedPassword = await this.dependencies.hasher.generate(password)
+
+    const result = await this.dependencies.account.create({
+      ...request.body,
+      password: hashedPassword,
+    })
+
+    return httpResponse(200, {
+      message: 'Successfully registered user',
+      data: result || {},
+    })
   }
 }
