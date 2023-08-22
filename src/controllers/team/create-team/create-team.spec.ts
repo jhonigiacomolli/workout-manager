@@ -2,6 +2,7 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { CreateTeamController } from './create-team'
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
+import { BadRequestError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({
   name: 'valid_team_title',
@@ -37,13 +38,13 @@ describe('Create Team Controller', () => {
   })
   test('Should return 400 if title param is not provided', async () => {
     const { sut } = makeSut()
-    const result = await sut.handle(fakeEmptyRequest)
-    expect(result).toEqual(httpResponse(400, 'Empty param: name is required'))
+    const result = sut.handle(fakeEmptyRequest)
+    await expect(result).rejects.toThrow(new BadRequestError('Empty param: name is required'))
   })
   test('Should return 500 if method throws when create new team', async () => {
     const { sut, teamStub } = makeSut()
     jest.spyOn(teamStub, 'create').mockImplementationOnce(() => { throw new Error() })
-    const result = await sut.handle(fakeRequest)
-    expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    const result = sut.handle(fakeRequest)
+    await expect(result).rejects.toThrow()
   })
 })
