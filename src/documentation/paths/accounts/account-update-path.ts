@@ -5,13 +5,13 @@ export const accountUpdatePath = {
     {
       name: 'id',
       required: true,
+      in: 'path',
       schema: {
         type: 'string',
       },
     },
   ],
   requestBody: {
-    required: true,
     in: 'path',
     content: {
       'application/json': {

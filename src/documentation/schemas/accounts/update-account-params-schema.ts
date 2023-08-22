@@ -59,5 +59,4 @@ export const accountUpdateParamsSchema = {
       type: 'string',
     },
   },
-  required: ['name', 'email', 'password'],
 }
