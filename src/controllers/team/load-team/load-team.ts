@@ -1,3 +1,4 @@
+import { BadRequestError, NotFoundError } from '@/helpers/errors'
 import { httpResponse } from '@/helpers/http'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
@@ -12,15 +13,15 @@ export class LoadTeamController implements Controller {
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const teamId = request.params.id
     if (!teamId) {
-      return Promise.resolve(httpResponse(400, 'Required param teamId is not provided'))
+      throw new BadRequestError('Required param teamId is not provided')
     }
 
     const team = await this.dependencies.team.getTeamByID(teamId)
 
     if (!team) {
-      return Promise.resolve(httpResponse(404, 'Team not found'))
+      throw new NotFoundError('Team not found')
     }
 
-    return Promise.resolve(httpResponse(200, { data: team }))
+    return httpResponse(200, team)
   }
 }
