@@ -1,6 +1,6 @@
 import { client } from '@/database'
 import { PgTeamRepository } from './postgres-team-repository'
-import { makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+import { makeFakePostgresTeam, makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
 
 jest.mock('pg', () => {
   const mClient = {
@@ -62,18 +62,18 @@ describe('Postgres Team Repository', () => {
     test('Should return an account model if succeeds', async () => {
       const { sut, params } = makeSut()
 
-      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [params] }))
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgresTeam()] }))
 
       const newResult = await sut.getTeamByID(params.id)
       expect(newResult).toEqual(params)
     })
-    test('Should return undefined when account query fails', async () => {
+    test('Should throws when account query fails', async () => {
       const { sut, params } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-      const result = await sut.getTeamByID(params.id)
-      expect(result).toBe(undefined)
+      const result = sut.getTeamByID(params.id)
+      await expect(result).rejects.toThrow()
     })
   })
   describe('getAllTeams()', () => {
@@ -108,13 +108,13 @@ describe('Postgres Team Repository', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
     })
-    test('Should return an empty list when account query fails', async () => {
+    test('Should throws when account query fails', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-      const result = await sut.getAllTeams(fakeRequestParams)
-      expect(result).toEqual([])
+      const result = sut.getAllTeams(fakeRequestParams)
+      await expect(result).rejects.toThrow()
     })
   })
 })
