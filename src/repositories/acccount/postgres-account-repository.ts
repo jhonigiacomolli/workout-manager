@@ -64,8 +64,7 @@ export class PgAccountRepository implements Account {
   }
 
   async getAllAccounts(params: HTTPPaginationAndOrderParams): Promise<AccountModel[]> {
-    try {
-      const { rows } = await client.query(`
+    const { rows } = await client.query(`
         SELECT
         id,
         COALESCE(name, '') as name,
@@ -87,18 +86,15 @@ export class PgAccountRepository implements Account {
         OFFSET $2::integer * $1::integer
       `, [params.limit, params.offset])
 
-      return rows.map(row => {
+    return rows.map(row => {
+      // eslint-disable-next-line
+      const { created_at, ...rowItems } = row
+      return {
+        ...rowItems,
         // eslint-disable-next-line
-        const { created_at, ...rowItems } = row
-        return {
-          ...rowItems,
-          // eslint-disable-next-line
-          createdAt: created_at,
-        }
-      })
-    } catch (err) {
-      return []
-    }
+        createdAt: created_at,
+      }
+    })
   }
 
   async checkEmailInUse(email: string): Promise<boolean> {
@@ -146,15 +142,11 @@ export class PgAccountRepository implements Account {
   }
 
   async delete(accountId: string): Promise<boolean> {
-    try {
-      const { rowCount } = await client.query(
-        'DELETE FROM accounts WHERE ID=$1',
-        [accountId],
-      )
+    const { rowCount } = await client.query(
+      'DELETE FROM accounts WHERE ID=$1',
+      [accountId],
+    )
 
-      return rowCount > 0
-    } catch {
-      return false
-    }
+    return rowCount > 0
   }
 }
