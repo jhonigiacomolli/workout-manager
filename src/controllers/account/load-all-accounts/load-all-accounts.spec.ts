@@ -1,4 +1,4 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { LoadAllAccountsController } from './load-all-accounts'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
@@ -83,13 +83,13 @@ describe('LoadAllAccountsController', () => {
       orderBy: 'name',
     })
   })
-  test('Should return 500 if loadAll method throws', async () => {
+  test('Should return throw if loadAll method throws', async () => {
     const { sut, accountStub } = makeSut()
 
     jest.spyOn(accountStub, 'getAllAccounts').mockImplementationOnce(() => { throw new Error() })
 
-    const result = await sut.handle(fakeRequest)
+    const result = sut.handle(fakeRequest)
 
-    await expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    await expect(result).rejects.toThrow()
   })
 })
