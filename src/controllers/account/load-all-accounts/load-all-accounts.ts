@@ -14,27 +14,20 @@ export class LoadAllAccountsController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
-    try {
-      const { limit, page, offset, orderBy, order } = request.query.pagination
+    const { limit, page, offset, orderBy, order } = request.query.pagination
 
-      const fields: AccountKeys[] = ['id', 'name', 'email', 'phone', 'address', 'status']
+    const fields: AccountKeys[] = ['id', 'name', 'email', 'phone', 'address', 'status']
 
-      const orderByField = fields.includes(orderBy) ? orderBy : 'name'
+    const orderByField = fields.includes(orderBy) ? orderBy : 'name'
 
-      const accounts = await this.dependencies.account.getAllAccounts({
-        limit,
-        page,
-        offset,
-        orderBy: orderByField,
-        order,
-      })
+    const accounts = await this.dependencies.account.getAllAccounts({
+      limit,
+      page,
+      offset,
+      orderBy: orderByField,
+      order,
+    })
 
-      return {
-        statusCode: 200,
-        body: accounts,
-      }
-    } catch {
-      return httpResponse(500, 'Internal Server Error')
-    }
+    return httpResponse(200, accounts)
   }
 }
