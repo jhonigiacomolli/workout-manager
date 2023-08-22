@@ -52,20 +52,22 @@ describe('Sign in', () => {
     await expect(response).rejects.toThrow(new BadRequestError('Empty param: password is required'))
   })
   test('Should return 404 if email is not registed', async () => {
-    const { sut, fakeRequest, accountStub } = makeSut()
-    jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(false))
+    const { sut, fakeRequest } = makeSut()
     const response = sut.handle(fakeRequest)
     await expect(response).rejects.toThrow(new NotFoundError('user not found'))
   })
-  test('Should return 404 if user not found on get email by emai method', async () => {
+  test('Should return 404 if user not found on getUserByEmail method', async () => {
     const { sut, fakeRequest, accountStub } = makeSut()
+    jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(true))
     jest.spyOn(accountStub, 'getUserByEmail').mockReturnValueOnce(Promise.resolve(undefined))
     const response = sut.handle(fakeRequest)
     await expect(response).rejects.toThrow(new NotFoundError('user not found'))
   })
+
   test('Should return 403 if wrong password is provided', async () => {
-    const { sut, fakeRequest, hasherStub } = makeSut()
+    const { sut, accountStub, fakeRequest, hasherStub } = makeSut()
     jest.spyOn(hasherStub, 'compare').mockReturnValueOnce(Promise.resolve(false))
+    jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(true))
     const response = sut.handle(fakeRequest)
     await expect(response).rejects.toThrow(new ForbiddenError('wrong password'))
   })
@@ -88,12 +90,16 @@ describe('Sign in', () => {
     await expect(response4).rejects.toThrow()
   })
   test('Should return accessToken if proccess succeeds', async () => {
-    const { sut, encryptStub, fakeRequest } = makeSut()
+    const { sut, accountStub, encryptStub, fakeRequest } = makeSut()
+
     const mockedEncrypt = jest.fn()
     mockedEncrypt.mockReturnValueOnce('encrypted_access_token')
     mockedEncrypt.mockReturnValueOnce('encrypted_refresh_token')
     jest.spyOn(encryptStub, 'encrypt').mockImplementation(mockedEncrypt)
+    jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(true))
+
     const response = await sut.handle(fakeRequest)
+
     expect(mockedEncrypt).toHaveBeenCalledTimes(2)
     expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 3600 })
     expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 86400 })
