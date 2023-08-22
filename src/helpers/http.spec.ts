@@ -1,4 +1,7 @@
+import { NotFoundError, UnauthorizedError } from './errors'
 import { httpRequest, httpResponse, useRouteController } from './http'
+
+jest.mock('@/controllers/log/error-log-controller')
 
 describe('http', () => {
   describe('httpRequest', () => {
@@ -94,6 +97,45 @@ describe('http', () => {
 
       expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
       expect(res.json).toHaveBeenCalledWith(httpResponse.body)
+    })
+
+    it('should return and custom internal server error response if any methods throw a generic error', async () => {
+      jest.spyOn(controller, 'handle').mockImplementationOnce(() => { throw new Error('') })
+      controller.handle.mockResolvedValue(httpResponse)
+
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(500)
+      expect(res.json).toHaveBeenCalledWith({
+        error: 'Internal Server Error',
+      })
+    })
+
+    it('should return and custom error response if any methods throw a NotFoundError', async () => {
+      jest.spyOn(controller, 'handle').mockImplementationOnce(() => { throw new NotFoundError() })
+      controller.handle.mockResolvedValue(httpResponse)
+
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(404)
+      expect(res.json).toHaveBeenCalledWith({
+        error: 'Not Found!',
+      })
+    })
+
+    it('should return and custom error response if any methods throw a UnauthorizedError', async () => {
+      jest.spyOn(controller, 'handle').mockImplementationOnce(() => { throw new UnauthorizedError() })
+      controller.handle.mockResolvedValue(httpResponse)
+
+      const routeController = useRouteController(controller)
+      await routeController(req, res)
+
+      expect(res.status).toHaveBeenCalledWith(401)
+      expect(res.json).toHaveBeenCalledWith({
+        error: 'Unauthorized!',
+      })
     })
   })
 })
