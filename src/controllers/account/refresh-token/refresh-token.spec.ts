@@ -1,6 +1,7 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { RefreshTokenController } from './refresh-token'
 import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
+import { ForbiddenError } from '@/helpers/errors'
 
 const fakeCorrectRequest = httpRequest({
   refreshToken: 'valid_refresh_token',
@@ -23,8 +24,10 @@ const makeSut = () => {
 describe('Refresh Token', () => {
   test('Should return 403 if refresh token is not provided on body', async () => {
     const { sut } = makeSut()
-    const result = await sut.handle(fakeWrongRequest)
-    expect(result).toEqual(httpResponse(403, 'Empty param: refreshToken is required'))
+
+    const result = sut.handle(fakeWrongRequest)
+
+    await expect(result).rejects.toThrow(new ForbiddenError('Empty param: refreshToken is required'))
   })
   test('Should return 403 if refresh token is invalid', async () => {
     const { sut, encrypterStub } = makeSut()
@@ -34,8 +37,9 @@ describe('Refresh Token', () => {
       status: { success: true, message: '' },
     }))
 
-    const result = await sut.handle(fakeCorrectRequest)
-    expect(result).toEqual(httpResponse(403, 'Invalid param: refreshToken'))
+    const result = sut.handle(fakeCorrectRequest)
+
+    await expect(result).rejects.toThrow(new ForbiddenError('Invalid param: refreshToken'))
   })
   test('Should return 403 if refresh token is expired', async () => {
     const { sut, encrypterStub } = makeSut()
@@ -45,16 +49,18 @@ describe('Refresh Token', () => {
       status: { success: false, message: 'Expired token' },
     }))
 
-    const result = await sut.handle(fakeCorrectRequest)
-    expect(result).toEqual(httpResponse(403, 'Expired token'))
+    const result = sut.handle(fakeCorrectRequest)
+
+    await expect(result).rejects.toThrow(new ForbiddenError('Expired token'))
   })
   test('Should return 500 if encrypt throws', async () => {
     const { sut, encrypterStub } = makeSut()
 
     jest.spyOn(encrypterStub, 'decrypt').mockImplementationOnce(() => { throw new Error() })
 
-    const result = await sut.handle(fakeCorrectRequest)
-    expect(result).toEqual(httpResponse(500, 'Internal Server Error'))
+    const result = sut.handle(fakeCorrectRequest)
+
+    await expect(result).rejects.toThrow()
   })
   test('Should return accessToken and refreshToken if proccess succeeds', async () => {
     const { sut, encrypterStub } = makeSut()
