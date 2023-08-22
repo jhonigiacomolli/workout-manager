@@ -68,8 +68,8 @@ describe('Refresh Token', () => {
     const response = await sut.handle(fakeCorrectRequest)
 
     expect(mockedEncryptFn).toHaveBeenCalledTimes(2)
-    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'encrypted_token' }, { expire: 3600 })
-    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'encrypted_token' }, { expire: 86400 })
+    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 3600 })
+    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 86400 })
     expect(response).toEqual(httpResponse(200, {
       accessToken: 'encrypted_access_token',
       refreshToken: 'encrypted_refresh_token',

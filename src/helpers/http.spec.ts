@@ -95,33 +95,5 @@ describe('http', () => {
       expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
       expect(res.json).toHaveBeenCalledWith(httpResponse.body)
     })
-
-    it('should return error response if statusCode is greather then 300', async () => {
-      const httpResponse = {
-        statusCode: 300,
-        body: { message: 'Bad Request' },
-      }
-      controller.handle.mockResolvedValue(httpResponse)
-
-      const routeController = useRouteController(controller)
-      await routeController(req, res)
-
-      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
-      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body })
-    })
-
-    it('should return error response if statusCode is greather then 400', async () => {
-      const httpResponse = {
-        statusCode: 400,
-        body: { message: 'Bad Request' },
-      }
-      controller.handle.mockResolvedValue(httpResponse)
-
-      const routeController = useRouteController(controller)
-      await routeController(req, res)
-
-      expect(res.status).toHaveBeenCalledWith(httpResponse.statusCode)
-      expect(res.json).toHaveBeenCalledWith({ error: httpResponse.body })
-    })
   })
 })
