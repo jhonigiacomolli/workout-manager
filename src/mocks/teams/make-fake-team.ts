@@ -53,6 +53,13 @@ export const makeFakeTeamList = (): TeamModel[] => [
   },
 ]
 
+export const makeFakePostgresTeam = (): FakePostgresTeamModel => ({
+  id: 'valid_team_id',
+  name: 'any_name',
+  created_at: '2023-06-30T03:00:00.000Z',
+  members: [],
+})
+
 export const makeFakePostgresTeamList = (): FakePostgresTeamModel[] => [
   {
     id: 'valid_team_id',

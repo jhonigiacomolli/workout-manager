@@ -23,18 +23,18 @@ export class PgTeamRepository implements Team {
   }
 
   async getTeamByID(id: string): Promise<TeamModel | undefined> {
-    try {
-      const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
+    const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
 
-      return rows[0]
-    } catch {
-      return undefined
+    return {
+      id: rows[0].id,
+      createdAt: rows[0].created_at,
+      name: rows[0].name,
+      members: rows[0].members,
     }
   }
 
   async getAllTeams(params: HTTPPaginationAndOrderParams): Promise<TeamModel[]> {
-    try {
-      const { rows } = await client.query(`
+    const { rows } = await client.query(`
         SELECT
         id,
         name,
@@ -46,14 +46,11 @@ export class PgTeamRepository implements Team {
         OFFSET $2::integer * $1::integer
       `, [params.limit, params.offset])
 
-      return rows.map(row => ({
-        id: row.id,
-        createdAt: row.created_at,
-        name: row.name,
-        members: row.members,
-      }))
-    } catch (errr) {
-      return []
-    }
+    return rows.map(row => ({
+      id: row.id,
+      createdAt: row.created_at,
+      name: row.name,
+      members: row.members,
+    }))
   }
 }
