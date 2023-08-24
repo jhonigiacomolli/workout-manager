@@ -22,6 +22,13 @@ export class PgTeamRepository implements Team {
     return result.rows[0]
   }
 
+  async delete(id: string): Promise<boolean> {
+    if (!id) return false
+
+    const { rowCount } = await client.query('DELETE FROM teams WHERE id=$1', [id])
+    return rowCount > 0
+  }
+
   async getTeamByID(id: string): Promise<TeamModel | undefined> {
     const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
 
