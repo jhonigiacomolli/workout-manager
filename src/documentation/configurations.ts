@@ -1,6 +1,7 @@
 import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
 import { teamGetPath, teamsListPath } from './paths/teams'
 import { teamCreatePath } from './paths/teams/team-create-path'
+import { teamRemovePath } from './paths/teams/team-remove-path'
 import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema } from './schemas'
 import { accountCreateParamsSchema } from './schemas/accounts/create-account-parms-schema'
 import { teamModelParamsSchema } from './schemas/teams/team-model--params-schema'
@@ -28,7 +29,10 @@ export const swaggerConfigurations = {
       get: teamsListPath,
       post: teamCreatePath,
     },
-    '/teams/{id}': teamGetPath,
+    '/teams/{id}': {
+      get: teamGetPath,
+      delete: teamRemovePath,
+    },
   },
   schemas: {
     error: errorSchema,

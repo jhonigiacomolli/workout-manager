@@ -1,39 +1,22 @@
-export const teamGetPath = {
+export const teamRemovePath = {
   tags: ['Team'],
-  summary: 'Request a team data',
+  summary: 'Remove an team',
   parameters: [
     {
       name: 'id',
-      in: 'path',
       required: true,
+      in: 'path',
       schema: {
         type: 'string',
       },
     },
   ],
   responses: {
-    200: {
-      description: 'Team requested successfully',
-      content: {
-        'application/json': {
-          schema: {
-            $ref: '#/schemas/teamModel',
-          },
-        },
-      },
+    204: {
+      description: 'Team removed',
     },
     400: {
-      description: 'Team id is not provided',
-      content: {
-        'application/json': {
-          schema: {
-            $ref: '#/schemas/error',
-          },
-        },
-      },
-    },
-    404: {
-      description: 'Team not found',
+      description: 'Bad Request',
       content: {
         'application/json': {
           schema: {
