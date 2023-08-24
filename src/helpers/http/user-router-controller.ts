@@ -1,34 +1,9 @@
 import { type Request, type Response } from 'express'
 import { type Controller } from '@/protocols/models/controller'
-import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 
-import { CustomError } from './errors/custom-error'
+import { CustomError } from '../errors/custom-error'
 import { ErrorLogController } from '@/controllers/log/error-log-controller'
 import { ErrorLogFileSystemRepository } from '@/repositories/log/error-log-filesystem-repository'
-
-export const httpResponse = (statusCode: number, body: string | string[] | object): HTTPResponse => {
-  return {
-    statusCode,
-    body,
-  }
-}
-
-export const httpRequest = (content: any, header?: any, params?: any, query?: any): HTTPRequest => {
-  return {
-    headers: {
-      ...header,
-    },
-    params: {
-      ...params,
-    },
-    query: {
-      ...query,
-    },
-    body: {
-      ...content,
-    },
-  }
-}
 
 export const useRouteController = (controller: Controller) => {
   return async (req: Request, res: Response) => {
