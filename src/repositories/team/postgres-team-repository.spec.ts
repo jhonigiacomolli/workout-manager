@@ -58,6 +58,24 @@ describe('Postgres Team Repository', () => {
       return expect(result).rejects.toThrow()
     })
   })
+  describe('delete()', () => {
+    test('Should return true when account remove succeeds', async () => {
+      const { sut, params } = makeSut()
+      const result = await sut.delete(params.id)
+      expect(result).toBeTruthy()
+    })
+    test('Should return false id id is not provided', async () => {
+      const { sut } = makeSut()
+      const result = await sut.delete('')
+      expect(result).toBeFalsy()
+    })
+    test('Should return 500 when account remove fails', async () => {
+      const { sut, params } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.delete(params.id)
+      return expect(result).rejects.toThrow()
+    })
+  })
   describe('getTeamByID()', () => {
     test('Should return an account model if succeeds', async () => {
       const { sut, params } = makeSut()
