@@ -7,4 +7,5 @@ export interface Team {
   getTeamByID: (id: string) => Promise<TeamModel | undefined>
   getAllTeams: (params?: HTTPRequestParams) => Promise<TeamModel[]>
   create: (params: CreateTeamParams) => Promise<TeamModel>
+  delete: (id: string) => Promise<boolean>
 }

@@ -14,4 +14,8 @@ export class TeamStub implements Team {
   async create(): Promise<TeamModel> {
     return Promise.resolve(makeFakeTeam())
   }
+
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
 }
