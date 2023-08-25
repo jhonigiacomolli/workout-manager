@@ -5,7 +5,7 @@ import { httpResponse, httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
-import { BadRequestError, ForbiddenError, EmptyParamError } from '@/helpers/errors'
+import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -78,7 +78,7 @@ describe('Sign Up Controller', () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()
     jest.spyOn(emailValidatorStub, 'validate').mockReturnValueOnce(false)
     const controller = sut.handle(fakeRequest)
-    await expect(controller).rejects.toThrow(new BadRequestError('Invalid param: email'))
+    await expect(controller).rejects.toThrow(new InvalidParamError('email'))
   })
   test('Should call Email Validator with correct email param', async () => {
     const { sut, emailValidatorStub, fakeRequest } = makeSut()

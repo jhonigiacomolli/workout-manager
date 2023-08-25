@@ -1,9 +1,9 @@
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
-import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 import { AccountUdateController } from './account-update-controller'
+import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const body = {
@@ -102,7 +102,7 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new BadRequestError('Invalid param: teamId'))
+    await expect(result).rejects.toThrow(new InvalidParamError('teamId'))
   })
   test('Should return 200 when update successfull', async () => {
     const { sut, fakeRequest } = makeSut()
