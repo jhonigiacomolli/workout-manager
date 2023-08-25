@@ -1,6 +1,6 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { TeamUpdateController } from './team-update-controller'
-import { BadRequestError, EmptyParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, NotFoundError } from '@/helpers/errors'
 import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
 import { TeamStub } from '@/mocks/teams/team-stub'
 
@@ -60,6 +60,15 @@ describe('TeamUpdateController', () => {
     }
 
     expect(teamSpy).toHaveBeenCalledWith(fakeRequest.params.id, output)
+  })
+  test('Should return 404 if id provided is invalid', async () => {
+    const { sut, fakeRequest, teamStub } = makeSut()
+
+    jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
+
+    const output = sut.handle(fakeRequest)
+
+    await expect(output).rejects.toThrow(new NotFoundError('Team not found'))
   })
   test('Should return 400 if setTeamById return false', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
