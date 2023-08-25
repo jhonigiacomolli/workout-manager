@@ -1,7 +1,7 @@
 import { client } from '@/database'
-import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { TeamModel } from '@/protocols/models/team'
-import { CreateTeamParams, Team } from '@/protocols/use-cases/team'
+import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
+import { CreateTeamParams, Team, UpdateTeamParams } from '@/protocols/use-cases/team'
 
 export class PgTeamRepository implements Team {
   async create(props: CreateTeamParams): Promise<TeamModel> {
@@ -61,7 +61,7 @@ export class PgTeamRepository implements Team {
     }))
   }
 
-  async setTeamByID(id: string, data: CreateTeamParams): Promise<boolean> {
+  async setTeamByID(id: string, data: UpdateTeamParams): Promise<boolean> {
     const { rowCount } = await client.query(`
       UPDATE teams
       SET
