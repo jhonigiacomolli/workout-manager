@@ -1,9 +1,9 @@
+import { TeamStub } from '@/mocks/teams/team-stub'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
+import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 import { AccountUdateController } from './account-update-controller'
-import { TeamStub } from '@/mocks/teams/team-stub'
-import { BadRequestError } from '@/helpers/errors'
 
 const makeSut = () => {
   const body = {
@@ -61,7 +61,7 @@ describe('Account Update Controller', () => {
 
     const result = sut.handle(worngRequest)
 
-    await expect(result).rejects.toThrow(new BadRequestError('Empty param: id is required'))
+    await expect(result).rejects.toThrow(new EmptyParamError('id'))
   })
   test('Should return 400 if name is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -74,7 +74,7 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new BadRequestError('Empty param: name is required'))
+    await expect(result).rejects.toThrow(new EmptyParamError('name'))
   })
   test('Should return 400 if email is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -87,7 +87,7 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new BadRequestError('Empty param: email is required'))
+    await expect(result).rejects.toThrow(new EmptyParamError('email'))
   })
   test('Should return 400 if teamId is invalid', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()

@@ -1,7 +1,7 @@
 import { TeamStub } from '@/mocks/teams/team-stub'
-import { BadRequestError } from '@/helpers/errors'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { TeamRemoveController } from './team-remove-controller'
+import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const requestBody = {}
@@ -32,7 +32,7 @@ describe('TeamRemoveController', () => {
 
     const output = sut.handle(fakeRequestWithoutId)
 
-    await expect(output).rejects.toThrow(new BadRequestError('Empty param: id is required'))
+    await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
   test('Should calls delete mothod with teamId', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()

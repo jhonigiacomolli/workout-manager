@@ -1,7 +1,7 @@
-import { AccountStub } from '@/mocks/account/account-stub'
-import { AccountRemoveController } from './account-remove-controller'
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { BadRequestError } from '@/helpers/errors'
+import { AccountStub } from '@/mocks/account/account-stub'
+import { BadRequestError, EmptyParamError } from '@/helpers/errors'
+import { AccountRemoveController } from './account-remove-controller'
 
 const body = {}
 const headers = {
@@ -37,7 +37,7 @@ describe('Account Remove Controller', () => {
 
     const result = sut.handle(wrongFakeRequest)
 
-    await expect(result).rejects.toThrow(new BadRequestError('Empty param: id is required'))
+    await expect(result).rejects.toThrow(new EmptyParamError('id'))
   })
   test('Should return 400 if no account delete method return false', async () => {
     const { sut, accountStub } = makeSut()

@@ -1,8 +1,8 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
-import { TeamCreateController } from './team-create'
 import { TeamStub } from '@/mocks/teams/team-stub'
+import { EmptyParamError } from '@/helpers/errors'
+import { TeamCreateController } from './team-create'
+import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
-import { BadRequestError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({
   name: 'valid_team_title',
@@ -39,7 +39,7 @@ describe('TeamCreateController', () => {
   test('Should return 400 if title param is not provided', async () => {
     const { sut } = makeSut()
     const result = sut.handle(fakeEmptyRequest)
-    await expect(result).rejects.toThrow(new BadRequestError('Empty param: name is required'))
+    await expect(result).rejects.toThrow(new EmptyParamError('name'))
   })
   test('Should return 500 if method throws when create new team', async () => {
     const { sut, teamStub } = makeSut()

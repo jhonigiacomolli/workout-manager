@@ -5,7 +5,7 @@ import { httpResponse, httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
-import { BadRequestError, ForbiddenError } from '@/helpers/errors'
+import { BadRequestError, ForbiddenError, EmptyParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const fakeRequest = httpRequest({
@@ -44,28 +44,28 @@ describe('Sign Up Controller', () => {
     fakeRequest.body.name = ''
     const controller = sut.handle(fakeRequest)
 
-    await expect(controller).rejects.toThrow(new BadRequestError('Empty param: name is required'))
+    await expect(controller).rejects.toThrow(new EmptyParamError('name'))
   })
   test('Should controller return 400 with e-mail not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.email = ''
     const controller = sut.handle(fakeRequest)
 
-    await expect(controller).rejects.toThrow(new BadRequestError('Empty param: email is required'))
+    await expect(controller).rejects.toThrow(new EmptyParamError('email'))
   })
   test('Should controller return 400 with password not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.password = ''
     const controller = sut.handle(fakeRequest)
 
-    await expect(controller).rejects.toThrow(new BadRequestError('Empty param: password is required'))
+    await expect(controller).rejects.toThrow(new EmptyParamError('password'))
   })
   test('Should controller return 400 with password confimation not provided', async () => {
     const { sut, fakeRequest } = makeSut()
     fakeRequest.body.passwordConfirmation = ''
     const controller = sut.handle(fakeRequest)
 
-    await expect(controller).rejects.toThrow(new BadRequestError('Empty param: passwordConfirmation is required'))
+    await expect(controller).rejects.toThrow(new EmptyParamError('passwordConfirmation'))
   })
   test('Should controller return 400 when password not equal to password confirmation', async () => {
     const { sut, fakeRequest } = makeSut()

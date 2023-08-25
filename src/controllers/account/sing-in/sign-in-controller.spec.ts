@@ -3,7 +3,7 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
-import { BadRequestError, ForbiddenError, NotFoundError } from '@/helpers/errors'
+import { ForbiddenError, NotFoundError, EmptyParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const accountStub = new AccountStub()
@@ -38,7 +38,7 @@ describe('Sign in', () => {
         email: '',
       },
     })
-    await expect(response).rejects.toThrow(new BadRequestError('Empty param: email is required'))
+    await expect(response).rejects.toThrow(new EmptyParamError('email'))
   })
   test('Should return 400 if no passwrod is provided', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -49,7 +49,7 @@ describe('Sign in', () => {
         password: '',
       },
     })
-    await expect(response).rejects.toThrow(new BadRequestError('Empty param: password is required'))
+    await expect(response).rejects.toThrow(new EmptyParamError('password'))
   })
   test('Should return 404 if email is not registed', async () => {
     const { sut, fakeRequest } = makeSut()
