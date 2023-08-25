@@ -22,28 +22,20 @@ export class SignInController implements Controller {
     const { email, password } = request.body
 
     for (const param of requiredParams) {
-      if (!request.body[param]) {
-        throw new EmptyParamError(param)
-      }
+      if (!request.body[param]) throw new EmptyParamError(param)
     }
 
     const isValidUser = await this.dependencies.account.checkEmailInUse(email)
 
-    if (!isValidUser) {
-      throw new NotFoundError('user not found')
-    }
+    if (!isValidUser) throw new NotFoundError('user not found')
 
     const user = await this.dependencies.account.getUserByEmail(email)
 
-    if (!user) {
-      throw new NotFoundError('user not found')
-    }
+    if (!user) throw new NotFoundError('user not found')
 
     const isCorrectPassword = await this.dependencies.hasher.compare(password, user.password)
 
-    if (!isCorrectPassword) {
-      throw new BadRequestError('wrong password')
-    }
+    if (!isCorrectPassword) throw new BadRequestError('wrong password')
 
     const accessToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 3600, issuer: request.headers.host })
     const refreshToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 86400, issuer: request.headers.host })

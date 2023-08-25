@@ -12,9 +12,7 @@ export class TeamCreateController implements Controller {
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const { name = '', members = [] } = request.body
 
-    if (!name) {
-      throw new EmptyParamError('name')
-    }
+    if (!name) throw new EmptyParamError('name')
 
     const data = await this.dependencies.team.create({
       name,

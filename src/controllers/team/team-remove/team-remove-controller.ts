@@ -16,15 +16,11 @@ export class TeamRemoveController implements Controller {
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const teamId = request.params.id
 
-    if (!teamId) {
-      throw new EmptyParamError('id')
-    }
+    if (!teamId) throw new EmptyParamError('id')
 
     const success = await this.dependencies.team.delete(teamId)
 
-    if (!success) {
-      throw new BadRequestError('Team removal failed!')
-    }
+    if (!success) throw new BadRequestError('Team removal failed!')
 
     return httpResponse(200, 'Team removed')
   }

@@ -23,26 +23,18 @@ export class SignUpController implements Controller {
     const { email, password, passwordConfirmation } = request.body
 
     for (const param of requiredParams) {
-      if (!request.body[param]) {
-        throw new EmptyParamError(param)
-      }
+      if (!request.body[param]) throw new EmptyParamError(param)
     }
 
-    if (password !== passwordConfirmation) {
-      throw new BadRequestError('password and passwordConfirmation must be equal')
-    }
+    if (password !== passwordConfirmation) throw new BadRequestError('password and passwordConfirmation must be equal')
 
     const isValid = this.dependencies.emailValidator.validate(email)
 
-    if (!isValid) {
-      throw new InvalidParamError('email')
-    }
+    if (!isValid) throw new InvalidParamError('email')
 
     const emailInUse = await this.dependencies.account.checkEmailInUse(email)
 
-    if (emailInUse) {
-      throw new ForbiddenError('E-mail already in use')
-    }
+    if (emailInUse) throw new ForbiddenError('E-mail already in use')
 
     const hashedPassword = await this.dependencies.hasher.generate(password)
 

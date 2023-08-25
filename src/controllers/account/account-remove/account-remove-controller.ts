@@ -14,15 +14,11 @@ export class AccountRemoveController implements Controller {
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const id = request.params.id
 
-    if (!id) {
-      throw new EmptyParamError('id')
-    }
+    if (!id) throw new EmptyParamError('id')
 
     const success = await this.dependencies.account.delete(id)
 
-    if (!success) {
-      throw new BadRequestError('User removal failed')
-    }
+    if (!success) throw new BadRequestError('User removal failed')
 
     return httpResponse(204, 'User removed')
   }

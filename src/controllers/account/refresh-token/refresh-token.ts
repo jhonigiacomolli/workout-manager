@@ -14,21 +14,15 @@ export class RefreshTokenController implements Controller {
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const refrehToken = request.body.refreshToken
 
-    if (!refrehToken) {
-      throw new ForbiddenError('Empty param: refreshToken is required')
-    }
+    if (!refrehToken) throw new ForbiddenError('Empty param: refreshToken is required')
 
     const host = request.headers.host || 'http://localhost'
 
     const { data, status } = await this.dependencies.encrypter.decrypt(refrehToken, host)
 
-    if (!status.success) {
-      throw new ForbiddenError(status.message)
-    }
+    if (!status.success) throw new ForbiddenError(status.message)
 
-    if (!data || !data.id) {
-      throw new ForbiddenError('Invalid param: refreshToken')
-    }
+    if (!data || !data.id) throw new ForbiddenError('Invalid param: refreshToken')
 
     const accessToken = await this.dependencies.encrypter.encrypt(data, { expire: 3600, issuer: request.headers.host })
     const refreshToken = await this.dependencies.encrypter.encrypt(data, { expire: 86400, issuer: request.headers.host })
