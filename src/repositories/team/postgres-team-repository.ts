@@ -4,7 +4,6 @@ import { TeamModel } from '@/protocols/models/team'
 import { CreateTeamParams, Team } from '@/protocols/use-cases/team'
 
 export class PgTeamRepository implements Team {
-  setTeamByID: (id: string, data: CreateTeamParams) => Promise<boolean>
   async create(props: CreateTeamParams): Promise<TeamModel> {
     const result = await client.query(`INSERT INTO teams(
       name,
@@ -60,5 +59,17 @@ export class PgTeamRepository implements Team {
       name: row.name,
       members: row.members,
     }))
+  }
+
+  async setTeamByID(id: string, data: CreateTeamParams): Promise<boolean> {
+    const { rowCount } = await client.query(`
+      UPDATE teams
+      SET
+        name=COALESCE($2,name),
+        members=COALESCE($3,members)
+      WHERE id=$1
+    `, [id, data.name, data.members])
+
+    return rowCount > 0
   }
 }
