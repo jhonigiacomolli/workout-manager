@@ -7,7 +7,7 @@ import { Team } from '@/protocols/use-cases/team'
 type Dependencies = {
   team: Team
 }
-export class LoadTeamController implements Controller {
+export class TeamLoadItemController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {

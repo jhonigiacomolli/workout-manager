@@ -10,7 +10,7 @@ type Dependencies = {
 
 type TeamKeys = keyof TeamModel
 
-export class LoadAllTeamsController implements Controller {
+export class TeamLoadAllItemsController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {

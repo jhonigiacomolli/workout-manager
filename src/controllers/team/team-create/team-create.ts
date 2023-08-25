@@ -7,7 +7,7 @@ import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 type ConstructorProps = {
   team: Team
 }
-export class CreateTeamController implements Controller {
+export class TeamCreateController implements Controller {
   constructor(private readonly dependencies: ConstructorProps) { }
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const { name = '', members = [] } = request.body

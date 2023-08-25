@@ -11,7 +11,7 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/index\\.ts$',
     'src/server.ts',
-    '/src/helpers/factories/.*\\.ts',
+    '/src/factories/.*\\.ts',
     '/src/mocks/.*\\.ts',
     '/src/database/.*\\.ts',
   ],
@@ -22,6 +22,7 @@ module.exports = {
     '<rootDir>/dist/',
     '<rootDir>/src/mocks/',
     '<rootDir>/src/database/',
+    '<rootDir>/src/factories/',
     '<rootDir>/src/protocols/',
     '<rootDir>/src/configurations/',
     '<rootDir>/src/documentation/',

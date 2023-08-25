@@ -10,7 +10,7 @@ type Dependencies = {
 
 type AccountKeys = keyof AccountModel
 
-export class LoadAllAccountsController implements Controller {
+export class AccountLoadAllItemsController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
