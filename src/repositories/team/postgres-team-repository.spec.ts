@@ -6,7 +6,7 @@ jest.mock('pg', () => {
   const mClient = {
     connect: jest.fn(),
     query: () => ({
-      rows: [makeFakeTeam()],
+      rows: [makeFakePostgresTeam()],
       rowCount: 1,
     }),
     end: jest.fn(),
@@ -39,19 +39,26 @@ const makeSut = () => {
   const sut = new PgTeamRepository()
   const params = makeFakeTeam()
 
+  const updateParams = {
+    name: params.name,
+    members: params.members,
+  }
+
   return {
-    sut, params,
+    sut,
+    params,
+    updateParams,
   }
 }
 
 describe('Postgres Team Repository', () => {
   describe('create()', () => {
-    test('Should return true when account register succeeds', async () => {
+    test('Should return true when team register succeeds', async () => {
       const { sut, params } = makeSut()
       const result = await sut.create(params)
-      expect(result).toEqual(makeFakeTeam())
+      expect(result).toEqual(makeFakePostgresTeam())
     })
-    test('Should return 500 when account register fails', async () => {
+    test('Should return 500 when team register fails', async () => {
       const { sut, params } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
       const result = sut.create(params)
@@ -59,7 +66,7 @@ describe('Postgres Team Repository', () => {
     })
   })
   describe('delete()', () => {
-    test('Should return true when account remove succeeds', async () => {
+    test('Should return true when team remove succeeds', async () => {
       const { sut, params } = makeSut()
       const result = await sut.delete(params.id)
       expect(result).toBeTruthy()
@@ -69,7 +76,7 @@ describe('Postgres Team Repository', () => {
       const result = await sut.delete('')
       expect(result).toBeFalsy()
     })
-    test('Should return 500 when account remove fails', async () => {
+    test('Should return 500 when team remove fails', async () => {
       const { sut, params } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
       const result = sut.delete(params.id)
@@ -77,7 +84,7 @@ describe('Postgres Team Repository', () => {
     })
   })
   describe('getTeamByID()', () => {
-    test('Should return an account model if succeeds', async () => {
+    test('Should return an team model if succeeds', async () => {
       const { sut, params } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgresTeam()] }))
@@ -85,7 +92,7 @@ describe('Postgres Team Repository', () => {
       const newResult = await sut.getTeamByID(params.id)
       expect(newResult).toEqual(params)
     })
-    test('Should throws when account query fails', async () => {
+    test('Should throws when team query fails', async () => {
       const { sut, params } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
@@ -95,7 +102,7 @@ describe('Postgres Team Repository', () => {
     })
   })
   describe('getAllTeams()', () => {
-    test('Should return an account model list if succeeds', async () => {
+    test('Should return an team model list if succeeds', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: makeFakePostgresTeamList() }))
@@ -126,12 +133,29 @@ describe('Postgres Team Repository', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
     })
-    test('Should throws when account query fails', async () => {
+    test('Should throws when team query fails', async () => {
       const { sut } = makeSut()
 
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
       const result = sut.getAllTeams(fakeRequestParams)
+      await expect(result).rejects.toThrow()
+    })
+  })
+  describe('setTeamById()', () => {
+    test('Should return true if succeeds', async () => {
+      const { sut, params, updateParams } = makeSut()
+
+      const newResult = await sut.setTeamByID(params.id, updateParams)
+
+      expect(newResult).toBeTruthy()
+    })
+    test('Should throws when team query fails', async () => {
+      const { sut, params, updateParams } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+
+      const result = sut.setTeamByID(params.id, updateParams)
       await expect(result).rejects.toThrow()
     })
   })
