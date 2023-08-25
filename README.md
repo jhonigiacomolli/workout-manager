@@ -2,7 +2,7 @@
 
 <div align='center'>
 
-![Image](resources/logo.svg)
+![Image](public/logo.svg)
 
 ![Action Test](https://github.com/jhonigiacomolli/workout-manager/actions/workflows/test.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/jhonigiacomolli/workout-manager/badge.svg?branch=)](https://coveralls.io/github/jhonigiacomolli/workout-manager?branch=)
