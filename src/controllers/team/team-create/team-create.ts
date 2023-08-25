@@ -1,6 +1,6 @@
 import { httpResponse } from '@/helpers/http'
 import { Team } from '@/protocols/use-cases/team'
-import { BadRequestError } from '@/helpers/errors'
+import { EmptyParamError } from '@/helpers/errors'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 
@@ -13,7 +13,7 @@ export class TeamCreateController implements Controller {
     const { name = '', members = [] } = request.body
 
     if (!name) {
-      throw new BadRequestError('Empty param: name is required')
+      throw new EmptyParamError('name')
     }
 
     const data = await this.dependencies.team.create({

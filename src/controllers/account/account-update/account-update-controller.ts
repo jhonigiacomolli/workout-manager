@@ -4,7 +4,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 
 import { httpResponse } from '@/helpers/http'
 import { Team } from '@/protocols/use-cases/team'
-import { BadRequestError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 
 interface ConstructorProps {
   account: Account
@@ -19,14 +19,14 @@ export class AccountUdateController implements Controller {
     const id = request.params.id
 
     if (!id) {
-      throw new BadRequestError('Empty param: id is required')
+      throw new EmptyParamError('id')
     }
 
     const requiredParams = ['name', 'email']
 
     for (const param of requiredParams) {
       if (!request.body[param]) {
-        throw new BadRequestError(`Empty param: ${param} is required`)
+        throw new EmptyParamError(`${param}`)
       }
     }
 

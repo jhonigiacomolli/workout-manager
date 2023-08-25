@@ -5,7 +5,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 
 import { httpResponse } from '@/helpers/http'
-import { BadRequestError, NotFoundError } from '@/helpers/errors'
+import { BadRequestError, NotFoundError, EmptyParamError } from '@/helpers/errors'
 
 interface ConstructorProps {
   account: Account
@@ -23,7 +23,7 @@ export class SignInController implements Controller {
 
     for (const param of requiredParams) {
       if (!request.body[param]) {
-        throw new BadRequestError(`Empty param: ${param} is required`)
+        throw new EmptyParamError(param)
       }
     }
 

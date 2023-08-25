@@ -1,4 +1,5 @@
 export * from './400-bad-request'
+export * from './400-empty-param'
 export * from './401-unauthorized'
 export * from './403-forbidden'
 export * from './404-not-found'

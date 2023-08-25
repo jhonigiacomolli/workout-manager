@@ -5,7 +5,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
 
 import { httpResponse } from '@/helpers/http'
-import { BadRequestError, ForbiddenError } from '@/helpers/errors'
+import { BadRequestError, ForbiddenError, EmptyParamError } from '@/helpers/errors'
 
 interface ConstructorProps {
   emailValidator: EmailValidator
@@ -24,7 +24,7 @@ export class SignUpController implements Controller {
 
     for (const param of requiredParams) {
       if (!request.body[param]) {
-        throw new BadRequestError(`Empty param: ${param} is required`)
+        throw new EmptyParamError(param)
       }
     }
 

@@ -1,7 +1,7 @@
 import { httpResponse } from '@/helpers/http'
-import { BadRequestError } from '@/helpers/errors'
 import { Account } from '@/protocols/use-cases/account'
 import { Controller } from '@/protocols/models/controller'
+import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 
 type AccountRemoveControllerProps = {
@@ -15,7 +15,7 @@ export class AccountRemoveController implements Controller {
     const id = request.params.id
 
     if (!id) {
-      throw new BadRequestError('Empty param: id is required')
+      throw new EmptyParamError('id')
     }
 
     const success = await this.dependencies.account.delete(id)
