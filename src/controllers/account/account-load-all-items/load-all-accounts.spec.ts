@@ -1,6 +1,6 @@
 import { httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
-import { LoadAllAccountsController } from './load-all-accounts'
+import { AccountLoadAllItemsController } from './load-all-accounts'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
 
 const fakeRequest = httpRequest({}, {}, {}, {
@@ -15,7 +15,7 @@ const fakeRequest = httpRequest({}, {}, {}, {
 
 const makeSut = () => {
   const accountStub = new AccountStub()
-  const sut = new LoadAllAccountsController({
+  const sut = new AccountLoadAllItemsController({
     account: accountStub,
   })
 
@@ -25,7 +25,7 @@ const makeSut = () => {
   }
 }
 
-describe('LoadAllAccountsController', () => {
+describe('AccountLoadAllItemsController', () => {
   test('Should return a list of teams', async () => {
     const { sut } = makeSut()
 

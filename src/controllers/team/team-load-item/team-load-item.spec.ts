@@ -1,5 +1,5 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { LoadTeamController } from './load-team'
+import { TeamLoadItemController } from './team-load-item'
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { NotFoundError } from '@/helpers/errors'
 
@@ -11,7 +11,7 @@ const fakeInvalidRequest = httpRequest({}, {})
 
 const makeSut = () => {
   const teamStub = new TeamStub()
-  const sut = new LoadTeamController({
+  const sut = new TeamLoadItemController({
     team: teamStub,
   })
 
@@ -20,7 +20,7 @@ const makeSut = () => {
     teamStub,
   }
 }
-describe('LoadTeamController', () => {
+describe('TeamLoadItemController', () => {
   test('Should return 400 if teamId is not provided', async () => {
     const { sut } = makeSut()
 

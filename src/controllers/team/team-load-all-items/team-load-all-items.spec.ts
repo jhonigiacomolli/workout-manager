@@ -1,5 +1,5 @@
 import { TeamStub } from '@/mocks/teams/team-stub'
-import { LoadAllTeamsController } from './load-all-teams'
+import { TeamLoadAllItemsController } from './team-load-all-items'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeTeamList } from '@/mocks/teams/make-fake-team'
 
@@ -15,7 +15,7 @@ const fakeRequest = httpRequest({}, {}, {}, {
 
 const makeSut = () => {
   const teamStub = new TeamStub()
-  const sut = new LoadAllTeamsController({
+  const sut = new TeamLoadAllItemsController({
     team: teamStub,
   })
 
@@ -25,7 +25,7 @@ const makeSut = () => {
   }
 }
 
-describe('LoadAllTeamsController', () => {
+describe('TeamLoadAllItemsController', () => {
   test('Should return a list of teams', async () => {
     const { sut } = makeSut()
 

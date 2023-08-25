@@ -1,5 +1,5 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { CreateTeamController } from './create-team'
+import { TeamCreateController } from './team-create'
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
 import { BadRequestError } from '@/helpers/errors'
@@ -11,7 +11,7 @@ const fakeEmptyRequest = httpRequest({})
 
 const makeSut = () => {
   const teamStub = new TeamStub()
-  const sut = new CreateTeamController({
+  const sut = new TeamCreateController({
     team: teamStub,
   })
 
@@ -21,7 +21,7 @@ const makeSut = () => {
   }
 }
 
-describe('Create Team Controller', () => {
+describe('TeamCreateController', () => {
   test('Should return an http response', async () => {
     const { sut } = makeSut()
     const result = await sut.handle(fakeRequest)
