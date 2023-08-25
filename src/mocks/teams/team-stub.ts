@@ -1,6 +1,6 @@
-import { makeFakeTeam, makeFakeTeamList } from './make-fake-team'
 import { Team } from '@/protocols/use-cases/team'
 import { TeamModel } from '@/protocols/models/team'
+import { makeFakeTeam, makeFakeTeamList } from './make-fake-team'
 
 export class TeamStub implements Team {
   async getTeamByID(): Promise<TeamModel | undefined> {
@@ -16,6 +16,10 @@ export class TeamStub implements Team {
   }
 
   async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
+  async setTeamByID(): Promise<boolean> {
     return Promise.resolve(true)
   }
 }

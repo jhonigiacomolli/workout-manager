@@ -4,6 +4,7 @@ import { TeamModel } from '@/protocols/models/team'
 import { CreateTeamParams, Team } from '@/protocols/use-cases/team'
 
 export class PgTeamRepository implements Team {
+  setTeamByID: (id: string, data: CreateTeamParams) => Promise<boolean>
   async create(props: CreateTeamParams): Promise<TeamModel> {
     const result = await client.query(`INSERT INTO teams(
       name,
