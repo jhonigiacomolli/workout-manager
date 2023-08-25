@@ -4,7 +4,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 
 import { httpResponse } from '@/helpers/http'
 import { Team } from '@/protocols/use-cases/team'
-import { BadRequestError, EmptyParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 interface ConstructorProps {
   account: Account
@@ -34,7 +34,7 @@ export class AccountUdateController implements Controller {
       const team = await this.dependencies.team.getTeamByID(request.body.teamId)
 
       if (!team) {
-        throw new BadRequestError('Invalid param: teamId')
+        throw new InvalidParamError('teamId')
       }
     } else {
       request.body.teamId = undefined

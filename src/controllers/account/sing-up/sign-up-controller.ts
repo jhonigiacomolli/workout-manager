@@ -5,7 +5,7 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
 
 import { httpResponse } from '@/helpers/http'
-import { BadRequestError, ForbiddenError, EmptyParamError } from '@/helpers/errors'
+import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 interface ConstructorProps {
   emailValidator: EmailValidator
@@ -35,7 +35,7 @@ export class SignUpController implements Controller {
     const isValid = this.dependencies.emailValidator.validate(email)
 
     if (!isValid) {
-      throw new BadRequestError('Invalid param: email')
+      throw new InvalidParamError('email')
     }
 
     const emailInUse = await this.dependencies.account.checkEmailInUse(email)
