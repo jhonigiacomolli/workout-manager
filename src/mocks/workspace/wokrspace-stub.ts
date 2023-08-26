@@ -1,0 +1,9 @@
+import { makeFakeWorkspace } from './make-fake-workspace'
+import { Workspace } from '@/protocols/use-cases/workspace'
+import { WorkspaceModel } from '@/protocols/models/workspace'
+
+export class WorkspaceStub implements Workspace {
+  async create(): Promise<WorkspaceModel | undefined> {
+    return Promise.resolve(makeFakeWorkspace())
+  }
+}
