@@ -28,11 +28,11 @@ CREATE TABLE IF NOT EXISTS accounts(
 
 CREATE TABLE IF NOT EXISTS workspaces(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
-  created_at TIMESTAMP
+  created_at TIMESTAMP,
   title VARCHAR NOT NULL,
   description VARCHAR,
   boards VARCHAR[],
-  memebers VARCHAR[],
+  members VARCHAR[],
   profileImage VARCHAR,
-  coverImage VARCHAR,
+  coverImage VARCHAR
 );
