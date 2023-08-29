@@ -25,3 +25,14 @@ CREATE TABLE IF NOT EXISTS accounts(
   FOREIGN KEY (teamId) REFERENCES teams(id),
   created_at TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS workspaces(
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP
+  title VARCHAR NOT NULL,
+  description VARCHAR,
+  boards VARCHAR[],
+  memebers VARCHAR[],
+  profileImage VARCHAR,
+  coverImage VARCHAR,
+);
