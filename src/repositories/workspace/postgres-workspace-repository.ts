@@ -13,6 +13,8 @@ export class PgWorkspaceReposytory implements Workspace {
       profileImage,
       coverImage
     ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6) RETURNING
+      id,
+      created_at,
       COALESCE(title, '') as title,
       COALESCE(description, '') as description,
       COALESCE(boards, ARRAY[]::text[]) AS boards,
