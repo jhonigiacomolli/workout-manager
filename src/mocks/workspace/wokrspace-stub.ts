@@ -6,4 +6,11 @@ export class WorkspaceStub implements Workspace {
   async create(): Promise<WorkspaceModel | undefined> {
     return Promise.resolve(makeFakeWorkspace())
   }
+
+  async getAll(): Promise<WorkspaceModel[]> {
+    return Promise.resolve([
+      makeFakeWorkspace(),
+      makeFakeWorkspace(),
+    ])
+  }
 }
