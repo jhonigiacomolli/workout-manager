@@ -40,6 +40,10 @@ export class PgWorkspaceReposytory implements Workspace {
   }
 
   async getAll(params: HTTPRequestParams): Promise<WorkspaceModel[]> {
+    if (params.orderBy === 'createdAt') {
+      params.orderBy = 'created_at'
+    }
+
     const { rows } = await client.query(`
       SELECT * FROM workspaces
       ORDER BY ${params.orderBy} ${params.order}

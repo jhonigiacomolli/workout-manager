@@ -4,6 +4,7 @@ import { teamCreatePath } from './paths/teams/team-create-path'
 import { teamRemovePath } from './paths/teams/team-remove-path'
 import { teamUpdatePath } from './paths/teams/team-update-path'
 import { workspaceCreatePath } from './paths/workspaces/workspace-create-path'
+import { workspaceListPath } from './paths/workspaces/workspace-list-path'
 import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema, workspaceCreateParamsSchema, workspaceCreateRetunrSchema, workspaceModelSchema } from './schemas'
 import { accountCreateParamsSchema } from './schemas/accounts/create-account-parms-schema'
 import { teamModelParamsSchema } from './schemas/teams/team-model--params-schema'
@@ -38,6 +39,7 @@ export const swaggerConfigurations = {
       put: teamUpdatePath,
     },
     '/workspaces': {
+      get: workspaceListPath,
       post: workspaceCreatePath,
     },
   },

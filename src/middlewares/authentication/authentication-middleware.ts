@@ -5,8 +5,6 @@ import { Encrypter } from '@/protocols/use-cases/cryptography/encrypter'
 export const authenticate = async (request: Request, response: Response, next: NextFunction, account: Account, encrypter: Encrypter): Promise<void> => {
   const { authorization } = request.headers
 
-  console.log(authorization)
-
   if (!authorization || !authorization.toLocaleLowerCase().includes('bearer')) {
     response.status(401).json({ error: 'Unauthorized' })
     return

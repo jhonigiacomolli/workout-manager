@@ -1,3 +1,4 @@
+import { InvalidParamError } from '@/helpers/errors'
 import { httpResponse } from '@/helpers/http'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
@@ -14,13 +15,15 @@ export class WorkspaceLoadAllITemsController implements Controller {
 
     const fields = ['id', 'title', 'createdAt']
 
-    const orderByField = fields.includes(orderBy) ? orderBy : 'title'
+    if (!fields.includes(orderBy)) {
+      throw new InvalidParamError(`orderBy, accepted params(${fields.join(',')})`)
+    }
 
     const workspaces = await this.dependencies.workspace.getAll({
       limit,
       page,
       offset,
-      orderBy: orderByField,
+      orderBy,
       order,
     })
 
