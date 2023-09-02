@@ -2,6 +2,7 @@ import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeWorkspace } from '@/mocks/workspace/make-fake-workspace'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { WorkspaceLoadAllITemsController } from './workspace-load-all-items-controller'
+import { InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const fakeRequest = httpRequest({}, {}, {}, {
@@ -44,9 +45,8 @@ describe('WorkspaceLoadAllITemsController', () => {
     expect(workspaceSpy).toHaveBeenCalledWith(fakeRequest.query.pagination)
   })
   test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
-    const { sut, fakeRequest, workspaceStub } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
-    const workspaceSpy = jest.spyOn(workspaceStub, 'getAll')
     const fakeRequestWithInvalidParam = {
       ...fakeRequest,
       query: {
@@ -57,12 +57,9 @@ describe('WorkspaceLoadAllITemsController', () => {
         },
       },
     }
-    await sut.handle(fakeRequestWithInvalidParam)
+    const output = sut.handle(fakeRequestWithInvalidParam)
 
-    expect(workspaceSpy).toHaveBeenCalledWith({
-      ...fakeRequest.query.pagination,
-      orderBy: 'title',
-    })
+    await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,title,createdAt)'))
   })
   test('Should return a empty list of workspacess do not have entries on database', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()

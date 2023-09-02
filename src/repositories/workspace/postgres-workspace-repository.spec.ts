@@ -29,6 +29,12 @@ const querySql = `
       LIMIT $1
       OFFSET $2:: integer * $1:: integer;
     `
+const querySqlOrderByCreatedAt = `
+      SELECT * FROM workspaces
+      ORDER BY created_at DESC
+      LIMIT $1
+      OFFSET $2:: integer * $1:: integer;
+    `
 
 const makeSut = () => {
   const sut = new PgWorkspaceReposytory()
@@ -81,19 +87,36 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '0'])
 
-      fakeRequestParams.page = '2'
-      fakeRequestParams.offset = '10'
+      const fakeRequestParamsWithPagination = {
+        ...fakeRequestParams,
+        page: '2',
+        offset: '10',
+      }
 
-      await sut.getAll(fakeRequestParams)
+      await sut.getAll(fakeRequestParamsWithPagination)
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '10'])
 
-      fakeRequestParams.page = '5'
-      fakeRequestParams.offset = '40'
+      const fakeRequestParamsWithNewPagination = {
+        ...fakeRequestParams,
+        page: '5',
+        offset: '40',
+      }
+
+      await sut.getAll(fakeRequestParamsWithNewPagination)
+
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
+    })
+    test('Should query is called with correct values if invalid orderby field is provided', async () => {
+      const { sut } = makeSut()
+
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+
+      fakeRequestParams.orderBy = 'createdAt'
 
       await sut.getAll(fakeRequestParams)
 
-      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
+      expect(querySpy).toHaveBeenCalledWith(querySqlOrderByCreatedAt, ['10', '0'])
     })
     test('Should thorws an erro when account query fails', async () => {
       const { sut } = makeSut()

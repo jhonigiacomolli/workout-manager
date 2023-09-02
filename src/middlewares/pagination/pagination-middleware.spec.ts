@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { pagination } from './pagination-middleware'
+import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest: Partial<Request> = {
   query: {},
@@ -28,6 +29,17 @@ describe('PaginationMiddleWare', () => {
       },
     })
     expect(fakeNext).toHaveBeenCalled()
+  })
+  test('Should inject default pagination params if invalid order param is provided', async () => {
+    const fakeRequestWithInvalidOrder = {
+      ...fakeRequest,
+      query: {
+        order: 'wrong-order',
+      },
+    }
+    const output = pagination(fakeRequestWithInvalidOrder as Request, fakeResponse as Response, fakeNext)
+    await expect(output).rejects.toThrow(new InvalidParamError('order, accepted params(ASC,DESC)'))
+    expect(fakeNext).not.toHaveBeenCalled()
   })
   test('Should inject correct pagination params if limit query param is provided', async () => {
     fakeRequest.query = {

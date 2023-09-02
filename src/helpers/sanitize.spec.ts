@@ -1,3 +1,4 @@
+import { InvalidParamError } from './errors'
 import { validateNumberParams, validateOrderParams, validateTextParams } from './sanitize'
 
 describe('Sanitize', () => {
@@ -24,14 +25,19 @@ describe('Sanitize', () => {
     const falseResultWithSpecial = validateTextParams('1234;;;d56')
     expect(falseResultWithSpecial).toBeFalsy()
   })
-  test('validateOrderParams()', () => {
-    const result = validateOrderParams('wrong-order')
-    expect(result).toBe('DESC')
-
+  test('validateOrderParams()', async () => {
     const ascResult = validateOrderParams('asc')
     expect(ascResult).toBe('ASC')
 
     const descResult = validateOrderParams('desc')
     expect(descResult).toBe('DESC')
+
+    const emptyValueResult = validateOrderParams()
+    expect(emptyValueResult).toBe('DESC')
+
+    const emptyStringValueResult = validateOrderParams('')
+    expect(emptyStringValueResult).toBe('DESC')
+
+    expect(() => validateOrderParams('INVALID')).toThrow(new InvalidParamError('order, accepted params(ASC,DESC)'))
   })
 })
