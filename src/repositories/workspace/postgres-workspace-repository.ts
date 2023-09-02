@@ -1,6 +1,7 @@
 import { client } from '@/database'
 import { Workspace } from '@/protocols/use-cases/workspace'
 import { CreateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
+import { HTTPRequestParams } from '@/protocols/models/http'
 
 export class PgWorkspaceReposytory implements Workspace {
   async create(workspace: CreateWorkspaceModel): Promise<WorkspaceModel> {
@@ -36,5 +37,15 @@ export class PgWorkspaceReposytory implements Workspace {
       // eslint-disable-next-line
       createdAt: created_at,
     }))[0]
+  }
+
+  async getAll(params: HTTPRequestParams): Promise<WorkspaceModel[]> {
+    const { rows } = await client.query(`
+      SELECT * FROM workspaces
+      ORDER BY ${params.orderBy} ${params.order}
+      LIMIT $1
+      OFFSET $2:: integer * $1:: integer;
+    `, [params.limit, params.offset])
+    return rows
   }
 }
