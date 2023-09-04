@@ -39,9 +39,10 @@ const querySqlOrderByCreatedAt = `
 const makeSut = () => {
   const sut = new PgWorkspaceReposytory()
   const { id, ...params } = makeFakeWorkspace()
+  const paramsWithId = { id, ...params }
 
   return {
-    sut, params,
+    sut, params, paramsWithId,
   }
 }
 describe('PostgresWorkspaceReposytory', () => {
@@ -124,6 +125,25 @@ describe('PostgresWorkspaceReposytory', () => {
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
       const result = sut.getAll(fakeRequestParams)
+      await expect(result).rejects.toThrow()
+    })
+  })
+  describe('getById()', () => {
+    test('Should return an workspace model if succeeds', async () => {
+      const { sut, paramsWithId } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+
+      const newResult = await sut.getById(paramsWithId.id)
+
+      expect(newResult).toEqual(paramsWithId)
+    })
+    test('Should throws when team query fails', async () => {
+      const { sut, paramsWithId } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+
+      const result = sut.getById(paramsWithId.id)
       await expect(result).rejects.toThrow()
     })
   })
