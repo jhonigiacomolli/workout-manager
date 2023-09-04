@@ -1,13 +1,7 @@
-import { accountListPath, accountRemovePath, accountUpdatePath, signUpPath, signInPath, refreshTokenPath } from './paths/accounts'
-import { teamGetPath, teamsListPath } from './paths/teams'
-import { teamCreatePath } from './paths/teams/team-create-path'
-import { teamRemovePath } from './paths/teams/team-remove-path'
-import { teamUpdatePath } from './paths/teams/team-update-path'
-import { workspaceCreatePath } from './paths/workspaces/workspace-create-path'
-import { workspaceListPath } from './paths/workspaces/workspace-list-path'
-import { accountCreateReturnSchema, accountModelSchema, accountUpdateParamsSchema, errorSchema, messageSchema, teamModelSchema, workspaceCreateParamsSchema, workspaceCreateRetunrSchema, workspaceModelSchema } from './schemas'
-import { accountCreateParamsSchema } from './schemas/accounts/create-account-parms-schema'
-import { teamModelParamsSchema } from './schemas/teams/team-model--params-schema'
+import * as schemas from './schemas'
+import * as accountsPaths from './paths/accounts'
+import * as teamsPaths from './paths/teams'
+import * as wrokspacesPaths from './paths/workspaces'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -21,40 +15,43 @@ export const swaggerConfigurations = {
     'Workspace',
   ],
   paths: {
-    '/sign-up': signUpPath,
-    '/sign-in': signInPath,
-    'refresh-token': refreshTokenPath,
-    '/accounts': accountListPath,
+    '/sign-up': accountsPaths.signUpPath,
+    '/sign-in': accountsPaths.signInPath,
+    'refresh-token': accountsPaths.refreshTokenPath,
+    '/accounts': accountsPaths.accountListPath,
     '/accounts/{id}': {
-      delete: accountRemovePath,
-      put: accountUpdatePath,
+      delete: accountsPaths.accountRemovePath,
+      put: accountsPaths.accountUpdatePath,
     },
     '/teams': {
-      get: teamsListPath,
-      post: teamCreatePath,
+      get: teamsPaths.teamsListPath,
+      post: teamsPaths.teamCreatePath,
     },
     '/teams/{id}': {
-      get: teamGetPath,
-      delete: teamRemovePath,
-      put: teamUpdatePath,
+      get: teamsPaths.teamGetPath,
+      delete: teamsPaths.teamRemovePath,
+      put: teamsPaths.teamUpdatePath,
     },
     '/workspaces': {
-      get: workspaceListPath,
-      post: workspaceCreatePath,
+      get: wrokspacesPaths.workspaceListPath,
+      post: wrokspacesPaths.workspaceCreatePath,
+    },
+    '/workspaces/{id}': {
+      get: wrokspacesPaths.workspaceGetPath,
     },
   },
   schemas: {
-    error: errorSchema,
-    message: messageSchema,
-    accountModel: accountModelSchema,
-    accountCreateParams: accountCreateParamsSchema,
-    accountCreateReturns: accountCreateReturnSchema,
-    accountUpdateParams: accountUpdateParamsSchema,
-    teamModel: teamModelSchema,
-    teamModelParams: teamModelParamsSchema,
-    workspaceModel: workspaceModelSchema,
-    workspaceCreateParams: workspaceCreateParamsSchema,
-    workspaceCreateReturns: workspaceCreateRetunrSchema,
+    error: schemas.errorSchema,
+    message: schemas.messageSchema,
+    accountModel: schemas.accountModelSchema,
+    accountCreateParams: schemas.accountCreateParamsSchema,
+    accountCreateReturns: schemas.accountCreateReturnSchema,
+    accountUpdateParams: schemas.accountUpdateParamsSchema,
+    teamModel: schemas.teamModelSchema,
+    teamModelParams: schemas.teamModelParamsSchema,
+    workspaceModel: schemas.workspaceModelSchema,
+    workspaceCreateParams: schemas.workspaceCreateParamsSchema,
+    workspaceCreateReturns: schemas.workspaceCreateRetunrSchema,
   },
   components: {
     securitySchemes: {

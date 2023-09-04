@@ -1,2 +1,5 @@
+export * from './team-create-path'
 export * from './team-get-path'
+export * from './team-remove-path'
+export * from './team-update-path'
 export * from './teams-list-path'
