@@ -147,4 +147,21 @@ describe('PostgresWorkspaceReposytory', () => {
       await expect(result).rejects.toThrow()
     })
   })
+  describe('setById()', () => {
+    test('Should return true if succeeds', async () => {
+      const { sut, params, paramsWithId } = makeSut()
+
+      const newResult = await sut.setByID(paramsWithId.id, params)
+
+      expect(newResult).toBeTruthy()
+    })
+    test('Should throws when team query fails', async () => {
+      const { sut, params, paramsWithId } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+
+      const result = sut.setByID(paramsWithId.id, params)
+      await expect(result).rejects.toThrow()
+    })
+  })
 })
