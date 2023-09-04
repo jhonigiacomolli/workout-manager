@@ -73,17 +73,20 @@ describe('TeamUpdateController', () => {
   test('Should return 400 if setTeamById return false', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
-    jest.spyOn(teamStub, 'setTeamByID').mockReturnValueOnce(Promise.resolve(false))
+    jest.spyOn(teamStub, 'setTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
 
     const output = sut.handle(fakeRequest)
 
     await expect(output).rejects.toThrow(new BadRequestError('Team update fails!'))
   })
-  test('Should return 204 if proccess succeeds', async () => {
+  test('Should return 200 if proccess succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 
     const output = await sut.handle(fakeRequest)
 
-    expect(output).toEqual(httpResponse(204, 'Update successfully!'))
+    expect(output).toEqual(httpResponse(200, {
+      message: 'Team update successfully!',
+      data: makeFakeTeam(),
+    }))
   })
 })
