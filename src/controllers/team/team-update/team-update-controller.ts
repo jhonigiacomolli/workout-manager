@@ -29,10 +29,13 @@ export class TeamUpdateController implements Controller {
 
     if (!isValidId) throw new NotFoundError('Team not found')
 
-    const success = await this.dependencies.team.setTeamByID(id, teamData)
+    const updatedTeam = await this.dependencies.team.setTeamByID(id, teamData)
 
-    if (!success) throw new BadRequestError('Team update fails!')
+    if (!updatedTeam) throw new BadRequestError('Team update fails!')
 
-    return httpResponse(204, 'Update successfully!')
+    return httpResponse(200, {
+      message: 'Team update successfully!',
+      data: updatedTeam,
+    })
   }
 }

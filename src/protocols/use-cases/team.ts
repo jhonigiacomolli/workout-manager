@@ -10,5 +10,5 @@ export interface Team {
   delete: (id: string) => Promise<boolean>
   getTeamByID: (id: string) => Promise<TeamModel | undefined>
   getAllTeams: (params?: HTTPRequestParams) => Promise<TeamModel[]>
-  setTeamByID: (id: string, data: UpdateTeamParams) => Promise<boolean>
+  setTeamByID: (id: string, data: UpdateTeamParams) => Promise<TeamModel | undefined>
 }

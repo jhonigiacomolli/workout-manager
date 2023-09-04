@@ -69,7 +69,7 @@ export class PgWorkspaceReposytory implements Workspace {
   }
 
   async setById(id: string, data: UpdateWorkspaceModel): Promise<WorkspaceModel> {
-    const { rows, rowCount } = await client.query(`
+    const { rows } = await client.query(`
       UPDATE workspaces
       SET
         title=COALESCE($2,title),
@@ -89,7 +89,6 @@ export class PgWorkspaceReposytory implements Workspace {
       COALESCE(coverImage, '') as coverImage
     `, [id, data.title, data.description, data.members, data.boards, data.profileImage, data.coverImage])
 
-    console.log('Rows: ', rowCount)
     // eslint-disable-next-line
     return rows.map(({ created_at, ...workspace }) => ({
       ...workspace,

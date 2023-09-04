@@ -61,15 +61,24 @@ export class PgTeamRepository implements Team {
     }))
   }
 
-  async setTeamByID(id: string, data: UpdateTeamParams): Promise<boolean> {
-    const { rowCount } = await client.query(`
+  async setTeamByID(id: string, data: UpdateTeamParams): Promise<TeamModel | undefined> {
+    const { rows } = await client.query(`
       UPDATE teams
       SET
         name=COALESCE($2,name),
         members=COALESCE($3,members)
-      WHERE id=$1
+      WHERE id=$1 RETURNING
+      id,
+      created_at,
+      COALESCE(name, '') as name,
+      COALESCE(members, ARRAY[]::text[]) AS members
     `, [id, data.name, data.members])
 
-    return rowCount > 0
+    // eslint-disable-next-line
+    return rows.map(({ created_at, ...team }) => ({
+      ...team,
+      // eslint-disable-next-line
+      createdAt: created_at,
+    }))[0]
   }
 }

@@ -19,7 +19,7 @@ export class TeamStub implements Team {
     return Promise.resolve(true)
   }
 
-  async setTeamByID(): Promise<boolean> {
-    return Promise.resolve(true)
+  async setTeamByID(): Promise<TeamModel | undefined> {
+    return Promise.resolve(makeFakeTeam())
   }
 }
