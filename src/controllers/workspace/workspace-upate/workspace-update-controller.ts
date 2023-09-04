@@ -50,7 +50,7 @@ export class WorkspaceUpdateController implements Controller {
     if (!updatedWorkspace) throw new BadRequestError('Workspace update fails!')
 
     return httpResponse(200, {
-      message: 'Update successfully',
+      message: 'Workspace update successfully',
       data: updatedWorkspace,
     })
   }

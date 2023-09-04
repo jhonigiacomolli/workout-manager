@@ -92,7 +92,7 @@ describe('WorkspaceUpdateController', () => {
   test('Should return bad request error if setById method return false', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
-    jest.spyOn(workspaceStub, 'setById').mockReturnValueOnce(Promise.resolve(false))
+    jest.spyOn(workspaceStub, 'setById').mockReturnValueOnce(Promise.resolve(undefined))
 
     const output = sut.handle(fakeRequest)
 
@@ -103,6 +103,9 @@ describe('WorkspaceUpdateController', () => {
 
     const output = await sut.handle(fakeRequest)
 
-    expect(output).toEqual(httpResponse(200, 'Update successfully'))
+    expect(output).toEqual(httpResponse(200, {
+      message: 'Workspace update successfully',
+      data: makeFakeWorkspace(),
+    }))
   })
 })
