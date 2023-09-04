@@ -35,7 +35,7 @@ describe('Account Update Controller', () => {
   test('Should return 400 if setUserById method return false', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
 
-    jest.spyOn(accountStub, 'setUserById').mockReturnValueOnce(Promise.resolve(false))
+    jest.spyOn(accountStub, 'setUserById').mockReturnValueOnce(Promise.resolve(undefined))
 
     const result = sut.handle(fakeRequest)
 
@@ -109,6 +109,9 @@ describe('Account Update Controller', () => {
 
     const result = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(201, 'User updated successfully'))
+    expect(result).toEqual(httpResponse(200, {
+      message: 'User updated successffuly',
+      data: makeFakeAccount(),
+    }))
   })
 })

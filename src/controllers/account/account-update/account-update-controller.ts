@@ -34,10 +34,13 @@ export class AccountUdateController implements Controller {
       request.body.teamId = undefined
     }
 
-    const success = await this.dependencies.account.setUserById(id, request.body)
+    const updatedAccount = await this.dependencies.account.setUserById(id, request.body)
 
-    if (!success) throw new BadRequestError('Account update fails')
+    if (!updatedAccount) throw new BadRequestError('Account update fails')
 
-    return httpResponse(201, 'User updated successfully')
+    return httpResponse(200, {
+      message: 'User updated successffuly',
+      data: updatedAccount,
+    })
   }
 }

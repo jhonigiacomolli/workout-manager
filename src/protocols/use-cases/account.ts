@@ -10,5 +10,5 @@ export interface Account {
   getUserById: (id: string) => Promise<AccountModel | undefined>
   getUserByEmail: (email: string) => Promise<AccountModel | undefined>
   getAllAccounts: (params?: HTTPRequestParams) => Promise<AccountModel[]>
-  setUserById: (accountId: string, data: CreateAccountParams) => Promise<boolean>
+  setUserById: (accountId: string, data: CreateAccountParams) => Promise<AccountModel | undefined>
 }

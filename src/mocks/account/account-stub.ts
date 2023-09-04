@@ -19,8 +19,8 @@ export class AccountStub implements Account {
     return await Promise.resolve(false)
   }
 
-  async setUserById(): Promise<boolean> {
-    return await Promise.resolve(true)
+  async setUserById(): Promise<AccountModel | undefined> {
+    return await Promise.resolve(makeFakeAccount())
   }
 
   async delete(): Promise<boolean> {

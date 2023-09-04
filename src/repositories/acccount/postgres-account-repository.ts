@@ -5,7 +5,7 @@ import { type Account, type CreateAccountParams } from '@/protocols/use-cases/ac
 
 export class PgAccountRepository implements Account {
   async create(account: CreateAccountParams): Promise<AccountModel> {
-    const result = await client.query(`INSERT INTO accounts(
+    const { rows } = await client.query(`INSERT INTO accounts(
       name,
       created_at,
       email,
@@ -47,8 +47,12 @@ export class PgAccountRepository implements Account {
       account.tasks,
       account.teamId,
     ])
-
-    return result.rows[0]
+    // eslint-disable-next-line
+    return rows.map(({ created_at, ...account }) => ({
+      ...account,
+      // eslint-disable-next-line
+      createdAt: created_at,
+    }))[0]
   }
 
   async getUserById(id: string): Promise<AccountModel> {
@@ -103,8 +107,8 @@ export class PgAccountRepository implements Account {
     return rowCount > 0
   }
 
-  async setUserById(accountId: string, data: CreateAccountParams): Promise<boolean> {
-    const { rowCount } = await client.query(`
+  async setUserById(accountId: string, data: CreateAccountParams): Promise<AccountModel | undefined> {
+    const { rows } = await client.query(`
     UPDATE accounts
     SET
       name=COALESCE($2,name),
@@ -120,7 +124,20 @@ export class PgAccountRepository implements Account {
       status=COALESCE($12,status),
       tasks=COALESCE($13,tasks),
       teamId=COALESCE($14,teamId)
-    WHERE id=$1
+    WHERE id=$1 RETURNING
+      id,
+      created_at,
+      COALESCE(name, '') as name,
+      COALESCE(email, '') as email,
+      COALESCE(image, '') as image,
+      COALESCE(phone, '') as phone,
+      COALESCE(address, '') as address,
+      COALESCE(boards, ARRAY[]::text[]) AS boards,
+      COALESCE(responsability, ARRAY[]::text[]) AS responsability,
+      COALESCE(status, ARRAY[]::text[]) AS status,
+      COALESCE(desktops, ARRAY[]::text[]) AS desktops,
+      COALESCE(tasks, ARRAY[]::text[]) AS tasks,
+      COALESCE(permissions, ARRAY[]::text[]) AS permissions
   `, [
       accountId,
       data.name,
@@ -138,7 +155,12 @@ export class PgAccountRepository implements Account {
       data.teamId,
     ])
 
-    return rowCount > 0
+    // eslint-disable-next-line
+    return rows.map(({ created_at, ...account }) => ({
+      ...account,
+      // eslint-disable-next-line
+      createdAt: created_at,
+    }))[0]
   }
 
   async delete(accountId: string): Promise<boolean> {
