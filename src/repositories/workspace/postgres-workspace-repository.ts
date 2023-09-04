@@ -1,9 +1,10 @@
 import { client } from '@/database'
 import { Workspace } from '@/protocols/use-cases/workspace'
-import { CreateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
+import { CreateWorkspaceModel, UpdateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
 import { HTTPRequestParams } from '@/protocols/models/http'
 
 export class PgWorkspaceReposytory implements Workspace {
+  setById: (id: string, params: UpdateWorkspaceModel) => Promise<boolean>
   async create(workspace: CreateWorkspaceModel): Promise<WorkspaceModel> {
     const { rows } = await client.query(`INSERT INTO workspaces(
       title,
@@ -66,5 +67,21 @@ export class PgWorkspaceReposytory implements Workspace {
       coverImage: rows[0].coverImage,
       profileImage: rows[0].profileImage,
     }
+  }
+
+  async setByID(id: string, data: UpdateWorkspaceModel): Promise<boolean> {
+    const { rowCount } = await client.query(`
+      UPDATE workspaces
+      SET
+        title=COALESCE($2,title),
+        description=COALESCE($3,description),
+        members=COALESCE($4,members)
+        boards=COALESCE($5,boards)
+        profileImage=COALESCE($6,profileImage)
+        coverImage=COALESCE($7,coverImage)
+      WHERE id=$1
+    `, [id, data.title, data.description, data.members, data.boards, data.profileImage, data.coverImage])
+
+    return rowCount > 0
   }
 }
