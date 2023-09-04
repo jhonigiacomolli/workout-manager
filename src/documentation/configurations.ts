@@ -1,7 +1,7 @@
 import * as schemas from './schemas'
 import * as accountsPaths from './paths/accounts'
 import * as teamsPaths from './paths/teams'
-import * as wrokspacesPaths from './paths/workspaces'
+import * as workspacesPaths from './paths/workspaces'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -33,11 +33,12 @@ export const swaggerConfigurations = {
       put: teamsPaths.teamUpdatePath,
     },
     '/workspaces': {
-      get: wrokspacesPaths.workspaceListPath,
-      post: wrokspacesPaths.workspaceCreatePath,
+      get: workspacesPaths.workspaceListPath,
+      post: workspacesPaths.workspaceCreatePath,
     },
     '/workspaces/{id}': {
-      get: wrokspacesPaths.workspaceGetPath,
+      get: workspacesPaths.workspaceGetPath,
+      put: workspacesPaths.workspaceUpdatePath,
     },
   },
   schemas: {
