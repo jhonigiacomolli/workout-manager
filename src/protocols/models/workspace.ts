@@ -11,4 +11,4 @@ export interface WorkspaceModel {
 
 export type CreateWorkspaceModel = Omit<WorkspaceModel, 'id'>
 
-export type UpdateWorkspaceModel = Omit<WorkspaceModel, 'id' | 'createdAt'>
+export type UpdateWorkspaceModel = Partial<Omit<WorkspaceModel, 'id' | 'createdAt'>>

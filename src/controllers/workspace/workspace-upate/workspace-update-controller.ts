@@ -26,14 +26,7 @@ export class WorkspaceUpdateController implements Controller {
       profileImage: 'string',
       coverImage: 'string',
     }
-    const params: UpdateWorkspaceModel = {
-      title: '',
-      description: '',
-      boards: [],
-      members: [],
-      profileImage: '',
-      coverImage: '',
-    }
+    const params = {}
 
     const { id } = request.params
 
@@ -52,10 +45,13 @@ export class WorkspaceUpdateController implements Controller {
       params[param] = request.body[param]
     }
 
-    const updateSuccess = await this.dependencies.workspace.setById(id, params)
+    const updatedWorkspace = await this.dependencies.workspace.setById(id, params)
 
-    if (!updateSuccess) throw new BadRequestError('Workspace update fails!')
+    if (!updatedWorkspace) throw new BadRequestError('Workspace update fails!')
 
-    return httpResponse(200, 'Update successfully')
+    return httpResponse(200, {
+      message: 'Update successfully',
+      data: updatedWorkspace,
+    })
   }
 }

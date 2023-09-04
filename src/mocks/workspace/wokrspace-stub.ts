@@ -18,7 +18,7 @@ export class WorkspaceStub implements Workspace {
     return Promise.resolve(makeFakeWorkspace())
   }
 
-  async setById(): Promise<boolean> {
-    return Promise.resolve(true)
+  async setById(): Promise<WorkspaceModel | undefined> {
+    return Promise.resolve(makeFakeWorkspace())
   }
 }

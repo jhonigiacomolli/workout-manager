@@ -5,5 +5,5 @@ export interface Workspace {
   create: (workspace: CreateWorkspaceModel) => Promise<WorkspaceModel | undefined>
   getAll: (params?: HTTPRequestParams) => Promise<WorkspaceModel[]>
   getById: (id: string) => Promise<WorkspaceModel | undefined>
-  setById: (id: string, params: UpdateWorkspaceModel) => Promise<boolean>
+  setById: (id: string, params: UpdateWorkspaceModel) => Promise<WorkspaceModel | undefined>
 }
