@@ -52,4 +52,19 @@ export class PgWorkspaceReposytory implements Workspace {
     `, [params.limit, params.offset])
     return rows
   }
+
+  async getById(id: string): Promise<WorkspaceModel | undefined> {
+    const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
+
+    return {
+      id: rows[0].id,
+      createdAt: rows[0].created_at,
+      title: rows[0].title,
+      description: rows[0].description,
+      boards: rows[0].boards,
+      members: rows[0].members,
+      coverImage: rows[0].coverImage,
+      profileImage: rows[0].profileImage,
+    }
+  }
 }
