@@ -70,6 +70,24 @@ describe('PostgresWorkspaceReposytory', () => {
       expect(result).toEqual(makeFakeWorkspace())
     })
   })
+  describe('delete()', () => {
+    test('Should return true when team remove succeeds', async () => {
+      const { sut, paramsWithId } = makeSut()
+      const result = await sut.delete(paramsWithId.id)
+      expect(result).toBeTruthy()
+    })
+    test('Should return false id id is not provided', async () => {
+      const { sut } = makeSut()
+      const result = await sut.delete('')
+      expect(result).toBeFalsy()
+    })
+    test('Should return 500 when team remove fails', async () => {
+      const { sut, paramsWithId } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      const result = sut.delete(paramsWithId.id)
+      return expect(result).rejects.toThrow()
+    })
+  })
   describe('getAll()', () => {
     test('Should return an account model list if succeeds', async () => {
       const { sut } = makeSut()
