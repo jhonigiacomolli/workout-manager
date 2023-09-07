@@ -2,6 +2,7 @@ import * as schemas from './schemas'
 import * as accountsPaths from './paths/accounts'
 import * as teamsPaths from './paths/teams'
 import * as workspacesPaths from './paths/workspaces'
+import * as boardsPaths from './paths/boards'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -11,6 +12,7 @@ export const swaggerConfigurations = {
   },
   tags: [
     'Account',
+    'Board',
     'Team',
     'Workspace',
   ],
@@ -41,6 +43,9 @@ export const swaggerConfigurations = {
       put: workspacesPaths.workspaceUpdatePath,
       delete: workspacesPaths.workspaceRemovePath,
     },
+    '/boards': {
+      post: boardsPaths.boardCreatePath,
+    },
   },
   schemas: {
     error: schemas.errorSchema,
@@ -54,6 +59,9 @@ export const swaggerConfigurations = {
     workspaceModel: schemas.workspaceModelSchema,
     workspaceCreateParams: schemas.workspaceCreateParamsSchema,
     workspaceCreateReturns: schemas.workspaceCreateRetunrSchema,
+    boardModel: schemas.boardModelSchema,
+    boardCreateParams: schemas.boardCreateParamsSchema,
+    boardCreateReturns: schemas.boardCreateReturnSchema,
   },
   components: {
     securitySchemes: {
