@@ -3,6 +3,7 @@ import { CreateWorkspaceModel, UpdateWorkspaceModel, WorkspaceModel } from '@/pr
 
 export interface Workspace {
   create: (workspace: CreateWorkspaceModel) => Promise<WorkspaceModel | undefined>
+  delete: (id: string) => Promise<boolean>
   getAll: (params?: HTTPRequestParams) => Promise<WorkspaceModel[]>
   getById: (id: string) => Promise<WorkspaceModel | undefined>
   setById: (id: string, params: UpdateWorkspaceModel) => Promise<WorkspaceModel | undefined>

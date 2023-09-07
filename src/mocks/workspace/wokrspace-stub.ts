@@ -7,6 +7,10 @@ export class WorkspaceStub implements Workspace {
     return Promise.resolve(makeFakeWorkspace())
   }
 
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
   async getAll(): Promise<WorkspaceModel[]> {
     return Promise.resolve([
       makeFakeWorkspace(),
