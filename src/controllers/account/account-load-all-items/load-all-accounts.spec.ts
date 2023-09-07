@@ -2,6 +2,7 @@ import { httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { AccountLoadAllItemsController } from './load-all-accounts'
 import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({}, {}, {}, {
   pagination: {
@@ -48,6 +49,23 @@ describe('AccountLoadAllItemsController', () => {
       body: [],
     })
   })
+  test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
+    const { sut } = makeSut()
+
+    const fakeRequestWithInvalidParam = {
+      ...fakeRequest,
+      query: {
+        ...fakeRequest.query,
+        pagination: {
+          ...fakeRequest.query.pagination,
+          orderBy: 'wrong',
+        },
+      },
+    }
+    const output = sut.handle(fakeRequestWithInvalidParam)
+
+    await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,name,email,phone,address,status)'))
+  })
   test('Should getAllAccounts to have been called with correct params', async () => {
     const { sut, accountStub } = makeSut()
 
@@ -72,15 +90,6 @@ describe('AccountLoadAllItemsController', () => {
       order: 'DESC',
       orderBy: 'id',
       offset: '0',
-    })
-
-    fakeRequest.query.pagination.orderBy = 'wrong_field'
-
-    await sut.handle(fakeRequest)
-
-    expect(methodSpy).toHaveBeenCalledWith({
-      ...fakeRequest.query.pagination,
-      orderBy: 'name',
     })
   })
   test('Should return throw if loadAll method throws', async () => {

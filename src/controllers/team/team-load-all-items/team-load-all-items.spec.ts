@@ -2,6 +2,7 @@ import { TeamStub } from '@/mocks/teams/team-stub'
 import { TeamLoadAllItemsController } from './team-load-all-items'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({}, {}, {}, {
   pagination: {
@@ -42,6 +43,23 @@ describe('TeamLoadAllItemsController', () => {
 
     expect(result).toEqual(httpResponse(200, []))
   })
+  test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
+    const { sut } = makeSut()
+
+    const fakeRequestWithInvalidParam = {
+      ...fakeRequest,
+      query: {
+        ...fakeRequest.query,
+        pagination: {
+          ...fakeRequest.query.pagination,
+          orderBy: 'wrong',
+        },
+      },
+    }
+    const output = sut.handle(fakeRequestWithInvalidParam)
+
+    await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,name,members)'))
+  })
   test('Should getAllTeams to have been called with correct params', async () => {
     const { sut, teamStub } = makeSut()
 
@@ -66,15 +84,6 @@ describe('TeamLoadAllItemsController', () => {
       ...fakeRequest.query.pagination,
       order: 'DESC',
       orderBy: 'id',
-    })
-
-    fakeRequest.query.pagination.orderBy = 'wrong_field'
-
-    await sut.handle(fakeRequest)
-
-    expect(methodSpy).toHaveBeenCalledWith({
-      ...fakeRequest.query.pagination,
-      orderBy: 'name',
     })
   })
   test('Should return 500 if loadAll method throws', async () => {
