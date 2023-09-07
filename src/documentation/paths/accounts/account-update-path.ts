@@ -22,8 +22,15 @@ export const accountUpdatePath = {
     },
   },
   responses: {
-    204: {
+    200: {
       description: 'Account update successfully',
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/schemas/accountCreateReturns',
+          },
+        },
+      },
     },
     400: {
       description: 'Bad Request',

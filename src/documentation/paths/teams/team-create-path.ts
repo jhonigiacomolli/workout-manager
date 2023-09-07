@@ -13,7 +13,7 @@ export const teamCreatePath = {
     },
   },
   responses: {
-    204: {
+    200: {
       description: 'Team update successfully',
       content: {
         'application/json': {

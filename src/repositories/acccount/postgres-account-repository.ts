@@ -21,6 +21,7 @@ export class PgAccountRepository implements Account {
       tasks,
       teamId
     ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING
+      id,
       COALESCE(name, '') as name,
       COALESCE(email, '') as email,
       COALESCE(image, '') as image,
