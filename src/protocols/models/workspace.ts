@@ -1,4 +1,4 @@
-export interface WorkspaceModel {
+export type WorkspaceModel = {
   id: string
   createdAt: string
   title: string

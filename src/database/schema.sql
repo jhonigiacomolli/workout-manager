@@ -36,3 +36,11 @@ CREATE TABLE IF NOT EXISTS workspaces(
   profileImage VARCHAR,
   coverImage VARCHAR
 );
+
+CREATE TABLE IF NOT EXISTS boards(
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP,
+  title VARCHAR NOT NULL,
+  format VARCHAR,
+  groups VARCHAR[]
+);
