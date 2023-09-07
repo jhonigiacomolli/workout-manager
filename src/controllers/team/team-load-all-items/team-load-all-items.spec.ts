@@ -1,7 +1,7 @@
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { TeamLoadAllItemsController } from './team-load-all-items'
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+import { makeFakeTeamList } from '@/mocks/teams/team-fakes'
 import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({}, {}, {}, {

@@ -1,7 +1,7 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { BadRequestError, NotFoundError } from '@/helpers/errors'
-import { makeFakeWorkspace } from '@/mocks/workspace/make-fake-workspace'
+import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { WorkspaceLoadItemController } from './workspace-load-item-controller'
 
 const makeSut = () => {

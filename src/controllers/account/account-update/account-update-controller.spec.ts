@@ -1,7 +1,7 @@
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { AccountUdateController } from './account-update-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 

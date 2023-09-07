@@ -1,6 +1,6 @@
 import { client } from '@/database'
 import { PgTeamRepository } from './postgres-team-repository'
-import { makeFakePostgresTeam, makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/make-fake-team'
+import { makeFakePostgresTeam, makeFakePostgresTeamList, makeFakeTeam, makeFakeTeamList } from '@/mocks/teams/team-fakes'
 
 jest.mock('pg', () => {
   const mClient = {

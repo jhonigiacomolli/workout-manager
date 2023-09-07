@@ -1,5 +1,5 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeWorkspace } from '@/mocks/workspace/make-fake-workspace'
+import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { WorkspaceLoadAllITemsController } from './workspace-load-all-items-controller'
 import { InvalidParamError } from '@/helpers/errors'

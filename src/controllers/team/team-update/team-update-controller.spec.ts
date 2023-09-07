@@ -1,7 +1,7 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { TeamUpdateController } from './team-update-controller'
 import { BadRequestError, EmptyParamError, NotFoundError } from '@/helpers/errors'
-import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
+import { makeFakeTeam } from '@/mocks/teams/team-fakes'
 import { TeamStub } from '@/mocks/teams/team-stub'
 
 const makeSut = () => {

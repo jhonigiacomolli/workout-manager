@@ -1,4 +1,4 @@
-import { makeFakeWorkspace } from './make-fake-workspace'
+import { makeFakeWorkspace } from './workspace-fakes'
 import { Workspace } from '@/protocols/use-cases/workspace'
 import { WorkspaceModel } from '@/protocols/models/workspace'
 

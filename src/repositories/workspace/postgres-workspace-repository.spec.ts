@@ -1,4 +1,4 @@
-import { makeFakePostgressWorkspace, makeFakeWorkspace } from '@/mocks/workspace/make-fake-workspace'
+import { makeFakePostgressWorkspace, makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { PgWorkspaceReposytory } from './postgres-workspace-repository'
 import { client } from '@/database'
 

@@ -4,7 +4,7 @@ import { SignUpController } from './sign-up-controller'
 import { httpResponse, httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {

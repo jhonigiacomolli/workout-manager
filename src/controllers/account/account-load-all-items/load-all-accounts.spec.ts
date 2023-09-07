@@ -1,7 +1,7 @@
 import { httpRequest } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { AccountLoadAllItemsController } from './load-all-accounts'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest = httpRequest({}, {}, {}, {

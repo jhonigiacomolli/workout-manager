@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { authenticate } from './authentication-middleware'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { EncrypterStub } from '@/mocks/cryptography/encrypter-stub'
-import { makeFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount } from '@/mocks/account/account-fakes'
 
 const fakeRequest = {
   headers: {

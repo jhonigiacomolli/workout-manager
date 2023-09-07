@@ -1,6 +1,6 @@
 import { httpRequest, httpResponse } from '@/helpers/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
-import { makeFakeWorkspace } from '@/mocks/workspace/make-fake-workspace'
+import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { WorkspaceCreateController } from './workspace-create-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 

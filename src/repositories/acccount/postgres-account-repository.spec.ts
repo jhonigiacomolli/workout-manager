@@ -1,6 +1,6 @@
 import { client } from '@/database'
 import { PgAccountRepository } from './postgres-account-repository'
-import { makeFakeAccount, makePostgresFakeAccount } from '@/mocks/account/make-fake-account'
+import { makeFakeAccount, makePostgresFakeAccount } from '@/mocks/account/account-fakes'
 
 jest.mock('pg', () => {
   const mClient = {

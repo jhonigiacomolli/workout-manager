@@ -2,7 +2,7 @@ import { TeamStub } from '@/mocks/teams/team-stub'
 import { EmptyParamError } from '@/helpers/errors'
 import { TeamCreateController } from './team-create'
 import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeTeam } from '@/mocks/teams/make-fake-team'
+import { makeFakeTeam } from '@/mocks/teams/team-fakes'
 
 const fakeRequest = httpRequest({
   name: 'valid_team_title',

@@ -1,4 +1,4 @@
-import { makeFakeAccount } from './make-fake-account'
+import { makeFakeAccount } from './account-fakes'
 import { Account } from '@/protocols/use-cases/account'
 import { AccountModel } from '@/protocols/models/account'
 

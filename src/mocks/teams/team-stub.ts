@@ -1,6 +1,6 @@
 import { Team } from '@/protocols/use-cases/team'
 import { TeamModel } from '@/protocols/models/team'
-import { makeFakeTeam, makeFakeTeamList } from './make-fake-team'
+import { makeFakeTeam, makeFakeTeamList } from './team-fakes'
 
 export class TeamStub implements Team {
   async getTeamByID(): Promise<TeamModel | undefined> {
