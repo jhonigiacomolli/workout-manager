@@ -39,6 +39,13 @@ export class PgWorkspaceReposytory implements Workspace {
     }))[0]
   }
 
+  async delete(id: string): Promise<boolean> {
+    if (!id) return false
+
+    const { rowCount } = await client.query('DELETE FROM workspaces WHERE id=$1', [id])
+    return rowCount > 0
+  }
+
   async getAll(params: HTTPRequestParams): Promise<WorkspaceModel[]> {
     if (params.orderBy === 'createdAt') {
       params.orderBy = 'created_at'
