@@ -3,6 +3,7 @@ import { Account } from '@/protocols/use-cases/account'
 import { AccountModel } from '@/protocols/models/account'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
+import { InvalidParamError } from '@/helpers/errors'
 
 type Dependencies = {
   account: Account
@@ -18,13 +19,15 @@ export class AccountLoadAllItemsController implements Controller {
 
     const fields: AccountKeys[] = ['id', 'name', 'email', 'phone', 'address', 'status']
 
-    const orderByField = fields.includes(orderBy) ? orderBy : 'name'
+    if (!fields.includes(orderBy)) {
+      throw new InvalidParamError(`orderBy, accepted params(${fields.join(',')})`)
+    }
 
     const accounts = await this.dependencies.account.getAllAccounts({
       limit,
       page,
       offset,
-      orderBy: orderByField,
+      orderBy,
       order,
     })
 

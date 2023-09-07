@@ -1,6 +1,7 @@
 import { httpResponse } from '@/helpers/http'
 import { Team } from '@/protocols/use-cases/team'
 import { TeamModel } from '@/protocols/models/team'
+import { InvalidParamError } from '@/helpers/errors'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 
@@ -18,13 +19,15 @@ export class TeamLoadAllItemsController implements Controller {
 
     const fields: TeamKeys[] = ['id', 'name', 'members']
 
-    const orderByField = fields.includes(orderBy) ? orderBy : 'name'
+    if (!fields.includes(orderBy)) {
+      throw new InvalidParamError(`orderBy, accepted params(${fields.join(',')})`)
+    }
 
     const teams = await this.dependencies.team.getAllTeams({
       limit,
       page,
       offset,
-      orderBy: orderByField,
+      orderBy,
       order,
     })
 
