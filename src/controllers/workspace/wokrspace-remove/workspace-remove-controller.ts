@@ -23,6 +23,6 @@ export class WorkspaceRemoveController implements Controller {
 
     if (!success) throw new BadRequestError('Workspace remove failed!')
 
-    return Promise.resolve(httpResponse(200, 'Workspace removed!'))
+    return Promise.resolve(httpResponse(204, 'Workspace removed!'))
   }
 }

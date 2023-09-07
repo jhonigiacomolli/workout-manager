@@ -39,6 +39,7 @@ export const swaggerConfigurations = {
     '/workspaces/{id}': {
       get: workspacesPaths.workspaceGetPath,
       put: workspacesPaths.workspaceUpdatePath,
+      delete: workspacesPaths.workspaceRemovePath,
     },
   },
   schemas: {

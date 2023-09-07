@@ -65,11 +65,11 @@ describe('WorkspaceRemoveController', () => {
     await expect(output).rejects.toThrow()
   })
 
-  test('Should return 200 with method succeeeds', async () => {
+  test('Should return 204 with method succeeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 
     const output = await sut.handle(fakeRequest)
 
-    expect(output).toEqual(httpResponse(200, 'Workspace removed!'))
+    expect(output).toEqual(httpResponse(204, 'Workspace removed!'))
   })
 })
