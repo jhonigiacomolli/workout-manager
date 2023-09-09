@@ -1,4 +1,3 @@
-import { InvalidParamError } from './errors'
 import { validateNumberParams, validateOrderParams, validateTextParams } from './sanitize'
 
 describe('Sanitize', () => {
@@ -38,6 +37,8 @@ describe('Sanitize', () => {
     const emptyStringValueResult = validateOrderParams('')
     expect(emptyStringValueResult).toBe('DESC')
 
-    expect(() => validateOrderParams('INVALID')).toThrow(new InvalidParamError('order, accepted params(ASC,DESC)'))
+    const invalidParamValueResult = validateOrderParams('INVALID')
+
+    expect(invalidParamValueResult).toBeFalsy()
   })
 })

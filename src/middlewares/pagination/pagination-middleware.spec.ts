@@ -1,13 +1,12 @@
 import { Request, Response } from 'express'
 import { pagination } from './pagination-middleware'
-import { InvalidParamError } from '@/helpers/errors'
 
 const fakeRequest: Partial<Request> = {
   query: {},
 }
 
-const fakeResponse: Partial<Response> = {
-  status: jest.fn().mockReturnThis(),
+const fakeResponse: any = {
+  status: jest.fn(() => fakeResponse),
   json: jest.fn(),
 }
 
@@ -37,8 +36,13 @@ describe('PaginationMiddleWare', () => {
         order: 'wrong-order',
       },
     }
-    const output = pagination(fakeRequestWithInvalidOrder as Request, fakeResponse as Response, fakeNext)
-    await expect(output).rejects.toThrow(new InvalidParamError('order, accepted params(ASC,DESC)'))
+
+    await pagination(fakeRequestWithInvalidOrder as Request, fakeResponse as Response, fakeNext)
+
+    expect(fakeResponse.status).toHaveBeenCalledWith(400)
+    expect(fakeResponse.json).toHaveBeenCalledWith({
+      error: 'Invalid param: order, accepted values(asc,desc)',
+    })
     expect(fakeNext).not.toHaveBeenCalled()
   })
   test('Should inject correct pagination params if limit query param is provided', async () => {

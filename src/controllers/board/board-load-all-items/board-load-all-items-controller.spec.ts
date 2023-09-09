@@ -7,7 +7,8 @@ import { makeFakeBoard } from '@/mocks/board/board-fakes'
 const makeSut = () => {
   const fakeRequestBody = {}
   const fakeRequestHeaders = {}
-  const fakeRequestParams = {
+  const fakeRequestParams = {}
+  const fakeRequestQuery = {
     pagination: {
       limit: '10',
       page: '1',
@@ -16,7 +17,12 @@ const makeSut = () => {
       orderBy: 'id',
     },
   }
-  const fakeRequest = httpRequest(fakeRequestBody, fakeRequestHeaders, fakeRequestParams)
+  const fakeRequest = httpRequest(
+    fakeRequestBody,
+    fakeRequestHeaders,
+    fakeRequestParams,
+    fakeRequestQuery,
+  )
 
   const boardStub = new BoardStub()
   const sut = new BoardLoadAllItemsController({
@@ -44,7 +50,7 @@ describe('BoardListAllItemsController', () => {
   test('Should return invalid param error if wrong order by param is provided', async () => {
     const { sut, fakeRequest } = makeSut()
     const fakeRequestWithWrongOrderByParam = { ...fakeRequest }
-    fakeRequest.params.pagination.orderBy = 'wrong-param'
+    fakeRequest.query.pagination.orderBy = 'wrong-param'
 
     const output = sut.handle(fakeRequestWithWrongOrderByParam)
 
@@ -58,7 +64,7 @@ describe('BoardListAllItemsController', () => {
 
     await sut.handle(fakeRequest)
 
-    expect(boardSpy).toHaveBeenCalledWith(fakeRequest.params.pagination)
+    expect(boardSpy).toHaveBeenCalledWith(fakeRequest.query.pagination)
   })
 
   test('Should return a board model list if proccess succeeds', async () => {
