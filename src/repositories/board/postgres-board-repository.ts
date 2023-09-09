@@ -1,6 +1,7 @@
 import { client } from '@/database'
-import { Board, CreateBoardParams } from '@/protocols/use-cases/board'
 import { BoardModel } from '@/protocols/models/board'
+import { HTTPRequestParams } from '@/protocols/models/http'
+import { Board, CreateBoardParams } from '@/protocols/use-cases/board'
 
 export class PgBoardReposytory implements Board {
   async create(board: CreateBoardParams): Promise<BoardModel> {
@@ -36,19 +37,20 @@ export class PgBoardReposytory implements Board {
   //   return rowCount > 0
   // }
 
-  // async getAll(params: HTTPRequestParams): Promise<WorkspaceModel[]> {
-  //   if (params.orderBy === 'createdAt') {
-  //     params.orderBy = 'created_at'
-  //   }
+  async getAll(params: HTTPRequestParams): Promise<BoardModel[]> {
+    if (params.orderBy === 'createdAt') {
+      params.orderBy = 'created_at'
+    }
 
-  //   const { rows } = await client.query(`
-  //     SELECT * FROM workspaces
-  //     ORDER BY ${params.orderBy} ${params.order}
-  //     LIMIT $1
-  //     OFFSET $2:: integer * $1:: integer;
-  //   `, [params.limit, params.offset])
-  //   return rows
-  // }
+    const { rows } = await client.query(`
+      SELECT * FROM boards
+      ORDER BY ${params.orderBy} ${params.order}
+      LIMIT $1
+      OFFSET $2:: integer * $1:: integer;
+    `, [params.limit, params.offset])
+
+    return rows
+  }
 
   // async getById(id: string): Promise<WorkspaceModel | undefined> {
   //   const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
