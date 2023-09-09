@@ -49,23 +49,25 @@ export class PgBoardReposytory implements Board {
       OFFSET $2:: integer * $1:: integer;
     `, [params.limit, params.offset])
 
-    return rows
+    // eslint-disable-next-line camelcase
+    return rows.map(({ created_at, ...board }) => ({
+      ...board,
+      // eslint-disable-next-line camelcase
+      createdAt: created_at,
+    }))
   }
 
-  // async getById(id: string): Promise<WorkspaceModel | undefined> {
-  //   const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
+  async getById(id: string): Promise<BoardModel | undefined> {
+    const { rows } = await client.query('SELECT * FROM boards WHERE id=$1', [id])
 
-  //   return {
-  //     id: rows[0].id,
-  //     createdAt: rows[0].created_at,
-  //     title: rows[0].title,
-  //     description: rows[0].description,
-  //     boards: rows[0].boards,
-  //     members: rows[0].members,
-  //     coverImage: rows[0].coverImage,
-  //     profileImage: rows[0].profileImage,
-  //   }
-  // }
+    return {
+      id: rows[0].id,
+      createdAt: rows[0].created_at,
+      title: rows[0].title,
+      format: rows[0].format,
+      groups: rows[0].groups,
+    }
+  }
 
   // async setById(id: string, data: UpdateWorkspaceModel): Promise<WorkspaceModel> {
   //   const { rows } = await client.query(`
