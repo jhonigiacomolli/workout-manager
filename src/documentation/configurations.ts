@@ -50,6 +50,7 @@ export const swaggerConfigurations = {
     '/boards/{id}': {
       get: boardsPaths.boardGetPath,
       put: boardsPaths.boardUpdatePath,
+      delete: boardsPaths.boardRemovePath,
     },
   },
   schemas: {
