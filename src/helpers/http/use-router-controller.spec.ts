@@ -103,4 +103,21 @@ describe('useRouteController', () => {
       error: 'Unauthorized!',
     })
   })
+
+  test('Should invalid param error when postgres throw a uuid error', async () => {
+    jest.spyOn(controller, 'handle').mockImplementationOnce(() => {
+      const error = new Error('') as any
+      error.code = '22P02'
+      throw error
+    })
+    controller.handle.mockResolvedValue(httpResponse)
+
+    const routeController = useRouteController(controller)
+    await routeController(req, res)
+
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith({
+      error: 'Invalid param: id',
+    })
+  })
 })

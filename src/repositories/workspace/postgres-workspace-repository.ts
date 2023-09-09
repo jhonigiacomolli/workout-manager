@@ -61,28 +61,18 @@ export class PgWorkspaceReposytory implements Workspace {
   }
 
   async getById(id: string): Promise<WorkspaceModel | undefined> {
-    try {
-      const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
+    const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
 
-      // eslint-disable-next-line camelcase
-      return rows.map(({ created_at, title, description, boards, members, coverImage, profileImage }) => ({
-        id,
-        // eslint-disable-next-line camelcase
-        createdAt: created_at,
-        title,
-        description,
-        boards,
-        members,
-        coverImage,
-        profileImage,
-      }))[0]
-    } catch (error) {
-      if (error.code === '22P02') {
-        return undefined
-      } else {
-        throw error
-      }
-    }
+    return rows.map(row => ({
+      id: row.id,
+      createdAt: row.created_at,
+      title: row.title,
+      description: row.description,
+      boards: row.boards,
+      members: row.members,
+      coverImage: row.coverImage,
+      profileImage: row.profileImage,
+    }))[0]
   }
 
   async setById(id: string, data: UpdateWorkspaceModel): Promise<WorkspaceModel> {
@@ -106,11 +96,15 @@ export class PgWorkspaceReposytory implements Workspace {
       COALESCE(coverImage, '') as coverImage
     `, [id, data.title, data.description, data.members, data.boards, data.profileImage, data.coverImage])
 
-    // eslint-disable-next-line
-    return rows.map(({ created_at, ...workspace }) => ({
-      ...workspace,
-      // eslint-disable-next-line
-      createdAt: created_at,
+    return rows.map(row => ({
+      id: row.id,
+      createdAt: row.created_at,
+      title: row.title,
+      description: row.description,
+      boards: row.boards,
+      members: row.members,
+      coverImage: row.coverImage,
+      profileImage: row.profileImage,
     }))[0]
   }
 }

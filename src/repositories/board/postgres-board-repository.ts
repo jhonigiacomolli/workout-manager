@@ -59,23 +59,15 @@ export class PgBoardReposytory implements Board {
   }
 
   async getById(id: string): Promise<BoardModel | undefined> {
-    try {
-      const { rows } = await client.query('SELECT * FROM boards WHERE id=$1', [id])
+    const { rows } = await client.query('SELECT * FROM boards WHERE id=$1', [id])
 
-      return rows.map(board => ({
-        id: board.id,
-        createdAt: board.created_at,
-        title: board.title,
-        format: board.format,
-        groups: board.groups,
-      }))[0]
-    } catch (error) {
-      if (error.code === '22P02') {
-        return undefined
-      } else {
-        throw error
-      }
-    }
+    return rows.map(board => ({
+      id: board.id,
+      createdAt: board.created_at,
+      title: board.title,
+      format: board.format,
+      groups: board.groups,
+    }))[0]
   }
 
   async setById(id: string, data: Partial<BoardModel>): Promise<BoardModel> {

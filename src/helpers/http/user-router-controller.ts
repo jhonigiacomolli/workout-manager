@@ -27,16 +27,23 @@ export const useRouteController = (controller: Controller) => {
         res.status(error.statusCode).json({
           error: error.message,
         })
-      } else {
-        const logRepository = new ErrorLogFileSystemRepository()
-        const logController = new ErrorLogController(logRepository)
-
-        logController.handle(error)
-
-        res.status(500).json({
-          error: 'Internal Server Error',
-        })
+        return
       }
+      if (error.code === '22P02') {
+        res.status(400).json({
+          error: 'Invalid param: id',
+        })
+        return
+      }
+
+      const logRepository = new ErrorLogFileSystemRepository()
+      const logController = new ErrorLogController(logRepository)
+
+      logController.handle(error)
+
+      res.status(500).json({
+        error: 'Internal Server Error',
+      })
     }
   }
 }

@@ -57,17 +57,9 @@ export class PgAccountRepository implements Account {
   }
 
   async getUserById(id: string): Promise<AccountModel | undefined> {
-    try {
-      const { rows } = await client.query('SELECT * FROM accounts WHERE id=$1', [id])
+    const { rows } = await client.query('SELECT * FROM accounts WHERE id=$1', [id])
 
-      return rows[0]
-    } catch (error) {
-      if (error.code === '22P02') {
-        return undefined
-      } else {
-        throw error
-      }
-    }
+    return rows[0]
   }
 
   async getUserByEmail(email: string): Promise<AccountModel> {

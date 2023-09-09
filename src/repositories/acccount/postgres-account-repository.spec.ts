@@ -111,18 +111,6 @@ describe('Postgres Account Repository', () => {
       const newResult = await sut.getUserById(params.id)
       expect(newResult).toEqual(params)
     })
-    test('Should return undefined when team query fails because wrong id', async () => {
-      const { sut, params } = makeSut()
-
-      jest.spyOn(client, 'query').mockImplementationOnce(() => {
-        const error = new Error('') as any
-        error.code = '22P02'
-        throw error
-      })
-
-      const result = await sut.getUserById(params.id)
-      expect(result).toBeFalsy()
-    })
     test('Should return 500 when account query fails', async () => {
       const { sut, params } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
