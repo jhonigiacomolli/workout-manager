@@ -45,6 +45,7 @@ export const swaggerConfigurations = {
     },
     '/boards': {
       post: boardsPaths.boardCreatePath,
+      get: boardsPaths.boardListPath,
     },
   },
   schemas: {
