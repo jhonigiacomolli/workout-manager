@@ -18,3 +18,4 @@ export * from './workspace/make-workspace-update-controller.ts'
 
 export * from './board/make-board-create-controller'
 export * from './board/make-board-load-all-items-controller'
+export * from './board/make-board-load-item-controller'
