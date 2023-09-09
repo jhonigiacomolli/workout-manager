@@ -1,6 +1,6 @@
 import { Controller } from '@/protocols/models/controller'
-import { BoardCreateController } from '@/controllers/board/board-create/board-create-controller'
 import { PgBoardReposytory } from '@/repositories/board/postgres-board-repository'
+import { BoardCreateController } from '@/controllers/board/board-create/board-create-controller'
 
 export const makeBoardCreateController = (): Controller => {
   return new BoardCreateController({
