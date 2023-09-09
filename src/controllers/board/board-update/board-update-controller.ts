@@ -22,12 +22,18 @@ export class BoardUpdateController implements Controller {
       createdAt: 'string',
       groups: 'array',
     }
+    const boardFormats = ['gant', 'kanban', 'table']
 
     if (!id) throw new EmptyParamError('id')
 
     for (const paramKey of Object.keys(request.body)) {
       const paramValue = request.body[paramKey]
       const paramType = boardModelTypes[paramKey]
+
+      if (paramKey === 'format' && !boardFormats.includes(paramValue)) {
+        throw new InvalidParamError(`${paramKey}, accepted values(${boardFormats.join(',')})`)
+      }
+
       const isValidParamType = paramValidation(paramValue, paramType)
 
       if (paramValue && !isValidParamType) {
