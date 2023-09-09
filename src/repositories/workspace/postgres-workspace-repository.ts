@@ -1,7 +1,7 @@
 import { client } from '@/database'
 import { Workspace } from '@/protocols/use-cases/workspace'
-import { CreateWorkspaceModel, UpdateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
 import { HTTPRequestParams } from '@/protocols/models/http'
+import { CreateWorkspaceModel, UpdateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
 
 export class PgWorkspaceReposytory implements Workspace {
   async create(workspace: CreateWorkspaceModel): Promise<WorkspaceModel> {
@@ -61,17 +61,27 @@ export class PgWorkspaceReposytory implements Workspace {
   }
 
   async getById(id: string): Promise<WorkspaceModel | undefined> {
-    const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
+    try {
+      const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
 
-    return {
-      id: rows[0].id,
-      createdAt: rows[0].created_at,
-      title: rows[0].title,
-      description: rows[0].description,
-      boards: rows[0].boards,
-      members: rows[0].members,
-      coverImage: rows[0].coverImage,
-      profileImage: rows[0].profileImage,
+      // eslint-disable-next-line camelcase
+      return rows.map(({ created_at, title, description, boards, members, coverImage, profileImage }) => ({
+        id,
+        // eslint-disable-next-line camelcase
+        createdAt: created_at,
+        title,
+        description,
+        boards,
+        members,
+        coverImage,
+        profileImage,
+      }))[0]
+    } catch (error) {
+      if (error.code === '22P02') {
+        return undefined
+      } else {
+        throw error
+      }
     }
   }
 

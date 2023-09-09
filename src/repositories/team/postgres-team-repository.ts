@@ -30,13 +30,21 @@ export class PgTeamRepository implements Team {
   }
 
   async getTeamByID(id: string): Promise<TeamModel | undefined> {
-    const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
+    try {
+      const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
 
-    return {
-      id: rows[0].id,
-      createdAt: rows[0].created_at,
-      name: rows[0].name,
-      members: rows[0].members,
+      return rows.map(row => ({
+        id: row.id,
+        createdAt: row.created_at,
+        name: row.name,
+        members: row.members,
+      }))[0]
+    } catch (error) {
+      if (error.code === '22P02') {
+        return undefined
+      } else {
+        throw error
+      }
     }
   }
 

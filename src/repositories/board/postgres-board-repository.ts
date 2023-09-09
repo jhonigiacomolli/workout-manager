@@ -49,23 +49,32 @@ export class PgBoardReposytory implements Board {
       OFFSET $2:: integer * $1:: integer;
     `, [params.limit, params.offset])
 
-    // eslint-disable-next-line camelcase
-    return rows.map(({ created_at, ...board }) => ({
-      ...board,
-      // eslint-disable-next-line camelcase
-      createdAt: created_at,
+    return rows.map(board => ({
+      id: board.id,
+      createdAt: board.created_at,
+      title: board.title,
+      format: board.format,
+      groups: board.groups,
     }))
   }
 
   async getById(id: string): Promise<BoardModel | undefined> {
-    const { rows } = await client.query('SELECT * FROM boards WHERE id=$1', [id])
+    try {
+      const { rows } = await client.query('SELECT * FROM boards WHERE id=$1', [id])
 
-    return {
-      id: rows[0].id,
-      createdAt: rows[0].created_at,
-      title: rows[0].title,
-      format: rows[0].format,
-      groups: rows[0].groups,
+      return rows.map(board => ({
+        id: board.id,
+        createdAt: board.created_at,
+        title: board.title,
+        format: board.format,
+        groups: board.groups,
+      }))[0]
+    } catch (error) {
+      if (error.code === '22P02') {
+        return undefined
+      } else {
+        throw error
+      }
     }
   }
 
