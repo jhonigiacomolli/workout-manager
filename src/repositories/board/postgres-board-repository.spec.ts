@@ -1,7 +1,7 @@
 import { makeFakePostgressWorkspace, makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { PgBoardReposytory } from './postgres-board-repository'
 import { client } from '@/database'
-import { makeFakeBoard } from '@/mocks/board/board-fakes'
+import { makeFakeBoard, makePostgresFakeBoard } from '@/mocks/board/board-fakes'
 
 jest.mock('pg', () => {
   const mClient = {
@@ -94,10 +94,10 @@ describe('PostgresWorkspaceReposytory', () => {
     test('Should return an account model list if succeeds', async () => {
       const { sut } = makeSut()
 
-      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makePostgresFakeBoard()] }))
 
       const newResult = await sut.getAll(fakeRequestParams)
-      expect(newResult).toEqual([makeFakePostgressWorkspace()])
+      expect(newResult).toEqual([makeFakeBoard()])
     })
 
     test('Should query is called with correct values', async () => {
@@ -133,13 +133,14 @@ describe('PostgresWorkspaceReposytory', () => {
     test('Should query is called with correct values if invalid orderby field is provided', async () => {
       const { sut } = makeSut()
 
-      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makePostgresFakeBoard()] }))
 
       fakeRequestParams.orderBy = 'createdAt'
 
-      await sut.getAll(fakeRequestParams)
+      const output = await sut.getAll(fakeRequestParams)
 
       expect(querySpy).toHaveBeenCalledWith(querySqlOrderByCreatedAt, ['10', '0'])
+      expect(output).toEqual([makeFakeBoard()])
     })
 
     test('Should thorws an erro when account query fails', async () => {
@@ -152,25 +153,26 @@ describe('PostgresWorkspaceReposytory', () => {
     })
   })
 
-  // describe('getById()', () => {
-  //   test('Should return an workspace model if succeeds', async () => {
-  //     const { sut, paramsWithId } = makeSut()
+  describe('getById()', () => {
+    test('Should return an board model if succeeds', async () => {
+      const { sut, paramsWithId } = makeSut()
 
-  //     jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makePostgresFakeBoard()] }))
 
-  //     const newResult = await sut.getById(paramsWithId.id)
+      const newResult = await sut.getById(paramsWithId.id)
 
-  //     expect(newResult).toEqual(paramsWithId)
-  //   })
-  //   test('Should throws when team query fails', async () => {
-  //     const { sut, paramsWithId } = makeSut()
+      expect(newResult).toEqual(makeFakeBoard())
+    })
+    test('Should throws when team query fails', async () => {
+      const { sut, paramsWithId } = makeSut()
 
-  //     jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
 
-  //     const result = sut.getById(paramsWithId.id)
-  //     await expect(result).rejects.toThrow()
-  //   })
-  // })
+      const result = sut.getById(paramsWithId.id)
+      await expect(result).rejects.toThrow()
+    })
+  })
+
   // describe('setById()', () => {
   //   test('Should return true if succeeds', async () => {
   //     const { sut, params, paramsWithId } = makeSut()
