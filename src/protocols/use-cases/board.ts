@@ -9,4 +9,5 @@ export interface Board {
   create: (board: CreateBoardParams) => Promise<BoardModel | undefined>
   getAll: (params: HTTPRequestParams) => Promise<BoardModel[]>
   getById: (id: string) => Promise<BoardModel | undefined>
+  setById: (id: string, params: Partial<BoardModel>) => Promise<BoardModel | undefined>
 }

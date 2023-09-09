@@ -14,4 +14,8 @@ export class BoardStub implements Board {
   async getById(): Promise<BoardModel | undefined> {
     return Promise.resolve(makeFakeBoard())
   }
+
+  async setById(): Promise<BoardModel | undefined> {
+    return Promise.resolve(makeFakeBoard())
+  }
 }
