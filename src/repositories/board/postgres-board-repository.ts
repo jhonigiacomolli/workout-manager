@@ -1,7 +1,7 @@
 import { client } from '@/database'
 import { BoardModel } from '@/protocols/models/board'
 import { HTTPRequestParams } from '@/protocols/models/http'
-import { Board, CreateBoardParams, UpdateBoardParams } from '@/protocols/use-cases/board'
+import { Board, CreateBoardParams } from '@/protocols/use-cases/board'
 
 export class PgBoardReposytory implements Board {
   async create(board: CreateBoardParams): Promise<BoardModel> {
@@ -22,20 +22,21 @@ export class PgBoardReposytory implements Board {
       board.groups,
     ])
 
-    // eslint-disable-next-line
-    return rows.map(({ created_at, ...board }) => ({
-      ...board,
-      // eslint-disable-next-line
-      createdAt: created_at,
+    return rows.map(board => ({
+      id: board.id,
+      createdAt: board.created_at,
+      title: board.title,
+      format: board.format,
+      groups: board.groups,
     }))[0]
   }
 
-  // async delete(id: string): Promise<boolean> {
-  //   if (!id) return false
+  async delete(id: string): Promise<boolean> {
+    if (!id) return false
 
-  //   const { rowCount } = await client.query('DELETE FROM workspaces WHERE id=$1', [id])
-  //   return rowCount > 0
-  // }
+    const { rowCount } = await client.query('DELETE FROM boards WHERE id=$1', [id])
+    return rowCount > 0
+  }
 
   async getAll(params: HTTPRequestParams): Promise<BoardModel[]> {
     if (params.orderBy === 'createdAt') {
