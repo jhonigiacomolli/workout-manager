@@ -38,7 +38,7 @@ describe('BoardUpdateController', () => {
     await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
 
-  test('Should return invalid param error a type of body field provided is wrong', async () => {
+  test('Should return invalid param error if type of body field provided is wrong', async () => {
     const { sut, fakeRequest } = makeSut()
     const fakeRequestWIthoutId = { ...fakeRequest }
     fakeRequestWIthoutId.body = {
@@ -55,6 +55,19 @@ describe('BoardUpdateController', () => {
     }
 
     await expect(sut.handle(fakeRequestWIthoutId)).rejects.toThrow(new InvalidParamError('groups must have to be a array'))
+  })
+
+  test('Should return invalid param error format field is invalid', async () => {
+    const { sut, fakeRequest } = makeSut()
+    const fakeRequestWithWrongFormat = { ...fakeRequest }
+    fakeRequestWithWrongFormat.body = {
+      ...fakeRequest.body,
+      format: 'wrong-format',
+    }
+
+    const output = sut.handle(fakeRequestWithWrongFormat)
+
+    await expect(output).rejects.toThrow(new InvalidParamError('format, accepted values(gant,kanban,table)'))
   })
 
   test('Should should calls setById method with correct values', async () => {
