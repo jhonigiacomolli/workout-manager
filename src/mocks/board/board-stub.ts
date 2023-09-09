@@ -7,6 +7,10 @@ export class BoardStub implements Board {
     return Promise.resolve(makeFakeBoard())
   }
 
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
   async getAll(): Promise<BoardModel[]> {
     return Promise.resolve([makeFakeBoard()])
   }
