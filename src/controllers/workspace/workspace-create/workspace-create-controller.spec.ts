@@ -1,16 +1,16 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { WorkspaceCreateController } from './workspace-create-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
-  const fakeRequestHeader = {
-    authorization: 'valid_access_token',
-  }
-  const { id, ...params } = makeFakeWorkspace()
-  const fakeResquestBody = params
-  const fakeRequest = httpRequest(fakeResquestBody, fakeRequestHeader)
+  const { id, ...body } = makeFakeWorkspace()
+  const fakeRequest = makeFakeRequest({
+    body,
+    params: { id },
+  })
   const worksSpaceStub = new WorkspaceStub()
   const sut = new WorkspaceCreateController({
     workspace: worksSpaceStub,
@@ -22,6 +22,7 @@ const makeSut = () => {
     worksSpaceStub,
   }
 }
+
 describe('WorkSpaceCreateController', () => {
   test('Should 400 if title is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -34,6 +35,7 @@ describe('WorkSpaceCreateController', () => {
 
     await expect(output).rejects.toThrow(new EmptyParamError('title'))
   })
+
   test('Should 400 if title is not a string', async () => {
     const { sut, fakeRequest } = makeSut()
     const fakeRequestWithNumberTitle = {
@@ -56,6 +58,7 @@ describe('WorkSpaceCreateController', () => {
     const objectOutput = sut.handle(fakeRequestWithObjectTitle)
     await expect(objectOutput).rejects.toThrow(new InvalidParamError('title must to be a string'))
   })
+
   test('Should 400 if members is not a array', async () => {
     const { sut, fakeRequest } = makeSut()
     const fakeRequestWithMembersObject = {
@@ -70,6 +73,7 @@ describe('WorkSpaceCreateController', () => {
 
     await expect(output).rejects.toThrow(new InvalidParamError('members must to be a array'))
   })
+
   test('Should calls create method with correct params', async () => {
     const { sut, fakeRequest, worksSpaceStub } = makeSut()
 
@@ -87,6 +91,7 @@ describe('WorkSpaceCreateController', () => {
 
     expect(worksSpaceSpy).toHaveBeenCalledWith(fakeRequest.body)
   })
+
   test('Should return 400 if create method returns undefined', async () => {
     const { sut, fakeRequest, worksSpaceStub } = makeSut()
 
@@ -96,6 +101,7 @@ describe('WorkSpaceCreateController', () => {
 
     await expect(output).rejects.toThrow(new BadRequestError('Workspace create fails!'))
   })
+
   test('Should return correct values if process succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 

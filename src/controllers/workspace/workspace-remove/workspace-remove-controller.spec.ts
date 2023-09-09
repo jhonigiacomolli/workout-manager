@@ -1,15 +1,11 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { WorkspaceRemoveController } from './workspace-remove-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
-  const fakeRequestBody = {}
-  const fakeRequestHeaders = {}
-  const fakeRequestParams = {
-    id: 'any_id',
-  }
-  const fakeRequest = httpRequest(fakeRequestBody, fakeRequestHeaders, fakeRequestParams)
+  const fakeRequest = makeFakeRequest()
   const workspaceStub = new WorkspaceStub()
   const sut = new WorkspaceRemoveController({
     workspace: workspaceStub,

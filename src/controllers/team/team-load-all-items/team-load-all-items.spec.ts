@@ -1,20 +1,12 @@
+import { httpResponse } from '@/helpers/http'
 import { TeamStub } from '@/mocks/teams/team-stub'
-import { TeamLoadAllItemsController } from './team-load-all-items'
-import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeTeamList } from '@/mocks/teams/team-fakes'
 import { InvalidParamError } from '@/helpers/errors'
-
-const fakeRequest = httpRequest({}, {}, {}, {
-  pagination: {
-    limit: '10',
-    page: '1',
-    offset: '0',
-    order: 'DESC',
-    orderBy: 'id',
-  },
-})
+import { makeFakeTeamList } from '@/mocks/teams/team-fakes'
+import { TeamLoadAllItemsController } from './team-load-all-items'
+import { fakePaginationDefault, makeFakeRequest } from '@/mocks/http'
 
 const makeSut = () => {
+  const fakeRequest = makeFakeRequest()
   const teamStub = new TeamStub()
   const sut = new TeamLoadAllItemsController({
     team: teamStub,
@@ -22,20 +14,22 @@ const makeSut = () => {
 
   return {
     sut,
+    fakeRequest,
     teamStub,
   }
 }
 
 describe('TeamLoadAllItemsController', () => {
   test('Should return a list of teams', async () => {
-    const { sut } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
     const result = await sut.handle(fakeRequest)
 
     expect(result).toEqual(httpResponse(200, makeFakeTeamList()))
   })
+
   test('Should return a empty list of teams if not have entries on db', async () => {
-    const { sut, teamStub } = makeSut()
+    const { sut, fakeRequest, teamStub } = makeSut()
 
     jest.spyOn(teamStub, 'getAllTeams').mockReturnValueOnce(Promise.resolve([]))
 
@@ -43,51 +37,53 @@ describe('TeamLoadAllItemsController', () => {
 
     expect(result).toEqual(httpResponse(200, []))
   })
+
   test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
     const { sut } = makeSut()
-
-    const fakeRequestWithInvalidParam = {
-      ...fakeRequest,
+    const fakeRequestWithInvalidParam = makeFakeRequest({
       query: {
-        ...fakeRequest.query,
         pagination: {
-          ...fakeRequest.query.pagination,
+          ...fakePaginationDefault,
           orderBy: 'wrong',
         },
       },
-    }
+    })
+
     const output = sut.handle(fakeRequestWithInvalidParam)
 
     await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,name,members)'))
   })
+
   test('Should getAllTeams to have been called with correct params', async () => {
-    const { sut, teamStub } = makeSut()
+    const { sut, fakeRequest, teamStub } = makeSut()
 
     const methodSpy = jest.spyOn(teamStub, 'getAllTeams')
     await sut.handle(fakeRequest)
 
-    expect(methodSpy).toHaveBeenCalledWith({
-      limit: '10',
-      page: '1',
-      offset: '0',
-      order: 'DESC',
-      orderBy: 'id',
+    expect(methodSpy).toHaveBeenCalledWith(fakePaginationDefault)
+
+    const fakeRequestWithLimit = makeFakeRequest({
+      query: {
+        pagination: {
+          ...fakePaginationDefault,
+          limit: '4',
+          page: '1',
+          offset: '0',
+        },
+      },
     })
 
-    fakeRequest.query.pagination.limit = '4'
-    fakeRequest.query.pagination.page = '1'
-    fakeRequest.query.pagination.offset = '0'
-
-    await sut.handle(fakeRequest)
+    await sut.handle(fakeRequestWithLimit)
 
     expect(methodSpy).toHaveBeenCalledWith({
-      ...fakeRequest.query.pagination,
+      ...fakePaginationDefault,
       order: 'DESC',
       orderBy: 'id',
     })
   })
+
   test('Should return 500 if loadAll method throws', async () => {
-    const { sut, teamStub } = makeSut()
+    const { sut, fakeRequest, teamStub } = makeSut()
 
     jest.spyOn(teamStub, 'getAllTeams').mockImplementationOnce(() => { throw new Error() })
 

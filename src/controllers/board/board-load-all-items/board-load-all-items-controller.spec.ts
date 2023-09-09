@@ -1,29 +1,12 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { BoardStub } from '@/mocks/board/board-stub'
-import { BoardLoadAllItemsController } from './board-load-all-items-controller'
 import { InvalidParamError } from '@/helpers/errors'
 import { makeFakeBoard } from '@/mocks/board/board-fakes'
+import { BoardLoadAllItemsController } from './board-load-all-items-controller'
 
 const makeSut = () => {
-  const fakeRequestBody = {}
-  const fakeRequestHeaders = {}
-  const fakeRequestParams = {}
-  const fakeRequestQuery = {
-    pagination: {
-      limit: '10',
-      page: '1',
-      offset: '0',
-      order: 'DESC',
-      orderBy: 'id',
-    },
-  }
-  const fakeRequest = httpRequest(
-    fakeRequestBody,
-    fakeRequestHeaders,
-    fakeRequestParams,
-    fakeRequestQuery,
-  )
-
+  const fakeRequest = makeFakeRequest()
   const boardStub = new BoardStub()
   const sut = new BoardLoadAllItemsController({
     board: boardStub,
@@ -49,8 +32,14 @@ describe('BoardListAllItemsController', () => {
 
   test('Should return invalid param error if wrong order by param is provided', async () => {
     const { sut, fakeRequest } = makeSut()
-    const fakeRequestWithWrongOrderByParam = { ...fakeRequest }
-    fakeRequest.query.pagination.orderBy = 'wrong-param'
+    const fakeRequestWithWrongOrderByParam = makeFakeRequest({
+      query: {
+        pagination: {
+          ...fakeRequest.query.pagination,
+          orderBy: 'wrong-field',
+        },
+      },
+    })
 
     const output = sut.handle(fakeRequestWithWrongOrderByParam)
 

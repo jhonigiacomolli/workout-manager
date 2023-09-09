@@ -1,20 +1,11 @@
-import { httpRequest } from '@/helpers/http'
-import { AccountStub } from '@/mocks/account/account-stub'
-import { AccountLoadAllItemsController } from './load-all-accounts'
-import { makeFakeAccount } from '@/mocks/account/account-fakes'
+import { makeFakeRequest } from '@/mocks/http'
 import { InvalidParamError } from '@/helpers/errors'
-
-const fakeRequest = httpRequest({}, {}, {}, {
-  pagination: {
-    limit: '10',
-    page: '1',
-    offset: '0',
-    order: 'DESC',
-    orderBy: 'id',
-  },
-})
+import { AccountStub } from '@/mocks/account/account-stub'
+import { makeFakeAccount } from '@/mocks/account/account-fakes'
+import { AccountLoadAllItemsController } from './load-all-accounts'
 
 const makeSut = () => {
+  const fakeRequest = makeFakeRequest()
   const accountStub = new AccountStub()
   const sut = new AccountLoadAllItemsController({
     account: accountStub,
@@ -22,35 +13,37 @@ const makeSut = () => {
 
   return {
     sut,
+    fakeRequest,
     accountStub,
   }
 }
 
 describe('AccountLoadAllItemsController', () => {
   test('Should return a list of teams', async () => {
-    const { sut } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle(fakeRequest)
+    const output = await sut.handle(fakeRequest)
 
-    expect(result).toEqual({
+    expect(output).toEqual({
       statusCode: 200,
       body: [makeFakeAccount()],
     })
   })
   test('Should return a empty list of teams if not have entries on db', async () => {
-    const { sut, accountStub } = makeSut()
+    const { sut, accountStub, fakeRequest } = makeSut()
 
     jest.spyOn(accountStub, 'getAllAccounts').mockReturnValueOnce(Promise.resolve([]))
 
-    const result = await sut.handle(fakeRequest)
+    const output = await sut.handle(fakeRequest)
 
-    expect(result).toEqual({
+    expect(output).toEqual({
       statusCode: 200,
       body: [],
     })
   })
+
   test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
-    const { sut } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
     const fakeRequestWithInvalidParam = {
       ...fakeRequest,
@@ -62,14 +55,16 @@ describe('AccountLoadAllItemsController', () => {
         },
       },
     }
+
     const output = sut.handle(fakeRequestWithInvalidParam)
 
     await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,name,email,phone,address,status)'))
   })
   test('Should getAllAccounts to have been called with correct params', async () => {
-    const { sut, accountStub } = makeSut()
+    const { sut, accountStub, fakeRequest } = makeSut()
 
     const methodSpy = jest.spyOn(accountStub, 'getAllAccounts')
+
     await sut.handle(fakeRequest)
 
     expect(methodSpy).toHaveBeenCalledWith({
@@ -80,10 +75,19 @@ describe('AccountLoadAllItemsController', () => {
       orderBy: 'id',
     })
 
-    fakeRequest.query.pagination.limit = '4'
-    fakeRequest.query.pagination.page = '1'
+    const fakeRequestWithDiffPagination = makeFakeRequest({
+      query: {
+        pagination: {
+          limit: '4',
+          page: '1',
+          offset: '0',
+          order: 'DESC',
+          orderBy: 'id',
+        },
+      },
+    })
 
-    await sut.handle(fakeRequest)
+    await sut.handle(fakeRequestWithDiffPagination)
 
     expect(methodSpy).toHaveBeenCalledWith({
       ...fakeRequest.query.pagination,
@@ -93,12 +97,12 @@ describe('AccountLoadAllItemsController', () => {
     })
   })
   test('Should return throw if loadAll method throws', async () => {
-    const { sut, accountStub } = makeSut()
+    const { sut, accountStub, fakeRequest } = makeSut()
 
     jest.spyOn(accountStub, 'getAllAccounts').mockImplementationOnce(() => { throw new Error() })
 
-    const result = sut.handle(fakeRequest)
+    const output = sut.handle(fakeRequest)
 
-    await expect(result).rejects.toThrow()
+    await expect(output).rejects.toThrow()
   })
 })

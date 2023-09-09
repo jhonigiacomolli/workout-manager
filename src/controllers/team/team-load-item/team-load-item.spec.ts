@@ -1,15 +1,11 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
-import { TeamLoadItemController } from './team-load-item'
-import { TeamStub } from '@/mocks/teams/team-stub'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { NotFoundError } from '@/helpers/errors'
-
-const fakeValidRequest = httpRequest({}, {}, {
-  id: 'valid_team_id',
-})
-
-const fakeInvalidRequest = httpRequest({}, {})
+import { TeamStub } from '@/mocks/teams/team-stub'
+import { TeamLoadItemController } from './team-load-item'
 
 const makeSut = () => {
+  const fakeRequest = makeFakeRequest()
   const teamStub = new TeamStub()
   const sut = new TeamLoadItemController({
     team: teamStub,
@@ -17,28 +13,32 @@ const makeSut = () => {
 
   return {
     sut,
+    fakeRequest,
     teamStub,
   }
 }
 describe('TeamLoadItemController', () => {
   test('Should return 400 if teamId is not provided', async () => {
     const { sut } = makeSut()
+    const fakeInvalidRequest = makeFakeRequest({ params: {} })
 
     const result = sut.handle(fakeInvalidRequest)
 
     await expect(result).rejects.toThrow(new NotFoundError('Required param teamId is not provided'))
   })
+
   test('Should return 404 if teamId is a invalid teamId', async () => {
-    const { sut, teamStub } = makeSut()
+    const { sut, fakeRequest, teamStub } = makeSut()
 
     jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
 
-    const result = sut.handle(fakeValidRequest)
+    const result = sut.handle(fakeRequest)
     await expect(result).rejects.toThrow(new NotFoundError('Team not found'))
   })
+
   test('Should return 200 with team data if succeeds', async () => {
-    const { sut } = makeSut()
-    const result = await sut.handle(fakeValidRequest)
+    const { sut, fakeRequest } = makeSut()
+    const result = await sut.handle(fakeRequest)
 
     expect(result).toEqual(httpResponse(200, {
       id: 'valid_team_id',

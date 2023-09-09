@@ -1,50 +1,61 @@
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { TeamStub } from '@/mocks/teams/team-stub'
 import { EmptyParamError } from '@/helpers/errors'
 import { TeamCreateController } from './team-create'
-import { httpRequest, httpResponse } from '@/helpers/http'
 import { makeFakeTeam } from '@/mocks/teams/team-fakes'
 
-const fakeRequest = httpRequest({
-  name: 'valid_team_title',
-})
-const fakeEmptyRequest = httpRequest({})
-
 const makeSut = () => {
+  const { id, ...body } = makeFakeTeam()
+  const fakeRequest = makeFakeRequest({ body })
   const teamStub = new TeamStub()
   const sut = new TeamCreateController({
     team: teamStub,
   })
 
   return {
-    teamStub,
     sut,
+    fakeRequest,
+    teamStub,
   }
 }
 
 describe('TeamCreateController', () => {
   test('Should return an http response', async () => {
-    const { sut } = makeSut()
-    const result = await sut.handle(fakeRequest)
-    expect(result).toHaveProperty('statusCode')
-    expect(result).toHaveProperty('body')
+    const { sut, fakeRequest } = makeSut()
+
+    const output = await sut.handle(fakeRequest)
+
+    expect(output).toHaveProperty('statusCode')
+    expect(output).toHaveProperty('body')
   })
+
   test('Should return 200 if team created succesfully', async () => {
-    const { sut } = makeSut()
-    const result = await sut.handle(fakeRequest)
-    expect(result).toEqual(httpResponse(200, {
+    const { sut, fakeRequest } = makeSut()
+
+    const output = await sut.handle(fakeRequest)
+
+    expect(output).toEqual(httpResponse(200, {
       message: 'Successfully registered team',
       data: makeFakeTeam(),
     }))
   })
+
   test('Should return 400 if title param is not provided', async () => {
     const { sut } = makeSut()
-    const result = sut.handle(fakeEmptyRequest)
-    await expect(result).rejects.toThrow(new EmptyParamError('name'))
+    const fakeEmptyRequest = makeFakeRequest()
+
+    const output = sut.handle(fakeEmptyRequest)
+
+    await expect(output).rejects.toThrow(new EmptyParamError('name'))
   })
+
   test('Should return 500 if method throws when create new team', async () => {
-    const { sut, teamStub } = makeSut()
+    const { sut, fakeRequest, teamStub } = makeSut()
     jest.spyOn(teamStub, 'create').mockImplementationOnce(() => { throw new Error() })
-    const result = sut.handle(fakeRequest)
-    await expect(result).rejects.toThrow()
+
+    const output = sut.handle(fakeRequest)
+
+    await expect(output).rejects.toThrow()
   })
 })

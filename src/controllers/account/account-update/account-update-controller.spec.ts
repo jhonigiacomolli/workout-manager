@@ -1,19 +1,18 @@
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { TeamStub } from '@/mocks/teams/team-stub'
-import { httpRequest, httpResponse } from '@/helpers/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { AccountUdateController } from './account-update-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
-  const body = {
-    ...makeFakeAccount(),
-    passwordConfirmation: makeFakeAccount().password,
-  }
-  const headers = {
-    authorization: 'valid_access_token',
-  }
-  const fakeRequest = httpRequest(body, headers, { id: 'any_team_id' })
+  const fakeRequest = makeFakeRequest({
+    body: {
+      ...makeFakeAccount(),
+      passwordConfirmation: makeFakeAccount().password,
+    },
+  })
 
   const accountStub = new AccountStub()
   const teamStub = new TeamStub()
@@ -37,10 +36,11 @@ describe('Account Update Controller', () => {
 
     jest.spyOn(accountStub, 'setUserById').mockReturnValueOnce(Promise.resolve(undefined))
 
-    const result = sut.handle(fakeRequest)
+    const output = sut.handle(fakeRequest)
 
-    await expect(result).rejects.toThrow(new BadRequestError('Account update fails'))
+    await expect(output).rejects.toThrow(new BadRequestError('Account update fails'))
   })
+
   test('Should return 500 if setUserById method throws', async () => {
     const { sut, accountStub, fakeRequest } = makeSut()
 
@@ -48,10 +48,11 @@ describe('Account Update Controller', () => {
       throw new Error()
     })
 
-    const result = sut.handle(fakeRequest)
+    const output = sut.handle(fakeRequest)
 
-    await expect(result).rejects.toThrow()
+    await expect(output).rejects.toThrow()
   })
+
   test('Should return 400 if id is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
 
@@ -59,14 +60,15 @@ describe('Account Update Controller', () => {
 
     worngRequest.params = {}
 
-    const result = sut.handle(worngRequest)
+    const output = sut.handle(worngRequest)
 
-    await expect(result).rejects.toThrow(new EmptyParamError('id'))
+    await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
+
   test('Should return 400 if name is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = sut.handle({
+    const output = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -74,12 +76,13 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new EmptyParamError('name'))
+    await expect(output).rejects.toThrow(new EmptyParamError('name'))
   })
+
   test('Should return 400 if email is not provided on body', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = sut.handle({
+    const output = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -87,14 +90,15 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new EmptyParamError('email'))
+    await expect(output).rejects.toThrow(new EmptyParamError('email'))
   })
+
   test('Should return 400 if teamId is invalid', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
     jest.spyOn(teamStub, 'getTeamByID').mockReturnValueOnce(Promise.resolve(undefined))
 
-    const result = sut.handle({
+    const output = sut.handle({
       ...fakeRequest,
       body: {
         ...fakeRequest.body,
@@ -102,14 +106,15 @@ describe('Account Update Controller', () => {
       },
     })
 
-    await expect(result).rejects.toThrow(new InvalidParamError('teamId'))
+    await expect(output).rejects.toThrow(new InvalidParamError('teamId'))
   })
+
   test('Should return 200 when update successfull', async () => {
     const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle(fakeRequest)
+    const output = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(200, {
+    expect(output).toEqual(httpResponse(200, {
       message: 'User updated successffuly',
       data: makeFakeAccount(),
     }))

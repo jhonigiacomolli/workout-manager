@@ -1,14 +1,15 @@
 import { BoardStub } from '@/mocks/board/board-stub'
 import { makeFakeBoard } from '@/mocks/board/board-fakes'
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
 import { BoardCreateController } from './board-create-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { makeFakeRequest } from '@/mocks/http'
 
 const makeSut = () => {
   const { id, ...params } = makeFakeBoard()
-  const fakeRequestBody = params
-  const fakeRequestHeaders = {}
-  const fakeRequest = httpRequest(fakeRequestBody, fakeRequestHeaders)
+  const fakeRequest = makeFakeRequest({
+    body: params,
+  })
   const boardStub = new BoardStub()
   const sut = new BoardCreateController({
     board: boardStub,

@@ -1,19 +1,12 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
-import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
-import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
-import { WorkspaceLoadAllITemsController } from './workspace-load-all-items-controller'
+import { httpResponse } from '@/helpers/http'
 import { InvalidParamError } from '@/helpers/errors'
+import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
+import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
+import { makeFakeRequest, fakePaginationDefault } from '@/mocks/http'
+import { WorkspaceLoadAllITemsController } from './workspace-load-all-items-controller'
 
 const makeSut = () => {
-  const fakeRequest = httpRequest({}, {}, {}, {
-    pagination: {
-      limit: '10',
-      page: '1',
-      offset: '0',
-      order: 'DESC',
-      orderBy: 'id',
-    },
-  })
+  const fakeRequest = makeFakeRequest()
   const workspaceStub = new WorkspaceStub()
   const sut = new WorkspaceLoadAllITemsController({
     workspace: workspaceStub,
@@ -35,6 +28,7 @@ describe('WorkspaceLoadAllITemsController', () => {
 
     await expect(output).rejects.toThrow()
   })
+
   test('Should getAll method calls with corred params', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
@@ -42,25 +36,25 @@ describe('WorkspaceLoadAllITemsController', () => {
 
     await sut.handle(fakeRequest)
 
-    expect(workspaceSpy).toHaveBeenCalledWith(fakeRequest.query.pagination)
+    expect(workspaceSpy).toHaveBeenCalledWith(fakePaginationDefault)
   })
-  test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
-    const { sut, fakeRequest } = makeSut()
 
-    const fakeRequestWithInvalidParam = {
-      ...fakeRequest,
+  test('Should getAll method calls with corred params if invalid orderby param is provided', async () => {
+    const { sut } = makeSut()
+    const fakeRequestWithInvalidParam = makeFakeRequest({
       query: {
-        ...fakeRequest.query,
         pagination: {
-          ...fakeRequest.query.pagination,
+          ...fakePaginationDefault,
           orderBy: 'wrong',
         },
       },
-    }
+    })
+
     const output = sut.handle(fakeRequestWithInvalidParam)
 
     await expect(output).rejects.toThrow(new InvalidParamError('orderBy, accepted params(id,title,createdAt)'))
   })
+
   test('Should return a empty list of workspacess do not have entries on database', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
@@ -70,6 +64,7 @@ describe('WorkspaceLoadAllITemsController', () => {
 
     expect(output).toEqual(httpResponse(200, []))
   })
+
   test('Should return a list of workspacess if succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 

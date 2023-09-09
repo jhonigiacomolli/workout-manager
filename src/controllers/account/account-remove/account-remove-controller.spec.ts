@@ -1,60 +1,60 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 import { AccountRemoveController } from './account-remove-controller'
 
-const body = {}
-const headers = {
-  authorization: 'valid_access_token',
-}
-
-const fakeRequest = httpRequest(body, headers, { id: 'any_account_id' })
-
 const makeSut = () => {
+  const fakeRequest = makeFakeRequest()
   const accountStub = new AccountStub()
   const sut = new AccountRemoveController({
     account: accountStub,
   })
 
   return {
-    sut, accountStub,
+    sut,
+    fakeRequest,
+    accountStub,
   }
 }
 
 describe('Account Remove Controller', () => {
   test('Should return 200 if account is removed', async () => {
-    const { sut } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
-    const result = await sut.handle(fakeRequest)
+    const output = await sut.handle(fakeRequest)
 
-    expect(result).toEqual(httpResponse(204, 'User removed'))
+    expect(output).toEqual(httpResponse(204, 'User removed'))
   })
+
   test('Should return 400 if no account id is provided with param', async () => {
-    const { sut } = makeSut()
+    const { sut, fakeRequest } = makeSut()
 
     const wrongFakeRequest = { ...fakeRequest }
     wrongFakeRequest.params = {}
 
-    const result = sut.handle(wrongFakeRequest)
+    const output = sut.handle(wrongFakeRequest)
 
-    await expect(result).rejects.toThrow(new EmptyParamError('id'))
+    await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
+
   test('Should return 400 if no account delete method return false', async () => {
-    const { sut, accountStub } = makeSut()
+    const { sut, fakeRequest, accountStub } = makeSut()
 
     jest.spyOn(accountStub, 'delete').mockReturnValueOnce(Promise.resolve(false))
 
-    const result = sut.handle(fakeRequest)
+    const output = sut.handle(fakeRequest)
 
-    await expect(result).rejects.toThrow(new BadRequestError('User removal failed'))
+    await expect(output).rejects.toThrow(new BadRequestError('User removal failed'))
   })
+
   test('Should return 500 if any method throws', async () => {
-    const { sut, accountStub } = makeSut()
+    const { sut, fakeRequest, accountStub } = makeSut()
 
     jest.spyOn(accountStub, 'delete').mockImplementationOnce(() => { throw new Error() })
 
-    const result = sut.handle(fakeRequest)
+    const output = sut.handle(fakeRequest)
 
-    await expect(result).rejects.toThrow()
+    await expect(output).rejects.toThrow()
   })
 })

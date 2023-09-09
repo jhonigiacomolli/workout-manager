@@ -1,20 +1,11 @@
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { BoardStub } from '@/mocks/board/board-stub'
-import { httpRequest, httpResponse } from '@/helpers/http'
 import { BoardRemoveController } from './board-remove-controller'
 import { BadRequestError, EmptyParamError } from '@/helpers/errors'
 
 const makeSut = () => {
-  const fakeRequestBody = {}
-  const fakeRequestHeaders = {}
-  const fakeRequestParams = {
-    id: 'any_id',
-  }
-  const fakeRequest = httpRequest(
-    fakeRequestBody,
-    fakeRequestHeaders,
-    fakeRequestParams,
-  )
-
+  const fakeRequest = makeFakeRequest()
   const boardStub = new BoardStub()
   const sut = new BoardRemoveController({
     board: boardStub,

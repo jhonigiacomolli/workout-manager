@@ -1,16 +1,12 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
+import { makeFakeRequest } from '@/mocks/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
 import { BadRequestError, NotFoundError } from '@/helpers/errors'
 import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
 import { WorkspaceLoadItemController } from './workspace-load-item-controller'
 
 const makeSut = () => {
-  const fakeRequestHeaders = {}
-  const fakeRequestBody = {}
-  const fakeRequestParams = {
-    id: 'any_id',
-  }
-  const fakeRequest = httpRequest(fakeRequestBody, fakeRequestHeaders, fakeRequestParams)
+  const fakeRequest = makeFakeRequest()
   const workspaceStub = new WorkspaceStub()
   const sut = new WorkspaceLoadItemController({
     workspace: workspaceStub,
@@ -36,6 +32,7 @@ describe('WorkspaceLoadItemController', () => {
 
     await expect(output).rejects.toThrow(new BadRequestError('Required param id is not provided'))
   })
+
   test('Should controller calls getById with correct param', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
@@ -45,6 +42,7 @@ describe('WorkspaceLoadItemController', () => {
 
     expect(workspaceSpy).toHaveBeenCalledWith(fakeRequest.params.id)
   })
+
   test('Should return invalid param error if provided id is invalid', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
@@ -54,6 +52,7 @@ describe('WorkspaceLoadItemController', () => {
 
     await expect(output).rejects.toThrow(new NotFoundError('Workspace not found!'))
   })
+
   test('Should throws error if getById method throws', async () => {
     const { sut, fakeRequest, workspaceStub } = makeSut()
 
@@ -63,6 +62,7 @@ describe('WorkspaceLoadItemController', () => {
 
     await expect(output).rejects.toThrow()
   })
+
   test('Should return a workspace data correctly id proccess succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 

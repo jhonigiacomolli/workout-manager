@@ -1,19 +1,16 @@
-import { httpRequest, httpResponse } from '@/helpers/http'
+import { httpResponse } from '@/helpers/http'
 import { TeamUpdateController } from './team-update-controller'
 import { BadRequestError, EmptyParamError, NotFoundError } from '@/helpers/errors'
 import { makeFakeTeam } from '@/mocks/teams/team-fakes'
 import { TeamStub } from '@/mocks/teams/team-stub'
+import { makeFakeRequest } from '@/mocks/http'
 
 const makeSut = () => {
-  const requestBody = makeFakeTeam()
-  const requestHeaders = {
-    authorization: 'valid_access_token',
-  }
-  const requestParams = {
-    id: 'any_account_id',
-  }
-  const fakeRequest = httpRequest(requestBody, requestHeaders, requestParams)
-
+  const { id, ...body } = makeFakeTeam()
+  const fakeRequest = makeFakeRequest({
+    body,
+    params: { id },
+  })
   const teamStub = new TeamStub()
   const sut = new TeamUpdateController({
     team: teamStub,
@@ -24,6 +21,7 @@ const makeSut = () => {
     teamStub,
   }
 }
+
 describe('TeamUpdateController', () => {
   test('Should return 400 if team id is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
@@ -36,6 +34,7 @@ describe('TeamUpdateController', () => {
 
     await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
+
   test('Should return 400 if team data is not provided on request body', async () => {
     const { sut, fakeRequest } = makeSut()
     const requestWithoutBody = {
@@ -47,6 +46,7 @@ describe('TeamUpdateController', () => {
 
     await expect(output).rejects.toThrow(new EmptyParamError('name'))
   })
+
   test('Should call setTeamById method with correct values', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
@@ -61,6 +61,7 @@ describe('TeamUpdateController', () => {
 
     expect(teamSpy).toHaveBeenCalledWith(fakeRequest.params.id, output)
   })
+
   test('Should return 404 if id provided is invalid', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
@@ -70,6 +71,7 @@ describe('TeamUpdateController', () => {
 
     await expect(output).rejects.toThrow(new NotFoundError('Team not found'))
   })
+
   test('Should return 400 if setTeamById return false', async () => {
     const { sut, fakeRequest, teamStub } = makeSut()
 
@@ -79,6 +81,7 @@ describe('TeamUpdateController', () => {
 
     await expect(output).rejects.toThrow(new BadRequestError('Team update fails!'))
   })
+
   test('Should return 200 if proccess succeeds', async () => {
     const { sut, fakeRequest } = makeSut()
 
