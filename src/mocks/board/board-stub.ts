@@ -10,4 +10,8 @@ export class BoardStub implements Board {
   async getAll(): Promise<BoardModel[]> {
     return Promise.resolve([makeFakeBoard()])
   }
+
+  async getById(): Promise<BoardModel | undefined> {
+    return Promise.resolve(makeFakeBoard())
+  }
 }

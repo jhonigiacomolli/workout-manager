@@ -8,4 +8,5 @@ export type UpdateBoardParams = Omit<BoardModel, 'id' | 'createdAt'>
 export interface Board {
   create: (board: CreateBoardParams) => Promise<BoardModel | undefined>
   getAll: (params: HTTPRequestParams) => Promise<BoardModel[]>
+  getById: (id: string) => Promise<BoardModel | undefined>
 }
