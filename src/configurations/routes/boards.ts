@@ -5,8 +5,10 @@ import { useRouteController } from '@/helpers/http'
 
 import {
   makeBoardCreateController,
+  makeBoardLoadAllItemsController,
 } from '@/factories/controllers'
 
 export default (router: Router) => {
   router.post('/boards', authentication, useRouteController(makeBoardCreateController()))
+  router.get('/boards', authentication, useRouteController(makeBoardLoadAllItemsController()))
 }
