@@ -25,13 +25,13 @@ const fakeRequestParams = {
 }
 
 const querySql = `
-      SELECT * FROM workspaces
+      SELECT * FROM boards
       ORDER BY name DESC
       LIMIT $1
       OFFSET $2:: integer * $1:: integer;
     `
 const querySqlOrderByCreatedAt = `
-      SELECT * FROM workspaces
+      SELECT * FROM boards
       ORDER BY created_at DESC
       LIMIT $1
       OFFSET $2:: integer * $1:: integer;
@@ -89,64 +89,69 @@ describe('PostgresWorkspaceReposytory', () => {
   //     return expect(result).rejects.toThrow()
   //   })
   // })
-  // describe('getAll()', () => {
-  //   test('Should return an account model list if succeeds', async () => {
-  //     const { sut } = makeSut()
 
-  //     jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+  describe('getAll()', () => {
+    test('Should return an account model list if succeeds', async () => {
+      const { sut } = makeSut()
 
-  //     const newResult = await sut.getAll(fakeRequestParams)
-  //     expect(newResult).toEqual([makeFakePostgressWorkspace()])
-  //   })
-  //   test('Should query is called with correct values', async () => {
-  //     const { sut } = makeSut()
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
 
-  //     const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+      const newResult = await sut.getAll(fakeRequestParams)
+      expect(newResult).toEqual([makeFakePostgressWorkspace()])
+    })
 
-  //     await sut.getAll(fakeRequestParams)
+    test('Should query is called with correct values', async () => {
+      const { sut } = makeSut()
 
-  //     expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '0'])
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
 
-  //     const fakeRequestParamsWithPagination = {
-  //       ...fakeRequestParams,
-  //       page: '2',
-  //       offset: '10',
-  //     }
+      await sut.getAll(fakeRequestParams)
 
-  //     await sut.getAll(fakeRequestParamsWithPagination)
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '0'])
 
-  //     expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '10'])
+      const fakeRequestParamsWithPagination = {
+        ...fakeRequestParams,
+        page: '2',
+        offset: '10',
+      }
 
-  //     const fakeRequestParamsWithNewPagination = {
-  //       ...fakeRequestParams,
-  //       page: '5',
-  //       offset: '40',
-  //     }
+      await sut.getAll(fakeRequestParamsWithPagination)
 
-  //     await sut.getAll(fakeRequestParamsWithNewPagination)
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '10'])
 
-  //     expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
-  //   })
-  //   test('Should query is called with correct values if invalid orderby field is provided', async () => {
-  //     const { sut } = makeSut()
+      const fakeRequestParamsWithNewPagination = {
+        ...fakeRequestParams,
+        page: '5',
+        offset: '40',
+      }
 
-  //     const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
+      await sut.getAll(fakeRequestParamsWithNewPagination)
 
-  //     fakeRequestParams.orderBy = 'createdAt'
+      expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
+    })
 
-  //     await sut.getAll(fakeRequestParams)
+    test('Should query is called with correct values if invalid orderby field is provided', async () => {
+      const { sut } = makeSut()
 
-  //     expect(querySpy).toHaveBeenCalledWith(querySqlOrderByCreatedAt, ['10', '0'])
-  //   })
-  //   test('Should thorws an erro when account query fails', async () => {
-  //     const { sut } = makeSut()
+      const querySpy = jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
 
-  //     jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+      fakeRequestParams.orderBy = 'createdAt'
 
-  //     const result = sut.getAll(fakeRequestParams)
-  //     await expect(result).rejects.toThrow()
-  //   })
-  // })
+      await sut.getAll(fakeRequestParams)
+
+      expect(querySpy).toHaveBeenCalledWith(querySqlOrderByCreatedAt, ['10', '0'])
+    })
+
+    test('Should thorws an erro when account query fails', async () => {
+      const { sut } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
+
+      const result = sut.getAll(fakeRequestParams)
+      await expect(result).rejects.toThrow()
+    })
+  })
+
   // describe('getById()', () => {
   //   test('Should return an workspace model if succeeds', async () => {
   //     const { sut, paramsWithId } = makeSut()
