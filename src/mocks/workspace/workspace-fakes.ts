@@ -7,7 +7,7 @@ type PostgresWorkspaceModel = Omit<WorkspaceModel, 'createdAt'> & {
 export const makeFakeWorkspace = (): WorkspaceModel => ({
   id: 'any_id',
   title: 'workspace_title',
-  createdAt: '2023/08/26',
+  createdAt: '2023-06-30T03:00:00.000Z',
   members: [],
   boards: [],
   description: 'Any description',
@@ -18,7 +18,7 @@ export const makeFakeWorkspace = (): WorkspaceModel => ({
 export const makeFakePostgressWorkspace = (): PostgresWorkspaceModel => ({
   id: 'any_id',
   title: 'workspace_title',
-  created_at: '2023/08/26',
+  created_at: '2023-06-30T03:00:00.000Z',
   members: [],
   boards: [],
   description: 'Any description',
