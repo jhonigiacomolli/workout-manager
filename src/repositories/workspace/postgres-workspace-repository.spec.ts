@@ -156,6 +156,18 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(newResult).toEqual(paramsWithId)
     })
+    test('Should return undefined when team query fails because wrong id', async () => {
+      const { sut, paramsWithId } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => {
+        const error = new Error('') as any
+        error.code = '22P02'
+        throw error
+      })
+
+      const result = await sut.getById(paramsWithId.id)
+      expect(result).toBeFalsy()
+    })
     test('Should throws when team query fails', async () => {
       const { sut, paramsWithId } = makeSut()
 
