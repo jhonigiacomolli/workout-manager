@@ -7,10 +7,12 @@ import {
   makeBoardCreateController,
   makeBoardLoadAllItemsController,
   makeBoardLoadItemController,
+  makeBoardUpdateController,
 } from '@/factories/controllers'
 
 export default (router: Router) => {
   router.post('/boards', authentication, useRouteController(makeBoardCreateController()))
   router.get('/boards', authentication, useRouteController(makeBoardLoadAllItemsController()))
   router.get('/boards/:id', authentication, useRouteController(makeBoardLoadItemController()))
+  router.put('/boards/:id', authentication, useRouteController(makeBoardUpdateController()))
 }
