@@ -1,5 +1,3 @@
-import { InvalidParamError } from './errors'
-
 export const validateNumberParams = (value?: any, defaultValue?: any) => {
   if (!value || !/^[0-9]+$/.test(value)) return defaultValue || ''
 
@@ -20,7 +18,7 @@ export const validateOrderParams = (value?: any) => {
   value = value.toUpperCase()
 
   if (!/^[a-zA-Z]+$/.test(value) || !orders.includes(value)) {
-    throw new InvalidParamError(`order, accepted params(${orders.join(',')})`)
+    return null
   }
 
   return value

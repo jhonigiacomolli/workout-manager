@@ -17,5 +17,12 @@ export const pagination = async (request: Request, response: Response, next: Nex
     request.query.pagination.offset = undefined
   }
 
+  if (!request.query.pagination.order) {
+    response.status(400).json({
+      error: 'Invalid param: order, accepted values(asc,desc)',
+    })
+    return
+  }
+
   next()
 }

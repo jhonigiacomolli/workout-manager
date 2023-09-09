@@ -11,7 +11,7 @@ export class BoardLoadAllItemsController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
-    const { limit, page, offset, order, orderBy } = request.params.pagination
+    const { limit, page, offset, order, orderBy } = request.query.pagination
 
     const fields = ['createdAt', 'format', 'id', 'title']
 
