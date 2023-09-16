@@ -15,7 +15,7 @@ export const accountCreateParamsSchema = {
       type: 'string',
     },
     image: {
-      type: 'string',
+      type: 'file',
     },
     phone: {
       type: 'string',

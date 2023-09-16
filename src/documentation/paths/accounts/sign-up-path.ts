@@ -2,11 +2,19 @@ export const signUpPath = {
   post: {
     tags: ['Account'],
     summary: 'Create new account',
+    consumes: [
+      'multipart/formdata',
+    ],
     requestBody: {
       required: true,
       in: 'path',
       content: {
         'application/json': {
+          schema: {
+            $ref: '#/schemas/accountCreateParams',
+          },
+        },
+        'multipart/formdata': {
           schema: {
             $ref: '#/schemas/accountCreateParams',
           },
