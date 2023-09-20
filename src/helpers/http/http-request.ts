@@ -1,6 +1,6 @@
 import { HTTPRequest } from '@/protocols/models/http'
 
-export const httpRequest = (content: any, header?: any, params?: any, query?: any): HTTPRequest => {
+export const httpRequest = (content: any, header?: any, params?: any, query?: any, files?: any): HTTPRequest => {
   return {
     headers: {
       ...header,
@@ -13,6 +13,9 @@ export const httpRequest = (content: any, header?: any, params?: any, query?: an
     },
     body: {
       ...content,
+    },
+    files: {
+      ...files,
     },
   }
 }

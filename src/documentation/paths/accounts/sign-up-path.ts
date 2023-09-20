@@ -14,7 +14,7 @@ export const signUpPath = {
             $ref: '#/schemas/accountCreateParams',
           },
         },
-        'multipart/formdata': {
+        'multipart/form-data': {
           schema: {
             $ref: '#/schemas/accountCreateParams',
           },

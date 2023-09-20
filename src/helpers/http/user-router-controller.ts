@@ -1,18 +1,20 @@
 import { type Request, type Response } from 'express'
 import { type Controller } from '@/protocols/models/controller'
 
-import { CustomError } from '../errors/custom-error'
+import { CustomError } from '@/helpers/errors/custom-error'
+import { RepositoryRequest } from '@/protocols/models/http'
 import { ErrorLogController } from '@/controllers/log/error-log-controller'
 import { ErrorLogFileSystemRepository } from '@/repositories/log/error-log-filesystem-repository'
 
 export const useRouteController = (controller: Controller) => {
-  return async (req: Request, res: Response) => {
+  return async (req: RepositoryRequest<Request>, res: Response) => {
     try {
       const httpResponse = await controller.handle({
         headers: { ...req.headers },
         params: { ...req.params },
         query: { ...req.query },
         body: { ...req.body },
+        files: { ...req.files },
       })
 
       if (typeof httpResponse.body === 'string') {

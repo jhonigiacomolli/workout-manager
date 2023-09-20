@@ -1,3 +1,5 @@
+import { File } from './file'
+
 export type HTTPRequestParams = {
   [key: string]: any
   host?: string
@@ -21,9 +23,14 @@ export type HTTPRequest = {
   params: HTTPRequestParams
   query: HTTPRequestParams
   headers: any
+  files: any
 }
 
 export type HTTPResponse = {
   statusCode: number
   body: any
+}
+
+export type RepositoryRequest<TYPE> = TYPE & {
+  files: File[]
 }
