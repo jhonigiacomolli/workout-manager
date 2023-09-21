@@ -11,6 +11,7 @@ export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, r
 
   if (!req.headers['content-type']?.includes('multipart/form-data')) {
     next()
+    return
   }
 
   req.on('data', (chunk) => {
@@ -30,16 +31,16 @@ export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, r
 
           return {
             [fileKeyName]: {
-              filename: filename?.trimStart().replace('filename=', ''),
-              mime: contentType?.replace('Content-Type: ', ''),
-              extension: filename?.split('.')[1],
+              filename: filename.trimStart().replace('filename=', ''),
+              mime: contentType.replace('Content-Type: ', ''),
+              extension: filename.split('.')[1],
               data: value,
             },
           }
         }
 
         return {
-          [key]: value.split('\r\n')[0] || '',
+          [key]: value.split('\r\n')[0],
         }
       })
   }

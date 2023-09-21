@@ -32,5 +32,7 @@ export type HTTPResponse = {
 }
 
 export type RepositoryRequest<TYPE> = TYPE & {
-  files: File[]
+  files: {
+    [key: string]: File
+  }
 }
