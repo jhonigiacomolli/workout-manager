@@ -1,5 +1,6 @@
 /dist/
 /node_modules/
 /coverage/
+/public/uploads/
 .env
 error-log.txt

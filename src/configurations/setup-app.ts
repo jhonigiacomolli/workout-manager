@@ -4,6 +4,7 @@ import {
   setupRoutes,
   setupSwagger,
   setupMiddlewares,
+  setupStaticFiles,
 } from '@/configurations'
 
 export const setupApp = (): Express => {
@@ -22,6 +23,7 @@ export const setupApp = (): Express => {
   setupSwagger(app)
   setupMiddlewares(app)
   setupRoutes(app)
+  setupStaticFiles(app)
 
   return app
 }
