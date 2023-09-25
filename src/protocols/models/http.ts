@@ -24,6 +24,7 @@ export type HTTPRequest = {
   query: HTTPRequestParams
   headers: any
   files: any
+  baseUrl: string
 }
 
 export type HTTPResponse = {

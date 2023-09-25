@@ -1,4 +1,5 @@
 import { httpRequest } from '@/helpers/http'
+import { File } from '@/protocols/models/file'
 import { HTTPRequest } from '@/protocols/models/http'
 
 type FakeRequestOptions = {
@@ -6,6 +7,10 @@ type FakeRequestOptions = {
   headers?: any
   params?: any
   query?: any
+  files?: {
+    [key: string]: File
+  }
+  baseUrl?: string
 }
 
 const fakeRequestHeaders = {
@@ -34,5 +39,7 @@ export const makeFakeRequest = (options?: FakeRequestOptions): HTTPRequest => ({
     options?.headers || fakeRequestHeaders,
     options?.params || fakeRequestParams,
     options?.query || fakeRequestQuery,
+    options?.files || {},
+    options?.baseUrl || 'http://localhost',
   ),
 })

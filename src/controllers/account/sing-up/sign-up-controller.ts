@@ -3,6 +3,7 @@ import { type Controller } from '@/protocols/models/controller'
 import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
 import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
+import { type FileUploader } from '@/protocols/use-cases/file'
 
 import { httpResponse } from '@/helpers/http'
 import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
@@ -11,6 +12,7 @@ interface ConstructorProps {
   emailValidator: EmailValidator
   account: Account
   hasher: Hasher
+  fileUploader: FileUploader
 }
 
 export class SignUpController implements Controller {
@@ -38,10 +40,17 @@ export class SignUpController implements Controller {
 
     const hashedPassword = await this.dependencies.hasher.generate(password)
 
-    const result = await this.dependencies.account.create({
+    const newAccountParams = {
       ...request.body,
       password: hashedPassword,
-    })
+    }
+
+    if (request.files.image) {
+      const imageUrl = await this.dependencies.fileUploader.uploadImage(request.files.image)
+      newAccountParams.image = imageUrl || ''
+    }
+
+    const result = await this.dependencies.account.create(newAccountParams)
 
     return httpResponse(200, {
       message: 'Successfully registered user',
