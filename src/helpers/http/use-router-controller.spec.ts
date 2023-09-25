@@ -12,7 +12,10 @@ describe('useRouteController', () => {
     controller = {
       handle: jest.fn(),
     }
-    req = {}
+    req = {
+      get: jest.fn(() => 'localhost'),
+      protocol: 'http',
+    }
     res = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
