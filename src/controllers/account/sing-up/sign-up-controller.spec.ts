@@ -231,9 +231,14 @@ describe('Sign Up Controller', () => {
 
     const output = await sut.handle(fakeRequest)
 
+    const fakeAccount = makeFakeAccount()
+
     expect(output).toEqual(httpResponse(200, {
       message: 'Successfully registered user',
-      data: makeFakeAccount(),
+      data: {
+        ...fakeAccount,
+        image: fakeRequest.baseUrl + fakeAccount.image,
+      },
     }))
   })
 
@@ -245,7 +250,7 @@ describe('Sign Up Controller', () => {
     const output = await sut.handle(fakeRequest)
 
     expect(output).toEqual(httpResponse(200, {
-      message: 'Successfully registered user',
+      message: 'Failed to create user',
       data: {},
     }))
   })

@@ -4,7 +4,14 @@ import path, { join } from 'path'
 import { File } from '@/protocols/models/file'
 import { LocalFileUploaderRepository } from './local-file-uploader'
 
-jest.mock('fs')
+jest.mock('fs', () => ({
+  mkdirSync: jest.fn(),
+  existsSync: jest.fn(),
+  createWriteStream: jest.fn(() => ({
+    write: jest.fn(),
+    close: jest.fn(),
+  })),
+}))
 
 jest.mock('crypto', () => ({
   randomUUID: jest.fn(() => 'hashed-filename'),
@@ -13,7 +20,7 @@ jest.mock('crypto', () => ({
 const makeSut = () => {
   const fakeImage: File = {
     filename: 'any-image.png',
-    extension: '.png',
+    extension: 'png',
     mime: 'image/png',
     data: 'any-data-file-string',
   }
@@ -86,13 +93,13 @@ describe('LocalFileUploaderRepository', () => {
   test('Should save file if proccess succeeds', async () => {
     const { sut, fakeImage } = makeSut()
 
-    const fsSpy = jest.spyOn(fs, 'writeFileSync')
+    const fsSpy = jest.spyOn(fs, 'createWriteStream')
 
     const output = await sut.uploadImage(fakeImage)
     const outputDirPath = path.resolve('public/uploads')
-    const outputFilePath = `/hashed-filename${fakeImage.extension}`
+    const outputFilePath = `/hashed-filename.${fakeImage.extension}`
 
-    expect(fsSpy).toHaveBeenCalledWith(join(outputDirPath, outputFilePath), fakeImage.data)
+    expect(fsSpy).toHaveBeenCalledWith(join(outputDirPath, outputFilePath))
     expect(output).toBe('/uploads' + outputFilePath)
   })
 })
