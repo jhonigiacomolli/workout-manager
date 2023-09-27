@@ -48,6 +48,7 @@ export class PgAccountRepository implements Account {
       account.tasks,
       account.teamId,
     ])
+
     // eslint-disable-next-line
     return rows.map(({ created_at, ...account }) => ({
       ...account,

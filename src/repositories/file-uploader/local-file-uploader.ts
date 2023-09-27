@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import { join, resolve } from 'path'
 import { File } from '@/protocols/models/file'
 import { FileUploader } from '@/protocols/use-cases/file'
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
+import { createWriteStream, existsSync, mkdirSync } from 'fs'
 
 export class LocalFileUploaderRepository implements FileUploader {
   async uploadImage(image: File): Promise<string | null> {
@@ -30,10 +30,13 @@ export class LocalFileUploaderRepository implements FileUploader {
     }
 
     const uploadedFileName = randomUUID()
-    const uploadedFilePath = join(uploadDirPath, `${uploadedFileName}${image.extension}`)
+    const uploadedFilePath = join(uploadDirPath, `${uploadedFileName}.${image.extension}`)
 
-    writeFileSync(uploadedFilePath, image.data)
+    const stream = createWriteStream(uploadedFilePath)
+    stream.write(image.data, 'binary')
+    stream.close()
+    image.data = 'bin'
 
-    return `/uploads/${uploadedFileName}${image.extension}`
+    return `/uploads/${uploadedFileName}.${image.extension}`
   }
 }

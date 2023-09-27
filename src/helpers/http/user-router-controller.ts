@@ -10,7 +10,6 @@ export const useRouteController = (controller: Controller) => {
   return async (req: RepositoryRequest<Request>, res: Response) => {
     try {
       const baseUrl = `${req.protocol}://${req.get('host')}`
-
       const httpResponse = await controller.handle({
         headers: { ...req.headers },
         params: { ...req.params },

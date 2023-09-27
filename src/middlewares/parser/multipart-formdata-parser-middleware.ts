@@ -1,81 +1,65 @@
-import type { File } from '@/protocols/models/file'
 import { RepositoryRequest } from '@/protocols/models/http'
 import { NextFunction, Request, Response } from 'express'
-
-type MultiPartValues = {
-  [key: string]: string | File
-}
+import path from 'path'
 
 export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, res: Response, next: NextFunction) => {
-  let data = ''
-
   if (!req.headers['content-type']?.includes('multipart/form-data')) {
     next()
     return
   }
 
-  req.on('data', (chunk) => {
-    data += chunk.toString()
+  req.setEncoding('latin1')
+
+  let rawData = ''
+  req.on('data', chunk => {
+    rawData += chunk
   })
 
-  const objectFormatMapper = (content: string, multipartHeader: string): MultiPartValues[] => {
-    return content
-      .replace('name=', '')
-      .replace(/"/g, '')
-      .split(multipartHeader)
-      .map(splitedContent => splitedContent.split('\r\n\r\n'))
-      .map(([key, value = '']) => {
-        if (key.includes('Content-Type: image/')) {
-          const [fileKeyName, fileValues] = key.split(';')
-          const [filename, contentType] = fileValues.split('\r\n')
-
-          return {
-            [fileKeyName]: {
-              filename: filename.trimStart().replace('filename=', ''),
-              mime: contentType.replace('Content-Type: ', ''),
-              extension: filename.split('.')[1],
-              data: value,
-            },
-          }
-        }
-
-        return {
-          [key]: value.split('\r\n')[0],
-        }
-      })
-  }
-
   req.on('end', () => {
-    const multipartContent = data.split('Content-Disposition: form-data; ')
-    const multipartHeader = multipartContent[0]
+    req.files = {}
 
-    const parsedFields = multipartContent
-      .map(content => content.replace(multipartHeader, '').trim())
-      .filter(content => !!content)
-      .map(content => objectFormatMapper(content, multipartHeader))
-      .reduce((acc, content) => [...acc, ...content], [])
-      .reduce((acc, content) => {
-        const isString = typeof Object.values(content)[0] === 'string'
-        const outputField = isString ? 'body' : 'files'
+    const boundary = getBoundary(req.headers['content-type'] as string)
 
-        return {
-          ...acc,
-          [outputField]: {
-            ...acc[outputField],
-            ...content,
-          },
+    const rawDataArray = rawData.split(boundary)
+    for (const item of rawDataArray) {
+      const name = getMatching(item, /(?:name=")(.+?)(?:")/)?.trim() as string
+
+      const value = getMatching(item, /(?:\r\n\r\n)([\S\s]*)(?:\r\n--$)/)?.trim()
+      if (!value) continue
+
+      const filename = getMatching(item, /(?:filename=")(.*?)(?:")/)
+
+      if (filename) {
+        const contentType = getMatching(item, /(?:Content-Type:)(.*?)(?:\r\n)/) as string
+        req.files[name] = {
+          filename,
+          mime: contentType.trim(),
+          extension: path.extname(filename).replace('.', ''),
+          data: value,
         }
-      }, { files: {}, body: {} })
-
-    req.body = {
-      ...req.body,
-      ...parsedFields.body,
-    }
-    req.files = {
-      ...req.files,
-      ...parsedFields.files,
+      } else {
+        req.body[name] = value
+      }
     }
 
     next()
   })
+}
+
+function getBoundary(contentType: string) {
+  const contentTypeArray = contentType.split(';').map(item => item.trim())
+  const boundaryPrefix = 'boundary='
+  let boundary = contentTypeArray.find(item => item.startsWith(boundaryPrefix)) as string
+
+  boundary = boundary.slice(boundaryPrefix.length)
+  if (boundary) boundary = boundary.trim()
+  return boundary
+}
+
+function getMatching(value: string, regex: RegExp) {
+  const matches = value.match(regex)
+  if (!matches || matches.length < 2) {
+    return null
+  }
+  return matches[1]
 }

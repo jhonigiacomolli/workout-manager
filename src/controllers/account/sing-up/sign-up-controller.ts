@@ -52,9 +52,19 @@ export class SignUpController implements Controller {
 
     const result = await this.dependencies.account.create(newAccountParams)
 
+    if (!result) {
+      return httpResponse(200, {
+        message: 'Failed to create user',
+        data: {},
+      })
+    }
+
     return httpResponse(200, {
       message: 'Successfully registered user',
-      data: result || {},
+      data: {
+        ...result,
+        image: request.baseUrl + result.image,
+      },
     })
   }
 }
