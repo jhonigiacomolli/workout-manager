@@ -4,7 +4,7 @@ import { TeamStub } from '@/mocks/teams/team-stub'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { AccountUdateController } from './account-update-controller'
-import { FileUploaderStub } from '@/mocks/file-uploader/file-uploader-stub'
+import { FileManagerStub } from '@/mocks/file-manager/file-manager-stub'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
@@ -17,19 +17,19 @@ const makeSut = () => {
 
   const accountStub = new AccountStub()
   const teamStub = new TeamStub()
-  const fileUploaderStub = new FileUploaderStub()
+  const fileManagerStub = new FileManagerStub()
 
   const sut = new AccountUdateController({
     account: accountStub,
     team: teamStub,
-    fileUploader: fileUploaderStub,
+    fileManager: fileManagerStub,
   })
 
   return {
     sut,
     accountStub,
     teamStub,
-    fileUploaderStub,
+    fileManagerStub,
     fakeRequest,
   }
 }
@@ -114,7 +114,7 @@ describe('Account Update Controller', () => {
   })
 
   test('Should return call file uploader with image if image file is provided', async () => {
-    const { sut, fakeRequest, fileUploaderStub } = makeSut()
+    const { sut, fakeRequest, fileManagerStub } = makeSut()
 
     const fakeRequestWithFile = {
       ...fakeRequest,
@@ -128,7 +128,7 @@ describe('Account Update Controller', () => {
       },
     }
 
-    const uploaderSpy = jest.spyOn(fileUploaderStub, 'uploadImage')
+    const uploaderSpy = jest.spyOn(fileManagerStub, 'uploadImage')
 
     await sut.handle(fakeRequestWithFile)
 
@@ -137,9 +137,9 @@ describe('Account Update Controller', () => {
   })
 
   test('Should return do not call file uploader with image if image file is not provided', async () => {
-    const { sut, fakeRequest, fileUploaderStub } = makeSut()
+    const { sut, fakeRequest, fileManagerStub } = makeSut()
 
-    const uploaderSpy = jest.spyOn(fileUploaderStub, 'uploadImage')
+    const uploaderSpy = jest.spyOn(fileManagerStub, 'uploadImage')
 
     await sut.handle(fakeRequest)
 

@@ -2,7 +2,7 @@ import fs from 'fs'
 import * as crypto from 'crypto'
 import path, { join } from 'path'
 import { File } from '@/protocols/models/file'
-import { LocalFileUploaderRepository } from './local-file-uploader'
+import { LocalFileManagerRepository } from './local-file-manager'
 
 jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
@@ -24,12 +24,12 @@ const makeSut = () => {
     mime: 'image/png',
     data: 'any-data-file-string',
   }
-  const sut = new LocalFileUploaderRepository()
+  const sut = new LocalFileManagerRepository()
 
   return { sut, fakeImage }
 }
 
-describe('LocalFileUploaderRepository', () => {
+describe('LocalFileManagerRepository', () => {
   test('Should return null if a file param provided is invalid', async () => {
     const { sut, fakeImage } = makeSut()
 

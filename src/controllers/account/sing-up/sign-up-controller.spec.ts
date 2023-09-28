@@ -6,8 +6,8 @@ import { SignUpController } from './sign-up-controller'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { HasherStub } from '@/mocks/cryptography/hasher-stub'
 import { makeFakeAccount } from '@/mocks/account/account-fakes'
+import { FileManagerStub } from '@/mocks/file-manager/file-manager-stub'
 import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
-import { FileUploaderStub } from '@/mocks/file-uploader/file-uploader-stub'
 
 const makeSut = () => {
   const fakeRequest = makeFakeRequest({
@@ -35,13 +35,13 @@ const makeSut = () => {
   const emailValidatorStub = new EmailValidatorStub()
   const accountStub = new AccountStub()
   const hasherStub = new HasherStub()
-  const fileUploaderStub = new FileUploaderStub()
+  const fileManagerStub = new FileManagerStub()
 
   const sut = new SignUpController({
     emailValidator: emailValidatorStub,
     account: accountStub,
     hasher: hasherStub,
-    fileUploader: fileUploaderStub,
+    fileManager: fileManagerStub,
   })
 
   return {
@@ -49,7 +49,7 @@ const makeSut = () => {
     accountStub,
     hasherStub,
     emailValidatorStub,
-    fileUploaderStub,
+    fileManagerStub,
     fakeRequest,
   }
 }
@@ -101,9 +101,9 @@ describe('Sign Up Controller', () => {
   })
 
   test('Should call file uploader method with correct value if a image file is provided', async () => {
-    const { sut, fakeRequest, fileUploaderStub } = makeSut()
+    const { sut, fakeRequest, fileManagerStub } = makeSut()
 
-    const fileUploaderSpy = jest.spyOn(fileUploaderStub, 'uploadImage')
+    const fileManagerSpy = jest.spyOn(fileManagerStub, 'uploadImage')
 
     const fakeRequestWithoutFiles = {
       ...fakeRequest,
@@ -112,11 +112,11 @@ describe('Sign Up Controller', () => {
 
     await sut.handle(fakeRequestWithoutFiles)
 
-    expect(fileUploaderSpy).not.toHaveBeenCalled()
+    expect(fileManagerSpy).not.toHaveBeenCalled()
 
     await sut.handle(fakeRequest)
 
-    expect(fileUploaderSpy).toHaveBeenCalledWith(fakeRequest.files.image)
+    expect(fileManagerSpy).toHaveBeenCalledWith(fakeRequest.files.image)
   })
 
   test('Should controller return 400 when email is invalid', async () => {
@@ -185,9 +185,9 @@ describe('Sign Up Controller', () => {
   })
 
   test('Should Sign Up calls account create method with correct values if file upload fails', async () => {
-    const { sut, accountStub, hasherStub, fakeRequest, fileUploaderStub } = makeSut()
+    const { sut, accountStub, hasherStub, fakeRequest, fileManagerStub } = makeSut()
     jest.spyOn(accountStub, 'checkEmailInUse').mockReturnValueOnce(Promise.resolve(false))
-    jest.spyOn(fileUploaderStub, 'uploadImage').mockReturnValueOnce(Promise.resolve(null))
+    jest.spyOn(fileManagerStub, 'uploadImage').mockReturnValueOnce(Promise.resolve(null))
     jest.spyOn(hasherStub, 'generate').mockReturnValueOnce(Promise.resolve('hashed_password'))
     const accountSpy = jest.spyOn(accountStub, 'create')
 
