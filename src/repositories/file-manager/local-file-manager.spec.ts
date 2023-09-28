@@ -6,7 +6,8 @@ import { LocalFileManagerRepository } from './local-file-manager'
 
 jest.mock('fs', () => ({
   mkdirSync: jest.fn(),
-  existsSync: jest.fn(),
+  existsSync: jest.fn(() => true),
+  unlinkSync: jest.fn(),
   createWriteStream: jest.fn(() => ({
     write: jest.fn(),
     close: jest.fn(),
@@ -24,82 +25,126 @@ const makeSut = () => {
     mime: 'image/png',
     data: 'any-data-file-string',
   }
+  const fakeUrl = '/uploads/any-image-url.pgn'
+
   const sut = new LocalFileManagerRepository()
 
-  return { sut, fakeImage }
+  return { sut, fakeImage, fakeUrl }
 }
 
 describe('LocalFileManagerRepository', () => {
-  test('Should return null if a file param provided is invalid', async () => {
-    const { sut, fakeImage } = makeSut()
+  describe('uploadImage', () => {
+    test('Should return null if a file param provided is invalid', async () => {
+      const { sut, fakeImage } = makeSut()
 
-    const output = await sut.uploadImage({} as File)
+      const output = await sut.uploadImage({} as File)
 
-    expect(output).toBeNull()
+      expect(output).toBeNull()
 
-    const newOutput = await sut.uploadImage({
-      ...fakeImage,
-      mime: '',
+      const newOutput = await sut.uploadImage({
+        ...fakeImage,
+        mime: '',
+      })
+
+      expect(newOutput).toBeNull()
     })
 
-    expect(newOutput).toBeNull()
+    test('Should return null if a file have invalid mime type', async () => {
+      const { sut, fakeImage } = makeSut()
+
+      const fakeWrongImage = {
+        ...fakeImage,
+        mime: 'application/pdf',
+        extension: '.pdf',
+      }
+
+      const output = await sut.uploadImage(fakeWrongImage)
+
+      expect(output).toBeNull()
+    })
+
+    test('Should check id uploads directory exist', async () => {
+      const { sut, fakeImage } = makeSut()
+
+      const fsSpy = jest.spyOn(fs, 'existsSync')
+
+      await sut.uploadImage(fakeImage)
+
+      expect(fsSpy).toHaveBeenCalledWith(path.resolve('public/uploads'))
+    })
+
+    test('Should create uploads directory if does not exist', async () => {
+      const { sut, fakeImage } = makeSut()
+
+      jest.spyOn(fs, 'existsSync').mockReturnValueOnce(false)
+
+      const fsSpy = jest.spyOn(fs, 'mkdirSync')
+
+      await sut.uploadImage(fakeImage)
+
+      expect(fsSpy).toHaveBeenCalledWith(path.resolve('public/uploads'))
+    })
+
+    test('Should call randomUUID method with correct value', async () => {
+      const { sut, fakeImage } = makeSut()
+
+      const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+      await sut.uploadImage(fakeImage)
+
+      expect(cryptoSpy).toHaveBeenCalledTimes(1)
+    })
+
+    test('Should save file if proccess succeeds', async () => {
+      const { sut, fakeImage } = makeSut()
+
+      const fsSpy = jest.spyOn(fs, 'createWriteStream')
+
+      const output = await sut.uploadImage(fakeImage)
+      const outputDirPath = path.resolve('public/uploads')
+      const outputFilePath = `/hashed-filename.${fakeImage.extension}`
+
+      expect(fsSpy).toHaveBeenCalledWith(join(outputDirPath, outputFilePath))
+      expect(output).toBe('/uploads' + outputFilePath)
+    })
   })
 
-  test('Should return null if a file have invalid mime type', async () => {
-    const { sut, fakeImage } = makeSut()
+  describe('removeImage', () => {
+    test('Should check if imagePath is a valid file', async () => {
+      const { sut, fakeUrl } = makeSut()
 
-    const fakeWrongImage = {
-      ...fakeImage,
-      mime: 'application/pdf',
-      extension: '.pdf',
-    }
+      const fsSpy = jest.spyOn(fs, 'existsSync')
 
-    const output = await sut.uploadImage(fakeWrongImage)
+      await sut.removeImage(fakeUrl)
 
-    expect(output).toBeNull()
-  })
+      expect(fsSpy).toHaveBeenCalledWith(path.resolve('public' + fakeUrl))
+    })
 
-  test('Should check id uploads directory exist', async () => {
-    const { sut, fakeImage } = makeSut()
+    test('Should return false if imagePath do not exist on upload dir', async () => {
+      const { sut, fakeUrl } = makeSut()
 
-    const fsSpy = jest.spyOn(fs, 'existsSync')
+      jest.spyOn(fs, 'existsSync').mockReturnValueOnce(false)
 
-    await sut.uploadImage(fakeImage)
+      const output = await sut.removeImage(fakeUrl)
 
-    expect(fsSpy).toHaveBeenCalledWith(path.resolve('public/uploads'))
-  })
+      expect(output).toBeFalsy()
+    })
 
-  test('Should create uploads directory if does not exist', async () => {
-    const { sut, fakeImage } = makeSut()
+    test('Should call fs unlink method if imagePath', async () => {
+      const { sut, fakeUrl } = makeSut()
 
-    jest.spyOn(fs, 'existsSync').mockReturnValueOnce(false)
+      const unlinkSpy = jest.spyOn(fs, 'unlinkSync')
 
-    const fsSpy = jest.spyOn(fs, 'mkdirSync')
+      await sut.removeImage(fakeUrl)
 
-    await sut.uploadImage(fakeImage)
+      expect(unlinkSpy).toHaveBeenCalledWith(path.resolve('public' + fakeUrl))
+    })
 
-    expect(fsSpy).toHaveBeenCalledWith(path.resolve('public/uploads'))
-  })
+    test('Should return true if proccess succeeds', async () => {
+      const { sut, fakeUrl } = makeSut()
 
-  test('Should call randomUUID method with correct value', async () => {
-    const { sut, fakeImage } = makeSut()
+      const output = await sut.removeImage(fakeUrl)
 
-    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
-    await sut.uploadImage(fakeImage)
-
-    expect(cryptoSpy).toHaveBeenCalledTimes(1)
-  })
-
-  test('Should save file if proccess succeeds', async () => {
-    const { sut, fakeImage } = makeSut()
-
-    const fsSpy = jest.spyOn(fs, 'createWriteStream')
-
-    const output = await sut.uploadImage(fakeImage)
-    const outputDirPath = path.resolve('public/uploads')
-    const outputFilePath = `/hashed-filename.${fakeImage.extension}`
-
-    expect(fsSpy).toHaveBeenCalledWith(join(outputDirPath, outputFilePath))
-    expect(output).toBe('/uploads' + outputFilePath)
+      expect(output).toBeTruthy()
+    })
   })
 })
