@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto'
 import { join, resolve } from 'path'
 import { File } from '@/protocols/models/file'
 import { FileManager } from '@/protocols/use-cases/file'
-import { createWriteStream, existsSync, mkdirSync } from 'fs'
+import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'fs'
 
 export class LocalFileManagerRepository implements FileManager {
   async uploadImage(image: File): Promise<string | null> {
@@ -41,6 +41,14 @@ export class LocalFileManagerRepository implements FileManager {
   }
 
   async removeImage(imagePath: string): Promise<boolean> {
+    const imageFullPath = resolve('public' + imagePath)
+
+    const fileExist = existsSync(imageFullPath)
+
+    if (!fileExist) return Promise.resolve(false)
+
+    unlinkSync(imageFullPath)
+
     return Promise.resolve(true)
   }
 }
