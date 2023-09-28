@@ -210,7 +210,7 @@ describe('Sign Up Controller', () => {
 
     expect(accountSpy).toHaveBeenCalledWith({
       ...fakeRequest.body,
-      image: 'http://localhost/uploads/any-file-uploaded.png',
+      image: '/uploads/any-file-uploaded.png',
       password: 'hashed_password',
     })
   })

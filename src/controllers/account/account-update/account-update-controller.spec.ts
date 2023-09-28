@@ -4,6 +4,7 @@ import { TeamStub } from '@/mocks/teams/team-stub'
 import { AccountStub } from '@/mocks/account/account-stub'
 import { makeFakeAccount } from '@/mocks/account/account-fakes'
 import { AccountUdateController } from './account-update-controller'
+import { FileUploaderStub } from '@/mocks/file-uploader/file-uploader-stub'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
@@ -16,16 +17,19 @@ const makeSut = () => {
 
   const accountStub = new AccountStub()
   const teamStub = new TeamStub()
+  const fileUploaderStub = new FileUploaderStub()
 
   const sut = new AccountUdateController({
     account: accountStub,
     team: teamStub,
+    fileUploader: fileUploaderStub,
   })
 
   return {
     sut,
     accountStub,
     teamStub,
+    fileUploaderStub,
     fakeRequest,
   }
 }
@@ -109,14 +113,102 @@ describe('Account Update Controller', () => {
     await expect(output).rejects.toThrow(new InvalidParamError('teamId'))
   })
 
+  test('Should return call file uploader with image if image file is provided', async () => {
+    const { sut, fakeRequest, fileUploaderStub } = makeSut()
+
+    const fakeRequestWithFile = {
+      ...fakeRequest,
+      files: {
+        image: {
+          filename: 'any-filename.pgn',
+          mime: 'image/png',
+          extenttion: 'png',
+          data: 'only-image-data',
+        },
+      },
+    }
+
+    const uploaderSpy = jest.spyOn(fileUploaderStub, 'uploadImage')
+
+    await sut.handle(fakeRequestWithFile)
+
+    expect(uploaderSpy).toHaveBeenCalledWith(fakeRequestWithFile.files.image)
+    expect(uploaderSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should return do not call file uploader with image if image file is not provided', async () => {
+    const { sut, fakeRequest, fileUploaderStub } = makeSut()
+
+    const uploaderSpy = jest.spyOn(fileUploaderStub, 'uploadImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(uploaderSpy).not.toHaveBeenCalled()
+  })
+
+  test('Should return call setById with new image path if file is uploaded', async () => {
+    const { sut, fakeRequest, accountStub } = makeSut()
+
+    const accountSpy = jest.spyOn(accountStub, 'setUserById')
+
+    const fakeRequestWithFile = {
+      ...fakeRequest,
+      files: {
+        image: {
+          filename: 'any-filename.pgn',
+          mime: 'image/png',
+          extenttion: 'png',
+          data: 'only-image-data',
+        },
+      },
+    }
+
+    await sut.handle(fakeRequestWithFile)
+
+    expect(accountSpy).toHaveBeenCalledWith(fakeRequest.params.id, {
+      ...fakeRequest.body,
+      image: '/uploads/any-file-uploaded.png',
+    })
+  })
+
+  test('Should return account with image url if file is provided', async () => {
+    const { sut, fakeRequest } = makeSut()
+
+    const fakeRequestWithFile = {
+      ...fakeRequest,
+      files: {
+        image: {
+          filename: 'any-filename.pgn',
+          mime: 'image/png',
+          extenttion: 'png',
+          data: 'only-image-data',
+        },
+      },
+    }
+
+    const outputWithFile = await sut.handle(fakeRequestWithFile)
+
+    expect(outputWithFile.body.data.image).toBe(fakeRequest.baseUrl + '/uploads/any-file-uploaded.png')
+
+    const outputWithoutFile = await sut.handle(fakeRequest)
+
+    expect(outputWithoutFile.body.data.image).toBe(fakeRequest.baseUrl + fakeRequest.body.image)
+  })
+
   test('Should return 200 when update successfull', async () => {
     const { sut, fakeRequest } = makeSut()
 
     const output = await sut.handle(fakeRequest)
 
+    const fakeAccount = makeFakeAccount()
+    const expectedData = {
+      ...fakeAccount,
+      image: fakeRequest.baseUrl + fakeAccount.image,
+    }
+
     expect(output).toEqual(httpResponse(200, {
       message: 'User updated successffuly',
-      data: makeFakeAccount(),
+      data: expectedData,
     }))
   })
 })
