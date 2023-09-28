@@ -5,12 +5,12 @@ import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { httpResponse } from '@/helpers/http'
 import { Team } from '@/protocols/use-cases/team'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
-import { FileUploader } from '@/protocols/use-cases/file'
+import { FileManager } from '@/protocols/use-cases/file'
 
 interface ConstructorProps {
   account: Account
   team: Team
-  fileUploader: FileUploader
+  fileManager: FileManager
 }
 
 export class AccountUdateController implements Controller {
@@ -40,7 +40,7 @@ export class AccountUdateController implements Controller {
     }
 
     if (request.files.image) {
-      request.body.image = await this.dependencies.fileUploader.uploadImage(request.files.image)
+      request.body.image = await this.dependencies.fileManager.uploadImage(request.files.image)
     }
 
     const updatedAccount = await this.dependencies.account.setUserById(id, request.body)

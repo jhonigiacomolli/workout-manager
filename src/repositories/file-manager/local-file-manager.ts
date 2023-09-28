@@ -1,10 +1,10 @@
 import { randomUUID } from 'crypto'
 import { join, resolve } from 'path'
 import { File } from '@/protocols/models/file'
-import { FileUploader } from '@/protocols/use-cases/file'
+import { FileManager } from '@/protocols/use-cases/file'
 import { createWriteStream, existsSync, mkdirSync } from 'fs'
 
-export class LocalFileUploaderRepository implements FileUploader {
+export class LocalFileManagerRepository implements FileManager {
   async uploadImage(image: File): Promise<string | null> {
     if (
       !image.filename ||
@@ -38,5 +38,9 @@ export class LocalFileUploaderRepository implements FileUploader {
     image.data = 'bin'
 
     return `/uploads/${uploadedFileName}.${image.extension}`
+  }
+
+  async removeImage(imagePath: string): Promise<boolean> {
+    return Promise.resolve(true)
   }
 }

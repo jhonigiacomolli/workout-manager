@@ -1,9 +1,9 @@
 import { type Account } from '@/protocols/use-cases/account'
+import { type FileManager } from '@/protocols/use-cases/file'
 import { type Controller } from '@/protocols/models/controller'
 import { type Hasher } from '@/protocols/use-cases/cryptography/hashser'
 import { type HTTPRequest, type HTTPResponse } from '@/protocols/models/http'
 import { type EmailValidator } from '@/protocols/models/validator/email-validator'
-import { type FileUploader } from '@/protocols/use-cases/file'
 
 import { httpResponse } from '@/helpers/http'
 import { BadRequestError, ForbiddenError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
@@ -12,7 +12,7 @@ interface ConstructorProps {
   emailValidator: EmailValidator
   account: Account
   hasher: Hasher
-  fileUploader: FileUploader
+  fileManager: FileManager
 }
 
 export class SignUpController implements Controller {
@@ -46,7 +46,7 @@ export class SignUpController implements Controller {
     }
 
     if (request.files.image) {
-      const imageUrl = await this.dependencies.fileUploader.uploadImage(request.files.image)
+      const imageUrl = await this.dependencies.fileManager.uploadImage(request.files.image)
       newAccountParams.image = imageUrl || ''
     }
 
