@@ -4,3 +4,4 @@
 /public/uploads/
 .env
 error-log.txt
+.DS_Store
