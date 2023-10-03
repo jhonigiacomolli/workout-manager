@@ -19,6 +19,11 @@ export const accountUpdatePath = {
           $ref: '#/schemas/accountUpdateParams',
         },
       },
+      'multipart/form-data': {
+        schema: {
+          $ref: '#/schemas/accountUpdateParamsMultipart',
+        },
+      },
     },
   },
   responses: {
