@@ -8,6 +8,7 @@ export * from './account/make-refresh-token-controller'
 export * from './team/make-team-create-controller'
 export * from './team/make-team-load-all-items.controller'
 export * from './team/make-team-load-item-controller'
+export * from './team/make-team-remove-controller'
 export * from './team/make-team-update-controller'
 
 export * from './workspace/make-workspace-create-controller'

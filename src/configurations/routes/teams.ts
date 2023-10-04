@@ -7,6 +7,7 @@ import {
   makeTeamCreateController,
   makeTeamLoadAllItemsController,
   makeTeamLoadItemController,
+  makeTeamRemoveController,
   makeTeamUpdateController,
 } from '@/factories/controllers'
 
@@ -15,4 +16,5 @@ export default (router: Router) => {
   router.post('/teams', authentication, useRouteController(makeTeamCreateController()))
   router.get('/teams/:id', authentication, useRouteController(makeTeamLoadItemController()))
   router.put('/teams/:id', authentication, useRouteController(makeTeamUpdateController()))
+  router.delete('/teams/:id', authentication, useRouteController(makeTeamRemoveController()))
 }
