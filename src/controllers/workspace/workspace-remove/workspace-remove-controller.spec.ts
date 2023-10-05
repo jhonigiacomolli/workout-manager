@@ -1,19 +1,24 @@
 import { httpResponse } from '@/helpers/http'
 import { makeFakeRequest } from '@/mocks/http'
 import { WorkspaceStub } from '@/mocks/workspace/wokrspace-stub'
+import { makeFakeWorkspace } from '@/mocks/workspace/workspace-fakes'
+import { FileManagerStub } from '@/mocks/file-manager/file-manager-stub'
 import { WorkspaceRemoveController } from './workspace-remove-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
   const fakeRequest = makeFakeRequest()
   const workspaceStub = new WorkspaceStub()
+  const fileManegerStub = new FileManagerStub()
   const sut = new WorkspaceRemoveController({
     workspace: workspaceStub,
+    fileManager: fileManegerStub,
   })
 
   return {
     sut,
     fakeRequest,
+    fileManegerStub,
     workspaceStub,
   }
 }
@@ -39,6 +44,63 @@ describe('WorkspaceRemoveController', () => {
     const output = sut.handle(fakeRequestWithInvalidId)
 
     await expect(output).rejects.toThrow(new InvalidParamError('id'))
+  })
+
+  test('Should remove coverImage and profileImage before delete workspace', async () => {
+    const { sut, fakeRequest, fileManegerStub } = makeSut()
+
+    const removerSpy = jest.spyOn(fileManegerStub, 'removeImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(removerSpy).toHaveBeenCalledWith(makeFakeWorkspace().coverImage)
+    expect(removerSpy).toHaveBeenCalledWith(makeFakeWorkspace().profileImage)
+    expect(removerSpy).toHaveBeenCalledTimes(2)
+  })
+
+  test('Should remove only coverImage if profileImage is empty before delete workspace', async () => {
+    const { sut, fakeRequest, workspaceStub, fileManegerStub } = makeSut()
+
+    jest.spyOn(workspaceStub, 'getById').mockReturnValueOnce(Promise.resolve({
+      ...makeFakeWorkspace(),
+      profileImage: '',
+    }))
+    const removerSpy = jest.spyOn(fileManegerStub, 'removeImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(removerSpy).toHaveBeenCalledWith(makeFakeWorkspace().coverImage)
+    expect(removerSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should remove only profileImage if coverImage is empty before delete workspace', async () => {
+    const { sut, fakeRequest, workspaceStub, fileManegerStub } = makeSut()
+
+    jest.spyOn(workspaceStub, 'getById').mockReturnValueOnce(Promise.resolve({
+      ...makeFakeWorkspace(),
+      coverImage: '',
+    }))
+    const removerSpy = jest.spyOn(fileManegerStub, 'removeImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(removerSpy).toHaveBeenCalledWith(makeFakeWorkspace().profileImage)
+    expect(removerSpy).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should not calls remove method if both images are empty', async () => {
+    const { sut, fakeRequest, workspaceStub, fileManegerStub } = makeSut()
+
+    jest.spyOn(workspaceStub, 'getById').mockReturnValueOnce(Promise.resolve({
+      ...makeFakeWorkspace(),
+      coverImage: '',
+      profileImage: '',
+    }))
+    const removerSpy = jest.spyOn(fileManegerStub, 'removeImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(removerSpy).toHaveBeenCalledTimes(0)
   })
 
   test('Should return bad request error if workspace delete method return false', async () => {
