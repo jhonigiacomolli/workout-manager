@@ -1,7 +1,9 @@
 import { WorkspaceModel } from '@/protocols/models/workspace'
 
-type PostgresWorkspaceModel = Omit<WorkspaceModel, 'createdAt'> & {
+type PostgresWorkspaceModel = Omit<WorkspaceModel, 'createdAt' | 'profileImage' | 'coverImage'> & {
   created_at: string
+  coverimage: string
+  profileimage: string
 }
 
 export const makeFakeWorkspace = (): WorkspaceModel => ({
@@ -22,6 +24,6 @@ export const makeFakePostgressWorkspace = (): PostgresWorkspaceModel => ({
   members: [],
   boards: [],
   description: 'Any description',
-  coverImage: '/profileimage',
-  profileImage: '/profileimage',
+  coverimage: '/profileimage',
+  profileimage: '/profileimage',
 })

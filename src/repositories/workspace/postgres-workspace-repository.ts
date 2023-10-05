@@ -11,8 +11,8 @@ export class PgWorkspaceReposytory implements Workspace {
       description,
       boards,
       members,
-      profileImage,
-      coverImage
+      profileimage,
+      coverimage
     ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4, $5, $6) RETURNING
       id,
       created_at,
@@ -20,8 +20,8 @@ export class PgWorkspaceReposytory implements Workspace {
       COALESCE(description, '') as description,
       COALESCE(boards, ARRAY[]::text[]) AS boards,
       COALESCE(members, ARRAY[]::text[]) AS members,
-      COALESCE(profileImage, '') as profileImage,
-      COALESCE(coverImage, '') as coverImage
+      COALESCE(profileimage, '') as profileimage,
+      COALESCE(coverimage, '') as coverimage
     `, [
       workspace.title,
       workspace.description,
@@ -32,10 +32,12 @@ export class PgWorkspaceReposytory implements Workspace {
     ])
 
     // eslint-disable-next-line
-    return rows.map(({ created_at, ...workspace }) => ({
+    return rows.map(({ created_at, coverimage, profileimage, ...workspace }) => ({
       ...workspace,
       // eslint-disable-next-line
       createdAt: created_at,
+      coverImage: coverimage,
+      profileImage: profileimage,
     }))[0]
   }
 
@@ -70,8 +72,8 @@ export class PgWorkspaceReposytory implements Workspace {
       description: row.description,
       boards: row.boards,
       members: row.members,
-      coverImage: row.coverImage,
-      profileImage: row.profileImage,
+      coverImage: row.coverimage,
+      profileImage: row.profileimage,
     }))[0]
   }
 
@@ -83,8 +85,8 @@ export class PgWorkspaceReposytory implements Workspace {
         description=COALESCE($3,description),
         members=COALESCE($4,members),
         boards=COALESCE($5,boards),
-        profileImage=COALESCE($6,profileImage),
-        coverImage=COALESCE($7,coverImage)
+        profileimage=COALESCE($6,profileimage),
+        coverimage=COALESCE($7,coverimage)
       WHERE id=$1 RETURNING
       id,
       created_at,
@@ -92,8 +94,8 @@ export class PgWorkspaceReposytory implements Workspace {
       COALESCE(description, '') as description,
       COALESCE(boards, ARRAY[]::text[]) AS boards,
       COALESCE(members, ARRAY[]::text[]) AS members,
-      COALESCE(profileImage, '') as profileImage,
-      COALESCE(coverImage, '') as coverImage
+      COALESCE(profileimage, '') as profileimage,
+      COALESCE(coverimage, '') as coverimage
     `, [id, data.title, data.description, data.members, data.boards, data.profileImage, data.coverImage])
 
     return rows.map(row => ({
@@ -103,8 +105,8 @@ export class PgWorkspaceReposytory implements Workspace {
       description: row.description,
       boards: row.boards,
       members: row.members,
-      coverImage: row.coverImage,
-      profileImage: row.profileImage,
+      coverImage: row.coverimage,
+      profileImage: row.profileimage,
     }))[0]
   }
 }
