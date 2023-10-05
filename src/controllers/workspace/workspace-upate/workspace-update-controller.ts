@@ -1,4 +1,5 @@
 import { httpResponse } from '@/helpers/http'
+import { FileManager } from '@/protocols/use-cases/file'
 import { Controller } from '@/protocols/models/controller'
 import { Workspace } from '@/protocols/use-cases/workspace'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
@@ -12,6 +13,7 @@ type ParamValidation = {
 
 type Dependencies = {
   workspace: Workspace
+  fileManager: FileManager
 }
 
 export class WorkspaceUpdateController implements Controller {
@@ -32,9 +34,9 @@ export class WorkspaceUpdateController implements Controller {
 
     if (!id) throw new EmptyParamError('id')
 
-    const isValidWorkspaceId = await this.dependencies.workspace.getById(id)
+    const savedWorkspace = await this.dependencies.workspace.getById(id)
 
-    if (!isValidWorkspaceId) throw new InvalidParamError('id')
+    if (!savedWorkspace) throw new InvalidParamError('id')
 
     for (const param of Object.keys(request.body)) {
       const paramType = paramsValidation[param]
@@ -43,6 +45,14 @@ export class WorkspaceUpdateController implements Controller {
       if (!isValidParamType) throw new InvalidParamError(`${param} must have to be a ${paramType}`)
 
       params[param] = request.body[param]
+    }
+
+    for (const param of Object.keys(request.files)) {
+      if (savedWorkspace[param]) {
+        await this.dependencies.fileManager.removeImage(savedWorkspace[param])
+      }
+      const uploadedImagePath = await this.dependencies.fileManager.uploadImage(request.files[param])
+      params[param] = uploadedImagePath
     }
 
     const updatedWorkspace = await this.dependencies.workspace.setById(id, params)
