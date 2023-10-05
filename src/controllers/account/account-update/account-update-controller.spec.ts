@@ -22,7 +22,7 @@ const makeSut = () => {
       image: {
         filename: 'any-filename.pgn',
         mime: 'image/png',
-        extenttion: 'png',
+        extension: 'png',
         data: 'only-image-data',
       },
     },
