@@ -13,7 +13,7 @@ export const makeFakeWorkspace = (): WorkspaceModel => ({
   members: [],
   boards: [],
   description: 'Any description',
-  coverImage: '/profileimage',
+  coverImage: '/coverimage',
   profileImage: '/profileimage',
 })
 
@@ -24,6 +24,6 @@ export const makeFakePostgressWorkspace = (): PostgresWorkspaceModel => ({
   members: [],
   boards: [],
   description: 'Any description',
-  coverimage: '/profileimage',
+  coverimage: '/coverimage',
   profileimage: '/profileimage',
 })

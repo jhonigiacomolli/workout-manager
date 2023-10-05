@@ -1,4 +1,5 @@
 import { httpResponse } from '@/helpers/http'
+import { FileManager } from '@/protocols/use-cases/file'
 import { Controller } from '@/protocols/models/controller'
 import { Workspace } from '@/protocols/use-cases/workspace'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
@@ -6,6 +7,7 @@ import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/e
 
 type Dependencies = {
   workspace: Workspace
+  fileManager: FileManager
 }
 
 export class WorkspaceRemoveController implements Controller {
@@ -15,9 +17,17 @@ export class WorkspaceRemoveController implements Controller {
 
     if (!id) throw new EmptyParamError('id')
 
-    const isValidId = await this.dependencies.workspace.getById(id)
+    const savedWorkspace = await this.dependencies.workspace.getById(id)
 
-    if (!isValidId) throw new InvalidParamError('id')
+    if (!savedWorkspace) throw new InvalidParamError('id')
+
+    const images = ['coverImage', 'profileImage']
+
+    for (const image of images) {
+      if (savedWorkspace[image]) {
+        await this.dependencies.fileManager.removeImage(savedWorkspace[image])
+      }
+    }
 
     const success = await this.dependencies.workspace.delete(id)
 
