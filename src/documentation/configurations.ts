@@ -65,6 +65,8 @@ export const swaggerConfigurations = {
     teamModelParams: schemas.teamModelParamsSchema,
     workspaceModel: schemas.workspaceModelSchema,
     workspaceCreateParams: schemas.workspaceCreateParamsSchema,
+    workspaceUpdateParams: schemas.workspaceUpdateParamsSchemaJson,
+    workspaceUpdateParamsMultipart: schemas.workspaceUpdateParamsSchemaMultipart,
     workspaceCreateReturns: schemas.workspaceCreateRetunrSchema,
     boardModel: schemas.boardModelSchema,
     boardCreateParams: schemas.boardCreateParamsSchema,

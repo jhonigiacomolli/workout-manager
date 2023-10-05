@@ -17,7 +17,12 @@ export const workspaceUpdatePath = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/schemas/workspaceCreateParams',
+          $ref: '#/schemas/workspaceUpdateParams',
+        },
+      },
+      'multipart/form-data': {
+        schema: {
+          $ref: '#/schemas/workspaceUpdateParamsMultipart',
         },
       },
     },

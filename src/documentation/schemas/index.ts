@@ -10,9 +10,10 @@ export * from './accounts/update-account-params-schema'
 export * from './teams/team-model-schema'
 export * from './teams/team-model--params-schema'
 
-export * from './workspaces/workspace-create-parms-schema'
+export * from './workspaces/workspace-create-params-schema'
 export * from './workspaces/workspace-create-return-schema'
 export * from './workspaces/workspace-model-schema'
+export * from './workspaces/workspace-update-params-schema'
 
 export * from './boards/board-create-parms-schema'
 export * from './boards/board-create-return-schema'
