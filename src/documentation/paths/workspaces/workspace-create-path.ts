@@ -10,6 +10,11 @@ export const workspaceCreatePath = {
           $ref: '#/schemas/workspaceCreateParams',
         },
       },
+      'multipart/form-data': {
+        schema: {
+          $ref: '#/schemas/workspaceCreateParams',
+        },
+      },
     },
   },
   responses: {

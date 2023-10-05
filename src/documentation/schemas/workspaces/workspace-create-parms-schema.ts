@@ -21,10 +21,10 @@ export const workspaceCreateParamsSchema = {
       },
     },
     profileImage: {
-      type: 'string',
+      type: 'file',
     },
     coverImage: {
-      type: 'string',
+      type: 'file',
     },
   },
 }
