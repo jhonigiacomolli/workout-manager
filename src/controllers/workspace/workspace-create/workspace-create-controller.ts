@@ -5,13 +5,15 @@ import { CreateWorkspaceModel } from '@/protocols/models/workspace'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 import { paramValidation } from '@/helpers/validation/param-validation'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { FileManager } from '@/protocols/use-cases/file'
 
 type ParamValidation = {
-  [key in keyof CreateWorkspaceModel]: 'string' | 'array'
+  [key in keyof CreateWorkspaceModel]: 'string' | 'array' | 'object'
 }
 
 type Dependencies = {
   workspace: Workspace
+  fileManager: FileManager
 }
 export class WorkspaceCreateController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
@@ -31,8 +33,8 @@ export class WorkspaceCreateController implements Controller {
       description: 'string',
       boards: 'array',
       members: 'array',
-      profileImage: 'string',
-      coverImage: 'string',
+      profileImage: 'object',
+      coverImage: 'object',
       createdAt: 'string',
     }
 
@@ -47,12 +49,26 @@ export class WorkspaceCreateController implements Controller {
       }
     }
 
+    const imageParams = ['coverImage', 'profileImage']
+    for (const param of Object.keys(request.files)) {
+      if (imageParams.includes(param)) {
+        const imagePath = await this.dependencies.fileManager.uploadImage(request.files[param])
+
+        workspaceParams[param] = imagePath
+      }
+    }
+
     if (!request.body.title) throw new EmptyParamError('title')
 
     const newWorkspace = await this.dependencies.workspace.create(workspaceParams)
 
     if (!newWorkspace?.id) throw new BadRequestError('Workspace create fails!')
 
+    for (const image of imageParams) {
+      if (newWorkspace[image]) {
+        newWorkspace[image] = request.baseUrl + newWorkspace[image]
+      }
+    }
     return httpResponse(200, {
       message: 'Workspace created successfully!',
       data: newWorkspace,

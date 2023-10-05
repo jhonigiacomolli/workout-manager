@@ -11,8 +11,8 @@ export const makeFakeWorkspace = (): WorkspaceModel => ({
   members: [],
   boards: [],
   description: 'Any description',
-  coverImage: 'https://workoutmanager.com.br/profileimage',
-  profileImage: 'https://workoutmanager.com.br/profileimage',
+  coverImage: '/profileimage',
+  profileImage: '/profileimage',
 })
 
 export const makeFakePostgressWorkspace = (): PostgresWorkspaceModel => ({
@@ -22,6 +22,6 @@ export const makeFakePostgressWorkspace = (): PostgresWorkspaceModel => ({
   members: [],
   boards: [],
   description: 'Any description',
-  coverImage: 'https://workoutmanager.com.br/profileimage',
-  profileImage: 'https://workoutmanager.com.br/profileimage',
+  coverImage: '/profileimage',
+  profileImage: '/profileimage',
 })
