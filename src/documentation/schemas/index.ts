@@ -18,3 +18,8 @@ export * from './workspaces/workspace-update-params-schema'
 export * from './boards/board-create-parms-schema'
 export * from './boards/board-create-return-schema'
 export * from './boards/board-model-schema'
+
+export * from './group/group-create-params-schema'
+export * from './group/group-create-return-schema'
+export * from './group/group-model-schema'
+export * from './group/group-update-params-schema'

@@ -3,6 +3,7 @@ import * as accountsPaths from './paths/accounts'
 import * as teamsPaths from './paths/teams'
 import * as workspacesPaths from './paths/workspaces'
 import * as boardsPaths from './paths/boards'
+import * as groupsPaths from './paths/groups'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -15,6 +16,7 @@ export const swaggerConfigurations = {
     'Board',
     'Team',
     'Workspace',
+    'Group',
   ],
   paths: {
     '/sign-up': accountsPaths.signUpPath,
@@ -52,6 +54,15 @@ export const swaggerConfigurations = {
       put: boardsPaths.boardUpdatePath,
       delete: boardsPaths.boardRemovePath,
     },
+    '/groups': {
+      get: groupsPaths.groupListPath,
+      post: groupsPaths.groupCreatePath,
+    },
+    '/groups/{id}': {
+      get: groupsPaths.groupGetPath,
+      put: groupsPaths.groupUpdatePath,
+      delete: groupsPaths.groupRemovePath,
+    },
   },
   schemas: {
     error: schemas.errorSchema,
@@ -71,6 +82,9 @@ export const swaggerConfigurations = {
     boardModel: schemas.boardModelSchema,
     boardCreateParams: schemas.boardCreateParamsSchema,
     boardCreateReturns: schemas.boardCreateReturnSchema,
+    groupModel: schemas.groupModelSchema,
+    groupCreateParams: schemas.groupCreateParamsSchema,
+    groupUpdateParams: schemas.groupUpdateParamsSchema,
   },
   components: {
     securitySchemes: {
