@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS accounts(
   boards VARCHAR[],
   tasks VARCHAR[],
   image VARCHAR,
-  teamId UUID,
+  teamid UUID,
   FOREIGN KEY (teamId) REFERENCES teams(id),
   created_at TIMESTAMP
 );
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS workspaces(
   description VARCHAR,
   boards VARCHAR[],
   members VARCHAR[],
-  profileImage VARCHAR,
-  coverImage VARCHAR
+  profileimage VARCHAR,
+  coverimage VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS boards(
@@ -44,3 +44,11 @@ CREATE TABLE IF NOT EXISTS boards(
   format VARCHAR,
   groups VARCHAR[]
 );
+
+CREATE TABLE IF NOT EXISTS groups(
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP,
+  title VARCHAR NOT NULL,
+  elements VARCHAR[]
+);
+
