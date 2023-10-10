@@ -3,7 +3,7 @@ import { makeFakeRequest } from '@/mocks/http'
 import { GropuStub } from '@/mocks/group/group-stub'
 import { makeFakeGroup } from '@/mocks/group/group-fakes'
 import { GroupUpdateController } from './group-update-controller'
-import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, InvalidParamError, NotFoundError } from '@/helpers/errors'
 
 const makeSut = () => {
   const { id, ...body } = makeFakeGroup()
@@ -40,17 +40,17 @@ describe('GroupUpdateController', () => {
     await expect(output).rejects.toThrow(new EmptyParamError('id'))
   })
 
-  test('Should return invalid param error if id is invalid', async () => {
+  test('Should return not found error if id is invalid', async () => {
     const { sut, fakeRequest, groupStub } = makeSut()
 
     jest.spyOn(groupStub, 'getById').mockReturnValueOnce(Promise.resolve(undefined))
 
     const output = sut.handle(fakeRequest)
 
-    await expect(output).rejects.toThrow(new InvalidParamError('id'))
+    await expect(output).rejects.toThrow(new NotFoundError('Group not found!'))
   })
 
-  test('Should return invalid param error if title is provided but not to be a string', async () => {
+  test('Should return not invalid param error if title is provided but not to be a string', async () => {
     const { sut, fakeRequest } = makeSut()
 
     const fakeRequestWithWrongTitle = {
