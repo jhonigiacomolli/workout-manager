@@ -70,7 +70,7 @@ export class PgGroupRepository implements Group {
       UPDATE groups
       SET
         title=COALESCE($2,title),
-        elements=COALESCE($4,elements)
+        elements=COALESCE($3,elements)
       WHERE id=$1 RETURNING
       id,
       created_at,
