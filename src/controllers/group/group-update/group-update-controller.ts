@@ -4,7 +4,7 @@ import { Controller } from '@/protocols/models/controller'
 import { UpdateGroupModel } from '@/protocols/models/group'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 import { paramValidation } from '@/helpers/validation/param-validation'
-import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, InvalidParamError, NotFoundError } from '@/helpers/errors'
 
 type Dependencies = {
   group: Group
@@ -24,7 +24,7 @@ export class GroupUpdateController implements Controller {
 
     const isValidId = await this.dependencies.group.getById(id)
 
-    if (!isValidId) throw new InvalidParamError('id')
+    if (!isValidId) throw new NotFoundError('Group not found!')
 
     for (const bodyParam of Object.keys(request.body)) {
       const paramType = updateParamsTypes[bodyParam]
