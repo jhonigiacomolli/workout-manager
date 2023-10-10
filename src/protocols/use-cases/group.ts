@@ -3,6 +3,7 @@ import { HTTPRequestParams } from '../models/http'
 
 export interface Group {
   create(params: CreateGroupModel): Promise<GroupModel | undefined>
+  delete(id: string): Promise<boolean>
   getAll: (params: HTTPRequestParams) => Promise<GroupModel[]>
   getById(id: string): Promise<GroupModel | undefined>
   setById(id: string, params: Partial<UpdateGroupModel>): Promise<GroupModel | undefined>

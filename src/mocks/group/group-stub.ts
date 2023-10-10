@@ -7,6 +7,10 @@ export class GropuStub implements Group {
     return Promise.resolve(makeFakeGroup())
   }
 
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
   async getById(): Promise<GroupModel | undefined> {
     return Promise.resolve(makeFakeGroup())
   }
