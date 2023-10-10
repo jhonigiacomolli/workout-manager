@@ -1,5 +1,5 @@
 import { client } from '@/database'
-import { PgBoardReposytory } from './postgres-group-repository'
+import { PgGroupRepository } from './postgres-group-repository'
 import { makeFakeGroup, makeFakePostgresGroup } from '@/mocks/group/group-fakes'
 
 jest.mock('pg', () => {
@@ -37,7 +37,7 @@ const querySqlOrderByCreatedAt = `
     `
 
 const makeSut = () => {
-  const sut = new PgBoardReposytory()
+  const sut = new PgGroupRepository()
   const { id, ...params } = makeFakeGroup()
   const paramsWithId = { id, ...params }
 
@@ -45,7 +45,7 @@ const makeSut = () => {
     sut, params, paramsWithId,
   }
 }
-describe('PostgresBoardReposytory', () => {
+describe('PostgresGroupRepository', () => {
   describe('create()', () => {
     test('Should return undefined if board register fails', async () => {
       jest.spyOn(client, 'query').mockImplementationOnce(() => ({

@@ -3,7 +3,7 @@ import { Group } from '@/protocols/use-cases/group'
 import { HTTPRequestParams } from '@/protocols/models/http'
 import { CreateGroupModel, GroupModel } from '@/protocols/models/group'
 
-export class PgBoardReposytory implements Group {
+export class PgGroupRepository implements Group {
   async create(board: CreateGroupModel): Promise<GroupModel> {
     const { rows } = await client.query(`INSERT INTO groups(
       title,
