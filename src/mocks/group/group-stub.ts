@@ -6,4 +6,12 @@ export class GropuStub implements Group {
   async create(): Promise<GroupModel | undefined> {
     return Promise.resolve(makeFakeGroup())
   }
+
+  async getById(): Promise<GroupModel | undefined> {
+    return Promise.resolve(makeFakeGroup())
+  }
+
+  async setById(): Promise<GroupModel | undefined> {
+    return Promise.resolve(makeFakeGroup())
+  }
 }
