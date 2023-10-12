@@ -6,4 +6,8 @@ export class ElementStub implements Element {
   async create(): Promise<ElementModel | undefined> {
     return Promise.resolve(makeFakeElement())
   }
+
+  async setById(): Promise<ElementModel | undefined> {
+    return Promise.resolve(makeFakeElement())
+  }
 }
