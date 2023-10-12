@@ -10,7 +10,7 @@ type Dependencies = {
   element: Element
 }
 
-export class ElementUdpateController implements Controller {
+export class ElementUpdateController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {

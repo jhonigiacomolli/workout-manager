@@ -21,9 +21,6 @@ export class ElementCreateController implements Controller {
       status: 'waiting',
       members: [],
       updates: [],
-      expectedDate: '',
-      startDate: '',
-      endDate: '',
     }
     const elementTypes = {
       title: 'string',

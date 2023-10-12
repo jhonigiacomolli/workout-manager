@@ -56,11 +56,11 @@ CREATE TABLE IF NOT EXISTS elements(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
   created_at TIMESTAMP,
   title VARCHAR NOT NULL,
-  group VARCHAR NOT NULL,
+  "group" VARCHAR NOT NULL,
   status VARCHAR NOT NULL,
   start_date TIMESTAMP,
   end_date TIMESTAMP,
   expected_date TIMESTAMP,
-  members VARCHAR[]
+  members VARCHAR[],
   updates VARCHAR[]
 );
