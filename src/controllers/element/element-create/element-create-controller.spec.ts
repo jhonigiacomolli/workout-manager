@@ -6,7 +6,7 @@ import { ElementCreateController } from './element-create-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
-  const { id, createdAt, ...bodyParams } = makeFakeElement()
+  const { id, createdAt, startDate, endDate, expectedDate, ...bodyParams } = makeFakeElement()
   const fakeRequest = makeFakeRequest({
     body: bodyParams,
   })
@@ -70,7 +70,7 @@ describe('ElementCreateController', () => {
     }
     await sut.handle(fakeRequestWrongTitle)
 
-    const { id, createdAt, ...expected } = makeFakeElement()
+    const { id, createdAt, startDate, endDate, expectedDate, ...expected } = makeFakeElement()
 
     expect(createSpy).toHaveBeenCalledWith(expected)
   })

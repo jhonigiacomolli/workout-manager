@@ -38,16 +38,16 @@ const fakeRequestParams = {
 
 const querySql = `
       SELECT
-      id,
-      created_at,
-      COALESCE(title, '') as title,
-      COALESCE(group, '') as group,
-      COALESCE(members, ARRAY[]::text[]) AS members,
-      COALESCE(status, '') as status,
-      COALESCE(expected_date, '') as expected_date,
-      COALESCE(start_date, '') as start_date,
-      COALESCE(end_date, '') as end_date,
-      COALESCE(updates, ARRAY[]::text[]) AS updates
+        id,
+        COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
+        COALESCE(title, '') as title,
+        COALESCE("group", '') as "group",
+        COALESCE(members, ARRAY[]::text[]) AS members,
+        COALESCE(status, '') as status,
+        COALESCE(expected_date, TIMESTAMP '1970-01-01 00:00:00') as expected_date,
+        COALESCE(start_date, TIMESTAMP '1970-01-01 00:00:00') as start_date,
+        COALESCE(end_date, TIMESTAMP '1970-01-01 00:00:00') as end_date,
+        COALESCE(updates, ARRAY[]::text[]) AS updates
       FROM elements
       ORDER BY name DESC
       LIMIT $1

@@ -2,7 +2,7 @@ import { httpResponse } from '@/helpers/http'
 import { makeFakeRequest } from '@/mocks/http'
 import { ElementStub } from '@/mocks/element/element-stub'
 import { makeFakeElement } from '@/mocks/element/element-fakes'
-import { ElementUdpateController } from './element-update-controller'
+import { ElementUpdateController } from './element-update-controller'
 import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
 
 const makeSut = () => {
@@ -12,7 +12,7 @@ const makeSut = () => {
     body: bodyParams,
   })
   const elementStub = new ElementStub()
-  const sut = new ElementUdpateController({
+  const sut = new ElementUpdateController({
     element: elementStub,
   })
 
@@ -23,7 +23,7 @@ const makeSut = () => {
   }
 }
 
-describe('ElementUdpateController', () => {
+describe('ElementUpdateController', () => {
   test('Should return empty param error if id is not provided', async () => {
     const { sut, fakeRequest } = makeSut()
 
