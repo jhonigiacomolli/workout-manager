@@ -18,6 +18,14 @@ export type CreateElementModel = {
   title: string
   members: string[]
   status: ElementStatus
+  updates: string[]
+}
+
+export type UpdateElementModel = {
+  group: string
+  title: string
+  members: string[]
+  status: ElementStatus
   startDate: string
   expectedDate: string
   endDate: string
