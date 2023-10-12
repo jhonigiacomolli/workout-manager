@@ -23,3 +23,8 @@ export * from './group/group-create-params-schema'
 export * from './group/group-create-return-schema'
 export * from './group/group-model-schema'
 export * from './group/group-update-params-schema'
+
+export * from './element/element-create-params-schema'
+export * from './element/element-create-return-schema'
+export * from './element/element-model-schema'
+export * from './element/element-update-params-schema'
