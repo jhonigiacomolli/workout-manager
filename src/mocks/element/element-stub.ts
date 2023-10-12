@@ -7,6 +7,10 @@ export class ElementStub implements Element {
     return Promise.resolve(makeFakeElement())
   }
 
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
   async getAll(): Promise<ElementModel[]> {
     return Promise.resolve([makeFakeElement(), makeFakeElement()])
   }
