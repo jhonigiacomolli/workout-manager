@@ -34,6 +34,6 @@ export type HTTPResponse = {
 
 export type RepositoryRequest<TYPE> = TYPE & {
   files: {
-    [key: string]: File
+    [key: string]: File | File[]
   }
 }

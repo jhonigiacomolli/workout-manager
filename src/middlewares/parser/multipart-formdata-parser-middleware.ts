@@ -1,6 +1,7 @@
-import { RepositoryRequest } from '@/protocols/models/http'
-import { NextFunction, Request, Response } from 'express'
 import path from 'path'
+import { File } from '@/protocols/models/file'
+import { NextFunction, Request, Response } from 'express'
+import { RepositoryRequest } from '@/protocols/models/http'
 
 export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, res: Response, next: NextFunction) => {
   if (!req.headers['content-type']?.includes('multipart/form-data')) {
@@ -21,6 +22,7 @@ export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, r
     const boundary = getBoundary(req.headers['content-type'] as string)
 
     const rawDataArray = rawData.split(boundary)
+
     for (const item of rawDataArray) {
       const name = getMatching(item, /(?:name=")(.+?)(?:")/)?.trim() as string
 
@@ -31,11 +33,23 @@ export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, r
 
       if (filename) {
         const contentType = getMatching(item, /(?:Content-Type:)(.*?)(?:\r\n)/) as string
-        req.files[name] = {
-          filename,
-          mime: contentType.trim(),
-          extension: path.extname(filename).replace('.', ''),
-          data: value,
+        if (name.includes('[]')) {
+          const activeFiles = req.files[name.replace('[]', '')] as File[]
+          const oldFileList: File[] = activeFiles ? [...activeFiles] : []
+
+          req.files[name.replace('[]', '')] = [...oldFileList, {
+            filename,
+            mime: contentType.trim(),
+            extension: path.extname(filename).replace('.', ''),
+            data: value,
+          }]
+        } else {
+          req.files[name] = {
+            filename,
+            mime: contentType.trim(),
+            extension: path.extname(filename).replace('.', ''),
+            data: value,
+          }
         }
       } else {
         req.body[name] = value

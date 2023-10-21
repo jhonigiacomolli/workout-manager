@@ -8,7 +8,7 @@ type FakeRequestOptions = {
   params?: any
   query?: any
   files?: {
-    [key: string]: File
+    [key: string]: File | File[]
   }
   baseUrl?: string
 }
