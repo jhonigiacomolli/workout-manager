@@ -41,6 +41,7 @@ describe('MultipartFormdatParaserMiddleware', () => {
       email: 'any-email',
     })
   })
+
   test('Should return parse body if content type is multipart/form-data if have files attached', async () => {
     const output = await request(app)
       .post('/any-route')
@@ -58,6 +59,46 @@ describe('MultipartFormdatParaserMiddleware', () => {
     expect(output.body.files.image.extension).toBe('svg')
     expect(output.body.files.image.mime).toBe('image/svg+xml')
   })
+
+  test('Should return parse body if content type is multipart/form-data if have an array of files attached', async () => {
+    const output = await request(app)
+      .post('/any-route')
+      .set('content-type', 'multipart/form-data')
+      .field('name', 'any-name')
+      .field('email', 'any-email')
+      .attach('images[]', 'public/logo.svg')
+      .attach('images[]', 'public/logo.svg')
+      .expect(200)
+
+    expect(output.body.body).toEqual({
+      name: 'any-name',
+      email: 'any-email',
+    })
+    expect(Array.isArray(output.body.files.images)).toBeTruthy()
+    expect(output.body.files.images[0].filename).toBe('logo.svg')
+    expect(output.body.files.images[0].extension).toBe('svg')
+    expect(output.body.files.images[0].mime).toBe('image/svg+xml')
+  })
+
+  test('Should return parse body if content type is multipart/form-data if have an array with only one file attached', async () => {
+    const output = await request(app)
+      .post('/any-route')
+      .set('content-type', 'multipart/form-data')
+      .field('name', 'any-name')
+      .field('email', 'any-email')
+      .attach('images[]', 'public/logo.svg')
+      .expect(200)
+
+    expect(output.body.body).toEqual({
+      name: 'any-name',
+      email: 'any-email',
+    })
+    expect(Array.isArray(output.body.files.images)).toBeTruthy()
+    expect(output.body.files.images[0].filename).toBe('logo.svg')
+    expect(output.body.files.images[0].extension).toBe('svg')
+    expect(output.body.files.images[0].mime).toBe('image/svg+xml')
+  })
+
   test('Should return parse body and files correctly if a simple request', async () => {
     const output = await request(app)
       .post('/any-route')
@@ -74,6 +115,7 @@ describe('MultipartFormdatParaserMiddleware', () => {
     })
     expect(output.body.files).toBeFalsy()
   })
+
   test('Should return correctly if a get method', async () => {
     const output = await request(app)
       .get('/any-route')
