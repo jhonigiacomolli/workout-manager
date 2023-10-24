@@ -1,4 +1,5 @@
 import { httpResponse } from '@/helpers/http'
+import { FileManager } from '@/protocols/use-cases/file'
 import { Controller } from '@/protocols/models/controller'
 import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 import { ElementUpdate } from '@/protocols/use-cases/element-update'
@@ -8,12 +9,14 @@ import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/e
 
 type Dependencies = {
   respository: ElementUpdate
+  fileManager: FileManager
 }
 
 export class ElementUpdateCreateController implements Controller {
   constructor(private readonly dependencies: Dependencies) { }
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
+    const attachments = request.files.attachments
     const requiredParams = ['content', 'user']
     const elementUpdateTypes = {
       content: 'string',
@@ -40,13 +43,28 @@ export class ElementUpdateCreateController implements Controller {
       newElementUpdateParams[paramKey] = paramValue
     }
 
+    if (attachments) {
+      if (!Array.isArray(attachments)) throw new InvalidParamError('attachments, must have to be a array of files!')
+
+      for (const file of request.files.attachments) {
+        const imagePath = await this.dependencies.fileManager.uploadImage(file)
+
+        if (!imagePath) throw new BadRequestError('Upload attachment fails!')
+
+        newElementUpdateParams.attachments.push(imagePath)
+      }
+    }
+
     const newElementUpdate = await this.dependencies.respository.create(newElementUpdateParams)
 
     if (!newElementUpdate) throw new BadRequestError('Element update create fails!')
 
     return httpResponse(200, {
       message: 'Element update created!',
-      data: newElementUpdate,
+      data: {
+        ...newElementUpdate,
+        attachments: newElementUpdate.attachments.map(attachment => request.baseUrl + attachment),
+      },
     })
   }
 }
