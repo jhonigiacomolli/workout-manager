@@ -1,5 +1,6 @@
 import { httpResponse } from '@/helpers/http'
 import { makeFakeRequest } from '@/mocks/http'
+import { FileManagerStub } from '@/mocks/file-manager/file-manager-stub'
 import { ElementUpdateStub } from '@/mocks/element-update/element-update-stub'
 import { ElementUpdateCreateController } from './element-update-create-controller'
 import { makeFakeElementUpdate } from '@/mocks/element-update/element-update-fakes'
@@ -9,16 +10,35 @@ const makeSut = () => {
   const { id, createdAt, updatedAt, ...body } = makeFakeElementUpdate()
   const fakeRequest = makeFakeRequest({
     body,
+    files: {
+      attachments: [
+        {
+          filename: 'any-filename',
+          mime: 'image/png',
+          extension: '.png',
+          data: 'any-image-data',
+        },
+        {
+          filename: 'other-filename',
+          mime: 'image/png',
+          extension: '.png',
+          data: 'other-image-data',
+        },
+      ],
+    },
   })
   const elementUpdateStub = new ElementUpdateStub()
+  const fileManagerStub = new FileManagerStub()
   const sut = new ElementUpdateCreateController({
     respository: elementUpdateStub,
+    fileManager: fileManagerStub,
   })
 
   return {
     sut,
     fakeRequest,
     elementUpdateStub,
+    fileManagerStub,
   }
 }
 
@@ -74,6 +94,43 @@ describe('ElementUpdateCreateController', () => {
     await expect(outputWithWrongUser).rejects.toThrow(new InvalidParamError('user, must have to be a string'))
   })
 
+  test('Should return invalid param error if attachments provided is not an array', async () => {
+    const { sut, fakeRequest } = makeSut()
+
+    const fakeRequestWithWrongAttachments = {
+      ...fakeRequest,
+      files: {
+        attachments: {},
+      },
+    }
+
+    const output = sut.handle(fakeRequestWithWrongAttachments)
+
+    await expect(output).rejects.toThrow(new InvalidParamError('attachments, must have to be a array of files!'))
+  })
+
+  test('Should call upload file method if have attachments', async () => {
+    const { sut, fakeRequest, fileManagerStub } = makeSut()
+
+    const uploadeImageSpy = jest.spyOn(fileManagerStub, 'uploadImage')
+
+    await sut.handle(fakeRequest)
+
+    expect(uploadeImageSpy).toHaveBeenCalledWith(fakeRequest.files.attachments[0])
+    expect(uploadeImageSpy).toHaveBeenCalledWith(fakeRequest.files.attachments[1])
+    expect(uploadeImageSpy).toHaveBeenCalledTimes(2)
+  })
+
+  test('Should return bad request error if uploadImage method return null', async () => {
+    const { sut, fakeRequest, fileManagerStub } = makeSut()
+
+    jest.spyOn(fileManagerStub, 'uploadImage').mockReturnValueOnce(Promise.resolve(null))
+
+    const output = sut.handle(fakeRequest)
+
+    await expect(output).rejects.toThrow(new BadRequestError('Upload attachment fails!'))
+  })
+
   test('Should call create method with correct params', async () => {
     const { sut, fakeRequest, elementUpdateStub } = makeSut()
 
@@ -81,7 +138,13 @@ describe('ElementUpdateCreateController', () => {
 
     await sut.handle(fakeRequest)
 
-    expect(createSpy).toHaveBeenCalledWith(fakeRequest.body)
+    expect(createSpy).toHaveBeenCalledWith({
+      ...fakeRequest.body,
+      attachments: [
+        '/uploads/any-file-uploaded.png',
+        '/uploads/any-file-uploaded.png',
+      ],
+    })
   })
 
   test('Should return bad request error if create method return undefined', async () => {
@@ -95,13 +158,27 @@ describe('ElementUpdateCreateController', () => {
   })
 
   test('Should return http response with element update model data', async () => {
-    const { sut, fakeRequest } = makeSut()
+    const { sut, fakeRequest, elementUpdateStub } = makeSut()
+
+    jest.spyOn(elementUpdateStub, 'create').mockReturnValueOnce(Promise.resolve({
+      ...makeFakeElementUpdate(),
+      attachments: [
+        '/uploads/any-file-uploaded.png',
+        '/uploads/any-file-uploaded.png',
+      ],
+    }))
 
     const output = await sut.handle(fakeRequest)
-
+    const expected = {
+      ...makeFakeElementUpdate(),
+      attachments: [
+        fakeRequest.baseUrl + '/uploads/any-file-uploaded.png',
+        fakeRequest.baseUrl + '/uploads/any-file-uploaded.png',
+      ],
+    }
     expect(output).toEqual(httpResponse(200, {
       message: 'Element update created!',
-      data: makeFakeElementUpdate(),
+      data: expected,
     }))
   })
 })
