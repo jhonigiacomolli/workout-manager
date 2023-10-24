@@ -7,6 +7,10 @@ export class ElementUpdateStub implements ElementUpdate {
     return Promise.resolve(makeFakeElementUpdate())
   }
 
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  }
+
   async getById(): Promise<ElementUpdateModel | undefined> {
     return Promise.resolve(makeFakeElementUpdate())
   }
