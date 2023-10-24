@@ -6,4 +6,8 @@ export class ElementUpdateStub implements ElementUpdate {
   async create(): Promise<ElementUpdateModel | undefined> {
     return Promise.resolve(makeFakeElementUpdate())
   }
+
+  async getById(): Promise<ElementUpdateModel | undefined> {
+    return Promise.resolve(makeFakeElementUpdate())
+  }
 }
