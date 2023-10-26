@@ -5,10 +5,12 @@ import { HTTPRequest, HTTPResponse } from '@/protocols/models/http'
 import { ElementUpdate } from '@/protocols/use-cases/element-update'
 import { paramValidation } from '@/helpers/validation/param-validation'
 import { CreateElementUpdateModel } from '@/protocols/models/element-update'
-import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, InvalidParamError, NotFoundError } from '@/helpers/errors'
+import { Element } from '@/protocols/use-cases/element'
 
 type Dependencies = {
   respository: ElementUpdate
+  element: Element
   fileManager: FileManager
 }
 
@@ -17,14 +19,16 @@ export class ElementUpdateCreateController implements Controller {
 
   async handle(request: HTTPRequest): Promise<HTTPResponse> {
     const attachments = request.files.attachments
-    const requiredParams = ['content', 'user']
+    const requiredParams = ['elementId', 'content', 'user']
     const elementUpdateTypes = {
       content: 'string',
+      elementId: 'string',
       user: 'string',
       attachments: 'array',
     }
     const newElementUpdateParams: CreateElementUpdateModel = {
       content: '',
+      elementId: '',
       user: '',
       attachments: [],
     }
@@ -32,6 +36,10 @@ export class ElementUpdateCreateController implements Controller {
     for (const requiredParam of requiredParams) {
       if (!request.body[requiredParam]) throw new EmptyParamError(requiredParam)
     }
+
+    const isValidElementId = await this.dependencies.element.getById(request.body.elementId)
+
+    if (!isValidElementId) throw new NotFoundError('Element not found!')
 
     for (const paramKey of Object.keys(newElementUpdateParams)) {
       const paramValue = request.body[paramKey]
