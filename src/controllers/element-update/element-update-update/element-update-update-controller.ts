@@ -20,6 +20,7 @@ export class ElementUpdateUpdateController implements Controller {
     const updatedElementUpdateParams: Partial<CreateElementUpdateModel> = {}
     const elementUpdateTypes = {
       content: 'string',
+      elementId: 'string',
       user: 'string',
       attachments: 'array',
     }
@@ -31,6 +32,8 @@ export class ElementUpdateUpdateController implements Controller {
     if (!savedElementUpdate?.id) throw new NotFoundError('Element update not found!')
 
     for (const bodyParamKey of Object.keys(request.body)) {
+      if (bodyParamKey === 'elementId') continue
+
       const bodyParamValue = request.body[bodyParamKey]
 
       if (bodyParamValue) {

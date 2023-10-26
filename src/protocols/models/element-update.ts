@@ -1,5 +1,6 @@
 export type ElementUpdateModel = {
   id: string
+  elementId: string
   createdAt: string
   updatedAt: string
   user: string
