@@ -4,7 +4,8 @@ import { FileManagerStub } from '@/mocks/file-manager/file-manager-stub'
 import { ElementUpdateStub } from '@/mocks/element-update/element-update-stub'
 import { ElementUpdateCreateController } from './element-update-create-controller'
 import { makeFakeElementUpdate } from '@/mocks/element-update/element-update-fakes'
-import { BadRequestError, EmptyParamError, InvalidParamError } from '@/helpers/errors'
+import { BadRequestError, EmptyParamError, InvalidParamError, NotFoundError } from '@/helpers/errors'
+import { ElementStub } from '@/mocks/element/element-stub'
 
 const makeSut = () => {
   const { id, createdAt, updatedAt, ...body } = makeFakeElementUpdate()
@@ -28,9 +29,11 @@ const makeSut = () => {
     },
   })
   const elementUpdateStub = new ElementUpdateStub()
+  const elementStub = new ElementStub()
   const fileManagerStub = new FileManagerStub()
   const sut = new ElementUpdateCreateController({
     respository: elementUpdateStub,
+    element: elementStub,
     fileManager: fileManagerStub,
   })
 
@@ -38,6 +41,7 @@ const makeSut = () => {
     sut,
     fakeRequest,
     elementUpdateStub,
+    elementStub,
     fileManagerStub,
   }
 }
@@ -92,6 +96,26 @@ describe('ElementUpdateCreateController', () => {
     const outputWithWrongUser = sut.handle(fakeRequestWithWrongUser)
 
     await expect(outputWithWrongUser).rejects.toThrow(new InvalidParamError('user, must have to be a string'))
+  })
+
+  test('Should call element getById method with correct element id', async () => {
+    const { sut, fakeRequest, elementStub } = makeSut()
+
+    const elementGetByIdSpy = jest.spyOn(elementStub, 'getById')
+
+    await sut.handle(fakeRequest)
+
+    expect(elementGetByIdSpy).toHaveBeenCalledWith(fakeRequest.body.elementId)
+  })
+
+  test('Should return not found error if elementId is not a valid element id', async () => {
+    const { sut, fakeRequest, elementStub } = makeSut()
+
+    jest.spyOn(elementStub, 'getById').mockReturnValueOnce(Promise.resolve(undefined))
+
+    const output = sut.handle(fakeRequest)
+
+    await expect(output).rejects.toThrow(new NotFoundError('Element not found!'))
   })
 
   test('Should return invalid param error if attachments provided is not an array', async () => {
