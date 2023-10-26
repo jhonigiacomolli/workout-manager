@@ -194,7 +194,7 @@ describe('ElementUpdateUpdateController', () => {
     await expect(output).rejects.toThrow(new BadRequestError('Upload attachment fails!'))
   })
 
-  test('Should do not call setById correct values', async () => {
+  test('Should call setById correct values', async () => {
     const { sut, fakeRequest, elementUpdateStub } = makeSut()
 
     const setByIdSpy = jest.spyOn(elementUpdateStub, 'setById')
@@ -210,10 +210,11 @@ describe('ElementUpdateUpdateController', () => {
     }
     await sut.handle(fakeRequestWithOldAttachemnts)
 
+    const { elementId, ...params } = fakeRequestWithOldAttachemnts.body
     expect(setByIdSpy).toHaveBeenCalledWith(fakeRequestWithOldAttachemnts.params.id, {
-      ...fakeRequestWithOldAttachemnts.body,
+      ...params,
       attachments: [
-        ...fakeRequestWithOldAttachemnts.body.attachments,
+        ...params.attachments,
         '/uploads/any-file-uploaded.png',
         '/uploads/any-file-uploaded.png',
       ],
