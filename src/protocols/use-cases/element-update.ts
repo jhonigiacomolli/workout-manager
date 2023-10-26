@@ -6,4 +6,5 @@ export interface ElementUpdate {
   getById(id: string): Promise<ElementUpdateModel | undefined>
   getAll(params: HTTPRequestParams): Promise<ElementUpdateModel[]>
   delete(id: string): Promise<boolean>
+  setById(id: string, params: Partial<CreateElementUpdateModel>): Promise<ElementUpdateModel | undefined>
 }

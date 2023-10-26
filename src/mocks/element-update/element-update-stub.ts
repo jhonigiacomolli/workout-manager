@@ -18,4 +18,8 @@ export class ElementUpdateStub implements ElementUpdate {
   async getAll(): Promise<ElementUpdateModel[]> {
     return Promise.resolve([makeFakeElementUpdate()])
   }
+
+  async setById(): Promise<ElementUpdateModel | undefined> {
+    return Promise.resolve(makeFakeElementUpdate())
+  }
 }
