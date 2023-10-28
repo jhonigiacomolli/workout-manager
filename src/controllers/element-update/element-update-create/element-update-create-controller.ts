@@ -24,7 +24,6 @@ export class ElementUpdateCreateController implements Controller {
       content: 'string',
       elementId: 'string',
       user: 'string',
-      attachments: 'array',
     }
     const newElementUpdateParams: CreateElementUpdateModel = {
       content: '',
@@ -41,7 +40,7 @@ export class ElementUpdateCreateController implements Controller {
 
     if (!isValidElementId) throw new NotFoundError('Element not found!')
 
-    for (const paramKey of Object.keys(newElementUpdateParams)) {
+    for (const paramKey of Object.keys(elementUpdateTypes)) {
       const paramValue = request.body[paramKey]
       const paramType = elementUpdateTypes[paramKey]
       const isValidType = paramValidation(paramValue, paramType)

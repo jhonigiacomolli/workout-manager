@@ -24,18 +24,18 @@ export class PgElementUpdateRepository implements ElementUpdate {
     const { rows } = await client.query(`INSERT INTO element_upadtes(
       elementid,
       created_at,
-      user,
+      "user",
       content,
       attachments
     ) VALUES($1, CURRENT_TIMESTAMP , $2, $3, $4)
     RETURNING
       id,
       created_at,
-      COALESCE(elementid, '') as elementid,
+      COALESCE(elementid, null) as elementid,
       COALESCE(updated_at, null) as updated_at,
       COALESCE(content, '') as content,
-      COALESCE(user, '') as user,
-      COALESCE(attachments, ARRAY[]::text[]) AS attachments,
+      COALESCE("user", '') as "user",
+      COALESCE(attachments, ARRAY[]::text[]) AS attachments
     `, [
       props.elementId,
       props.user,
@@ -64,9 +64,9 @@ export class PgElementUpdateRepository implements ElementUpdate {
       SELECT
         id,
         COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
-        COALESCE(updated_at, TIMESTAMP '1970-01-01 00:00:00') as updated_at,
-        COALESCE(elementid, '') as elementid,
-        COALESCE(user, '') as user,
+        COALESCE(updated_at, null) as updated_at,
+        COALESCE(elementid, null) as elementid,
+        COALESCE("user", '') as "user",
         COALESCE(content, '') as content,
         COALESCE(attachments, ARRAY[]::text[]) AS attachments
       FROM element_upadtes
@@ -83,7 +83,7 @@ export class PgElementUpdateRepository implements ElementUpdate {
       UPDATE element_upadtes
       SET
         content=COALESCE($2,content),
-        user=COALESCE($3,user),
+        "user"=COALESCE($3,"user"),
         attachments=COALESCE($4,attachments),
         updated_at=CURRENT_TIMESTAMP
       WHERE id=$1
@@ -91,8 +91,8 @@ export class PgElementUpdateRepository implements ElementUpdate {
         id,
         COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
         COALESCE(updated_at, TIMESTAMP '1970-01-01 00:00:00') as updated_at,
-        COALESCE(elementid, '') as elementid,
-        COALESCE(user, '') as user,
+        COALESCE(elementid, null) as elementid,
+        COALESCE("user", '') as "user",
         COALESCE(content, '') as content,
         COALESCE(attachments, ARRAY[]::text[]) AS attachments
     `, [

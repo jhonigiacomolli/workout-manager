@@ -42,14 +42,18 @@ export class ElementUpdateUpdateController implements Controller {
 
         if (!isValidParamType) throw new InvalidParamError(`${bodyParamKey}, must have to be a ${bodyParamType}`)
 
-        updatedElementUpdateParams[bodyParamKey] = bodyParamValue
+        if (bodyParamKey === 'attachments') {
+          updatedElementUpdateParams[bodyParamKey] = bodyParamValue.map(attachment => attachment.replace(request.baseUrl, ''))
+        } else {
+          updatedElementUpdateParams[bodyParamKey] = bodyParamValue
+        }
       }
     }
 
     const bodyAttachments: string[] = request.body.attachments
     if (bodyAttachments) {
       for (const savedAttachment of savedElementUpdate.attachments) {
-        if (!bodyAttachments.includes(savedAttachment)) {
+        if (!bodyAttachments.includes(request.baseUrl + savedAttachment)) {
           const savedAttachmentPath = savedAttachment.replace(request.baseUrl, '')
           await this.dependencies.fileManager.removeImage(savedAttachmentPath)
         }
