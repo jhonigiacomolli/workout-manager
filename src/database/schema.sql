@@ -64,3 +64,13 @@ CREATE TABLE IF NOT EXISTS elements(
   members VARCHAR[],
   updates VARCHAR[]
 );
+
+CREATE TABLE IF NOT EXISTS element_upadtes(
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  FOREIGN KEY (elementid) REFERENCES elements(id),
+  created_at TIMESTAMP,
+  updated_at TIMESTAMP,
+  user VARCHAR NOT NULL,
+  content VARCHAR NOT NULL,
+  attachments VARCHAR[]
+);
