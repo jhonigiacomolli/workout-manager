@@ -52,7 +52,21 @@ export const multiPartFormDataParser = async (req: RepositoryRequest<Request>, r
           }
         }
       } else {
-        req.body[name] = value
+        if (name.includes('[]')) {
+          const activeValues = req.body[name.replace('[]', '')]
+          const oldestVlaues = activeValues ? [...activeValues] : []
+
+          if (value === '[]') {
+            req.body[name.replace('[]', '')] = []
+          } else {
+            req.body[name.replace('[]', '')] = [
+              ...oldestVlaues,
+              value,
+            ]
+          }
+        } else {
+          req.body[name] = value
+        }
       }
     }
 
