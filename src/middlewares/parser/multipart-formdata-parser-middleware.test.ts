@@ -116,6 +116,42 @@ describe('MultipartFormdatParaserMiddleware', () => {
     expect(output.body.files).toBeFalsy()
   })
 
+  test('Should return a empry array if empty string array if provided on body', async () => {
+    const output = await request(app)
+      .post('/any-route')
+      .set('content-type', 'multipart/form-data')
+      .field('name', 'any-name')
+      .field('email', 'any-email')
+      .field('images[]', '[]')
+      .expect(200)
+
+    expect(output.body.body).toEqual({
+      name: 'any-name',
+      email: 'any-email',
+      images: [],
+    })
+  })
+
+  test('Should return a empry array if string array if provided on body', async () => {
+    const output = await request(app)
+      .post('/any-route')
+      .set('content-type', 'multipart/form-data')
+      .field('name', 'any-name')
+      .field('email', 'any-email')
+      .field('images[]', 'any-image.png')
+      .field('images[]', 'other-image.png')
+      .expect(200)
+
+    expect(output.body.body).toEqual({
+      name: 'any-name',
+      email: 'any-email',
+      images: [
+        'any-image.png',
+        'other-image.png',
+      ],
+    })
+  })
+
   test('Should return correctly if a get method', async () => {
     const output = await request(app)
       .get('/any-route')
