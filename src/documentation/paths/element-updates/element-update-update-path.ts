@@ -17,12 +17,12 @@ export const elementUpdateUpdatePath = {
     content: {
       'application/json': {
         schema: {
-          $ref: '#/schemas/elementUpdateUpdateParams',
+          $ref: '#/schemas/elementUpdateUpdateJsonParams',
         },
       },
       'multipart/form-data': {
         schema: {
-          $ref: '#/schemas/elementUpdateUpdateParams',
+          $ref: '#/schemas/elementUpdateUpdateMultipartParams',
         },
       },
     },

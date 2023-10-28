@@ -5,19 +5,16 @@ export const elementUpdateCreateParamsSchema = {
     content: {
       type: 'string',
     },
-    user: {
+    elementId: {
       type: 'string',
     },
-    attachments: {
-      type: 'array',
-      items: {
-        type: 'string',
-      },
+    user: {
+      type: 'string',
     },
     'attachments[]': {
       type: 'array',
       items: {
-        type: 'string',
+        type: 'file',
         format: 'binary',
       },
     },

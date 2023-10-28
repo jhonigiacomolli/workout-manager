@@ -1,4 +1,4 @@
-export const elementUpdateUpdateParamsSchema = {
+export const elementUpdateUpdateParamsJsonSchema = {
   type: 'object',
   require: ['title'],
   properties: {
@@ -14,11 +14,31 @@ export const elementUpdateUpdateParamsSchema = {
         type: 'string',
       },
     },
+  },
+}
+
+export const elementUpdateUpdateParamsMultipartSchema = {
+  type: 'object',
+  require: ['title'],
+  properties: {
+    content: {
+      type: 'string',
+    },
+    user: {
+      type: 'string',
+    },
     'attachments[]': {
       type: 'array',
       items: {
-        type: 'string',
-        format: 'binary',
+        allOf: [
+          {
+            type: 'string',
+            format: 'binary',
+          },
+          {
+            type: 'string',
+          },
+        ],
       },
     },
   },

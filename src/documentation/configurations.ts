@@ -115,7 +115,8 @@ export const swaggerConfigurations = {
     elementCreateReturns: schemas.elementCreateReturnSchema,
     elementUpdateModel: schemas.elementUpdateModelSchema,
     elementUpdateCreateParams: schemas.elementUpdateCreateParamsSchema,
-    elementUpdateUpdateParams: schemas.elementUpdateUpdateParamsSchema,
+    elementUpdateUpdateJsonParams: schemas.elementUpdateUpdateParamsJsonSchema,
+    elementUpdateUpdateMultipartParams: schemas.elementUpdateUpdateParamsMultipartSchema,
     elementUpdateCreateReturns: schemas.elementUpdateCreateReturnSchema,
   },
   components: {
