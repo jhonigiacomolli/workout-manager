@@ -28,3 +28,8 @@ export * from './element/element-create-params-schema'
 export * from './element/element-create-return-schema'
 export * from './element/element-model-schema'
 export * from './element/element-update-params-schema'
+
+export * from './element-updates/element-update-create-params-schema'
+export * from './element-updates/element-update-create-return-schema'
+export * from './element-updates/element-update-model-schema'
+export * from './element-updates/element-update-update-params-schema'

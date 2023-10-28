@@ -6,6 +6,7 @@ import * as groupsPaths from './paths/groups'
 import * as accountsPaths from './paths/accounts'
 import * as elementsPaths from './paths/elements'
 import * as workspacesPaths from './paths/workspaces'
+import * as elementUpdatesPaths from './paths/element-updates'
 
 export const swaggerConfigurations = {
   openapi: '3.0.0',
@@ -20,6 +21,7 @@ export const swaggerConfigurations = {
     'Workspace',
     'Group',
     'Element',
+    'Element Update',
   ],
   paths: {
     '/sign-up': accountsPaths.signUpPath,
@@ -75,6 +77,15 @@ export const swaggerConfigurations = {
       put: elementsPaths.elementUpdatePath,
       delete: elementsPaths.elementRemovePath,
     },
+    '/element-updates': {
+      get: elementUpdatesPaths.elementUpdateListPath,
+      post: elementUpdatesPaths.elementUpdateCreatePath,
+    },
+    '/element-updates/{id}': {
+      get: elementUpdatesPaths.elementUpdateGetPath,
+      put: elementUpdatesPaths.elementUpdateUpdatePath,
+      delete: elementUpdatesPaths.elementUpdateRemovePath,
+    },
   },
   schemas: {
     error: schemas.errorSchema,
@@ -102,6 +113,10 @@ export const swaggerConfigurations = {
     elementCreateParams: schemas.elementCreateParamsSchema,
     elementUpdateParams: schemas.elementUpdateParamsSchema,
     elementCreateReturns: schemas.elementCreateReturnSchema,
+    elementUpdateModel: schemas.elementUpdateModelSchema,
+    elementUpdateCreateParams: schemas.elementUpdateCreateParamsSchema,
+    elementUpdateUpdateParams: schemas.elementUpdateUpdateParamsSchema,
+    elementUpdateCreateReturns: schemas.elementUpdateCreateReturnSchema,
   },
   components: {
     securitySchemes: {

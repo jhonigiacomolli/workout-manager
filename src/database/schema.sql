@@ -67,10 +67,11 @@ CREATE TABLE IF NOT EXISTS elements(
 
 CREATE TABLE IF NOT EXISTS element_upadtes(
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  elementid UUID,
   FOREIGN KEY (elementid) REFERENCES elements(id),
   created_at TIMESTAMP,
   updated_at TIMESTAMP,
-  user VARCHAR NOT NULL,
+  "user" VARCHAR NOT NULL,
   content VARCHAR NOT NULL,
   attachments VARCHAR[]
 );
