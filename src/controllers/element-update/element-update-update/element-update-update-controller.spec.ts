@@ -214,7 +214,7 @@ describe('ElementUpdateUpdateController', () => {
     expect(setByIdSpy).toHaveBeenCalledWith(fakeRequestWithOldAttachemnts.params.id, {
       ...params,
       attachments: [
-        ...params.attachments,
+        '/uploads/saved-image.png',
         '/uploads/any-file-uploaded.png',
         '/uploads/any-file-uploaded.png',
       ],

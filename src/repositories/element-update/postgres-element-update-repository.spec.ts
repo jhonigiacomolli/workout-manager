@@ -37,9 +37,9 @@ const querySql = `
       SELECT
         id,
         COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
-        COALESCE(updated_at, TIMESTAMP '1970-01-01 00:00:00') as updated_at,
-        COALESCE(elementid, '') as elementid,
-        COALESCE(user, '') as user,
+        COALESCE(updated_at, null) as updated_at,
+        COALESCE(elementid, null) as elementid,
+        COALESCE("user", '') as "user",
         COALESCE(content, '') as content,
         COALESCE(attachments, ARRAY[]::text[]) AS attachments
       FROM element_upadtes
