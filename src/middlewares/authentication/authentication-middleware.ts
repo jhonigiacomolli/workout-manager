@@ -18,7 +18,8 @@ export const authenticate = async (request: Request, response: Response, next: N
     response.status(401).json({ error: status.message })
     return
   }
-  if (!data || !data.id) {
+
+  if (!data || !data.id || data.method !== 'access') {
     response.status(401).json({ error: 'Unauthorized' })
     return
   }

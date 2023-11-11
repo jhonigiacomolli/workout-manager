@@ -26,7 +26,7 @@ export const swaggerConfigurations = {
   paths: {
     '/sign-up': accountsPaths.signUpPath,
     '/sign-in': accountsPaths.signInPath,
-    'refresh-token': accountsPaths.refreshTokenPath,
+    '/refresh-token': accountsPaths.refreshTokenPath,
     '/accounts': accountsPaths.accountListPath,
     '/accounts/{id}': {
       delete: accountsPaths.accountRemovePath,

@@ -37,8 +37,8 @@ export class SignInController implements Controller {
 
     if (!isCorrectPassword) throw new BadRequestError('wrong password')
 
-    const accessToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 3600, issuer: request.headers.host })
-    const refreshToken = await this.dependencies.encrypter.encrypt({ id: user.id }, { expire: 86400, issuer: request.headers.host })
+    const accessToken = await this.dependencies.encrypter.encrypt({ id: user.id, method: 'access' }, { expire: 3600, issuer: request.headers.host })
+    const refreshToken = await this.dependencies.encrypter.encrypt({ id: user.id, method: 'refresh' }, { expire: 86400, issuer: request.headers.host })
 
     return httpResponse(200, {
       accessToken,

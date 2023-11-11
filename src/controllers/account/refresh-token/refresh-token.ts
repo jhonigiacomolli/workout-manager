@@ -22,10 +22,12 @@ export class RefreshTokenController implements Controller {
 
     if (!status.success) throw new ForbiddenError(status.message)
 
-    if (!data || !data.id) throw new ForbiddenError('Invalid param: refreshToken')
+    if (!data || !data.id || data.method !== 'refresh') {
+      throw new ForbiddenError('Invalid param: refreshToken')
+    }
 
-    const accessToken = await this.dependencies.encrypter.encrypt(data, { expire: 3600, issuer: request.headers.host })
-    const refreshToken = await this.dependencies.encrypter.encrypt(data, { expire: 86400, issuer: request.headers.host })
+    const accessToken = await this.dependencies.encrypter.encrypt({ ...data, method: 'access' }, { expire: 3600, issuer: request.headers.host })
+    const refreshToken = await this.dependencies.encrypter.encrypt({ ...data, method: 'refresh' }, { expire: 86400, issuer: request.headers.host })
 
     return httpResponse(200, {
       accessToken,
