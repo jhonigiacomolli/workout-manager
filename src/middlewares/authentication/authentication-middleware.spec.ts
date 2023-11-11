@@ -41,6 +41,7 @@ describe('Authentication Middleware', () => {
       error: 'Unauthorized',
     })
   })
+
   test('Should return 401 if access token is not a bearer token', async () => {
     await authenticate(fakeRequestNoBearer, fakeResponse, fakeNext, accountStub, encrypterStub)
     expect(fakeResponse.status).toHaveBeenCalledWith(401)
@@ -48,6 +49,7 @@ describe('Authentication Middleware', () => {
       error: 'Unauthorized',
     })
   })
+
   test('Should return 401 if access token is expired', async () => {
     jest.spyOn(encrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve({
       data: undefined,
@@ -59,6 +61,7 @@ describe('Authentication Middleware', () => {
       error: 'Expired token',
     })
   })
+
   test('Should return 401 if invalid token', async () => {
     jest.spyOn(encrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve({
       data: {},
@@ -71,6 +74,20 @@ describe('Authentication Middleware', () => {
       error: 'Unauthorized',
     })
   })
+
+  test('Should return 401 if token method is not to be access', async () => {
+    jest.spyOn(encrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve({
+      data: { id: 'any_id', method: 'refresh' },
+      status: { success: true, message: '' },
+    }))
+    await authenticate(fakeRequest, fakeResponse, fakeNext, accountStub, encrypterStub)
+
+    expect(fakeResponse.status).toHaveBeenCalledWith(401)
+    expect(fakeResponse.json).toHaveBeenCalledWith({
+      error: 'Unauthorized',
+    })
+  })
+
   test('Should return 401 if id included on token not to belong a any user', async () => {
     jest.spyOn(accountStub, 'getUserById').mockImplementationOnce(() => Promise.resolve(undefined))
 
@@ -83,6 +100,7 @@ describe('Authentication Middleware', () => {
       error: 'Unauthorized',
     })
   })
+
   test('Should return 200 if access token is authenticated', async () => {
     await authenticate(fakeRequest, fakeResponse, fakeNext, accountStub, encrypterStub)
 

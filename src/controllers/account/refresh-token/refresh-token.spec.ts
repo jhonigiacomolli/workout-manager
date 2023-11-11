@@ -34,6 +34,19 @@ describe('Refresh Token', () => {
     await expect(output).rejects.toThrow(new ForbiddenError('Empty param: refreshToken is required'))
   })
 
+  test('Should return 403 if refresh token method not to be refresh', async () => {
+    const { sut, fakeCorrectRequest, encrypterStub } = makeSut()
+
+    jest.spyOn(encrypterStub, 'decrypt').mockReturnValueOnce(Promise.resolve({
+      data: { id: 'any-id', method: 'access' },
+      status: { success: true, message: '' },
+    }))
+
+    const output = sut.handle(fakeCorrectRequest)
+
+    await expect(output).rejects.toThrow(new ForbiddenError('Invalid param: refreshToken'))
+  })
+
   test('Should return 403 if refresh token is invalid', async () => {
     const { sut, fakeCorrectRequest, encrypterStub } = makeSut()
 
@@ -46,6 +59,7 @@ describe('Refresh Token', () => {
 
     await expect(output).rejects.toThrow(new ForbiddenError('Invalid param: refreshToken'))
   })
+
   test('Should return 403 if refresh token is expired', async () => {
     const { sut, fakeCorrectRequest, encrypterStub } = makeSut()
 
@@ -72,6 +86,11 @@ describe('Refresh Token', () => {
   test('Should return accessToken and refreshToken if proccess succeeds', async () => {
     const { sut, fakeCorrectRequest, encrypterStub } = makeSut()
 
+    jest.spyOn(encrypterStub, 'decrypt').mockResolvedValueOnce({
+      data: { id: 'valid_id', method: 'refresh' },
+      status: { success: true, message: '' },
+    })
+
     const mockedEncryptFn = jest.fn()
     mockedEncryptFn.mockReturnValueOnce('encrypted_access_token')
     mockedEncryptFn.mockReturnValueOnce('encrypted_refresh_token')
@@ -81,8 +100,8 @@ describe('Refresh Token', () => {
     const response = await sut.handle(fakeCorrectRequest)
 
     expect(mockedEncryptFn).toHaveBeenCalledTimes(2)
-    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 3600 })
-    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 86400 })
+    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id', method: 'access' }, { expire: 3600 })
+    expect(mockedEncryptFn).toHaveBeenCalledWith({ id: 'valid_id', method: 'refresh' }, { expire: 86400 })
     expect(response).toEqual(httpResponse(200, {
       accessToken: 'encrypted_access_token',
       refreshToken: 'encrypted_refresh_token',

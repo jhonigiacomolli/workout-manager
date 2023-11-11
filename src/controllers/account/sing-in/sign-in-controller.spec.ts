@@ -117,8 +117,8 @@ describe('Sign in', () => {
     const output = await sut.handle(fakeRequest)
 
     expect(mockedEncrypt).toHaveBeenCalledTimes(2)
-    expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 3600 })
-    expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id' }, { expire: 86400 })
+    expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id', method: 'access' }, { expire: 3600 })
+    expect(mockedEncrypt).toHaveBeenCalledWith({ id: 'valid_id', method: 'refresh' }, { expire: 86400 })
     expect(output).toEqual(httpResponse(200, {
       accessToken: 'encrypted_access_token',
       refreshToken: 'encrypted_refresh_token',
