@@ -3,7 +3,25 @@ import { Group } from '@/protocols/use-cases/group'
 import { HTTPRequestParams } from '@/protocols/models/http'
 import { CreateGroupModel, GroupModel } from '@/protocols/models/group'
 
+type PostgresGroupModel = Omit<GroupModel, 'createdAt'> & {
+  created_at: string
+}
 export class PgGroupRepository implements Group {
+  /* eslint-disable camelcase */
+  private convertPgGroupIntoGroupModel = (elements: PostgresGroupModel[]): GroupModel[] => {
+    return elements.map(({
+      id = '',
+      title = '',
+      created_at = '',
+      elements = [],
+    }) => ({
+      id,
+      createdAt: created_at,
+      title,
+      elements,
+    }))
+  }
+
   async create(board: CreateGroupModel): Promise<GroupModel> {
     const { rows } = await client.query(`INSERT INTO groups(
       title,
@@ -19,12 +37,7 @@ export class PgGroupRepository implements Group {
       board.elements,
     ])
 
-    return rows.map(board => ({
-      id: board.id,
-      createdAt: board.created_at,
-      title: board.title,
-      elements: board.elements,
-    }))[0]
+    return this.convertPgGroupIntoGroupModel(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -46,23 +59,13 @@ export class PgGroupRepository implements Group {
       OFFSET $2:: integer * $1:: integer;
     `, [params.limit, params.offset])
 
-    return rows.map(board => ({
-      id: board.id,
-      createdAt: board.created_at,
-      title: board.title,
-      elements: board.elements,
-    }))
+    return this.convertPgGroupIntoGroupModel(rows)
   }
 
   async getById(id: string): Promise<GroupModel | undefined> {
     const { rows } = await client.query('SELECT * FROM groups WHERE id=$1', [id])
 
-    return rows.map(board => ({
-      id: board.id,
-      createdAt: board.created_at,
-      title: board.title,
-      elements: board.elements,
-    }))[0]
+    return this.convertPgGroupIntoGroupModel(rows)[0]
   }
 
   async setById(id: string, data: Partial<GroupModel>): Promise<GroupModel> {
@@ -78,11 +81,6 @@ export class PgGroupRepository implements Group {
       COALESCE(elements, ARRAY[]::text[]) AS elements
     `, [id, data.title, data.elements])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      title: row.title,
-      elements: row.elements,
-    }))[0]
+    return this.convertPgGroupIntoGroupModel(rows)[0]
   }
 }

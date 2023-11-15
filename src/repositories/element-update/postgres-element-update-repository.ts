@@ -8,18 +8,28 @@ export type PostgresElementUpdateModel = Omit<ElementUpdateModel, 'createdAt' | 
   updated_at: string
 }
 
-const modelMapping = (elements: PostgresElementUpdateModel[]): ElementUpdateModel[] => {
-  /* eslint-disable-next-line camelcase */
-  return elements.map(({ created_at, updated_at, ...row }) => ({
-    ...row,
-    /* eslint-disable-next-line camelcase */
-    createdAt: created_at,
-    /* eslint-disable-next-line camelcase */
-    updatedAt: updated_at,
-  }))
-}
-
 export class PgElementUpdateRepository implements ElementUpdate {
+  /* eslint-disable camelcase */
+  private convertPgUpdateIntoElementUpdate = (elements: PostgresElementUpdateModel[]): ElementUpdateModel[] => {
+    return elements.map(({
+      id = '',
+      created_at = '',
+      updated_at = '',
+      attachments = [],
+      content = '',
+      elementId = '',
+      user = '',
+    }) => ({
+      id,
+      createdAt: created_at,
+      updatedAt: updated_at,
+      attachments,
+      content,
+      elementId,
+      user,
+    }))
+  }
+
   async create(props: CreateElementUpdateModel): Promise<ElementUpdateModel | undefined> {
     const { rows } = await client.query(`INSERT INTO element_upadtes(
       elementid,
@@ -43,7 +53,7 @@ export class PgElementUpdateRepository implements ElementUpdate {
       props.attachments,
     ])
 
-    return modelMapping(rows)[0]
+    return this.convertPgUpdateIntoElementUpdate(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -56,7 +66,7 @@ export class PgElementUpdateRepository implements ElementUpdate {
   async getById(id: string): Promise<ElementUpdateModel | undefined> {
     const { rows } = await client.query('SELECT * FROM element_upadtes WHERE id=$1', [id])
 
-    return modelMapping(rows)[0]
+    return this.convertPgUpdateIntoElementUpdate(rows)[0]
   }
 
   async getAll(params: HTTPPaginationAndOrderParams): Promise<ElementUpdateModel[]> {
@@ -75,7 +85,7 @@ export class PgElementUpdateRepository implements ElementUpdate {
       OFFSET $2::integer * $1::integer
     `, [params.limit, params.offset])
 
-    return modelMapping(rows)
+    return this.convertPgUpdateIntoElementUpdate(rows)
   }
 
   async setById(id: string, data: Partial<CreateElementUpdateModel>): Promise<ElementUpdateModel | undefined> {
@@ -102,6 +112,6 @@ export class PgElementUpdateRepository implements ElementUpdate {
       data.attachments,
     ])
 
-    return modelMapping(rows)[0]
+    return this.convertPgUpdateIntoElementUpdate(rows)[0]
   }
 }

@@ -4,28 +4,40 @@ import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { CreateElementModel, ElementModel, UpdateElementModel } from '@/protocols/models/element'
 
 export type PostgresElementModel = Omit<ElementModel, 'createdAt' | 'startDate' | 'expectedDate' | 'endDate'> & {
-  created_at: string
-  expected_date: string
-  start_date: string
-  end_date: string
-}
-
-const modelMapping = (elements: PostgresElementModel[]): ElementModel[] => {
-  /* eslint-disable-next-line camelcase */
-  return elements.map(({ created_at, start_date, expected_date, end_date, ...row }) => ({
-    ...row,
-    /* eslint-disable-next-line camelcase */
-    createdAt: created_at,
-    /* eslint-disable-next-line camelcase */
-    startDate: start_date,
-    /* eslint-disable-next-line camelcase */
-    expectedDate: expected_date,
-    /* eslint-disable-next-line camelcase */
-    endDate: end_date,
-  }))
+  created_at: string | null
+  expected_date: string | null
+  start_date: string | null
+  end_date: string | null
 }
 
 export class PgElementRepository implements Element {
+  /* eslint-disable camelcase */
+  private convertPgElementIntoElement = (elements: PostgresElementModel[]): ElementModel[] => {
+    return elements.map(({
+      id = '',
+      group = '',
+      title = '',
+      created_at = '',
+      start_date = '',
+      expected_date = '',
+      end_date = '',
+      members = [],
+      status = 'waiting',
+      updates = [],
+    }) => ({
+      id,
+      group,
+      title,
+      createdAt: created_at || '',
+      startDate: start_date || '',
+      expectedDate: expected_date || '',
+      endDate: end_date || '',
+      members,
+      status,
+      updates,
+    }))
+  }
+
   async create(props: CreateElementModel): Promise<ElementModel | undefined> {
     const { rows } = await client.query(`INSERT INTO elements(
       title,
@@ -54,7 +66,7 @@ export class PgElementRepository implements Element {
       props.updates,
     ])
 
-    return modelMapping(rows)[0]
+    return this.convertPgElementIntoElement(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -67,21 +79,21 @@ export class PgElementRepository implements Element {
   async getById(id: string): Promise<ElementModel | undefined> {
     const { rows } = await client.query('SELECT * FROM elements WHERE id=$1', [id])
 
-    return modelMapping(rows)[0]
+    return this.convertPgElementIntoElement(rows)[0]
   }
 
   async getAll(params: HTTPPaginationAndOrderParams): Promise<ElementModel[]> {
     const { rows } = await client.query(`
       SELECT
         id,
-        COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
+        COALESCE(created_at, null) as created_at,
         COALESCE(title, '') as title,
         COALESCE("group", '') as "group",
         COALESCE(members, ARRAY[]::text[]) AS members,
         COALESCE(status, '') as status,
-        COALESCE(expected_date, TIMESTAMP '1970-01-01 00:00:00') as expected_date,
-        COALESCE(start_date, TIMESTAMP '1970-01-01 00:00:00') as start_date,
-        COALESCE(end_date, TIMESTAMP '1970-01-01 00:00:00') as end_date,
+        COALESCE(expected_date, null) as expected_date,
+        COALESCE(start_date, null) as start_date,
+        COALESCE(end_date, null) as end_date,
         COALESCE(updates, ARRAY[]::text[]) AS updates
       FROM elements
       ORDER BY ${params.orderBy} ${params.order}
@@ -89,7 +101,7 @@ export class PgElementRepository implements Element {
       OFFSET $2::integer * $1::integer
     `, [params.limit, params.offset])
 
-    return modelMapping(rows)
+    return this.convertPgElementIntoElement(rows)
   }
 
   async setById(id: string, data: Partial<UpdateElementModel>): Promise<ElementModel | undefined> {
@@ -128,6 +140,6 @@ export class PgElementRepository implements Element {
       data.updates,
     ])
 
-    return modelMapping(rows)[0]
+    return this.convertPgElementIntoElement(rows)[0]
   }
 }

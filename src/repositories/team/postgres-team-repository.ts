@@ -3,9 +3,28 @@ import { TeamModel } from '@/protocols/models/team'
 import { HTTPPaginationAndOrderParams } from '@/protocols/models/http'
 import { CreateTeamParams, Team, UpdateTeamParams } from '@/protocols/use-cases/team'
 
+type PostgresTeamModel = Omit<TeamModel, 'createdAt'> & {
+  created_at: string
+}
+
 export class PgTeamRepository implements Team {
+  /* eslint-disable camelcase */
+  private convertPgTeamIntoTeam = (elements: PostgresTeamModel[]): TeamModel[] => {
+    return elements.map(({
+      id = '',
+      name = '',
+      created_at = '',
+      members = [],
+    }) => ({
+      id,
+      createdAt: created_at,
+      name,
+      members,
+    }))
+  }
+
   async create(props: CreateTeamParams): Promise<TeamModel> {
-    const result = await client.query(`INSERT INTO teams(
+    const { rows } = await client.query(`INSERT INTO teams(
       name,
       created_at,
       members
@@ -19,7 +38,7 @@ export class PgTeamRepository implements Team {
       props.members,
     ])
 
-    return result.rows[0]
+    return this.convertPgTeamIntoTeam(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -32,12 +51,7 @@ export class PgTeamRepository implements Team {
   async getTeamByID(id: string): Promise<TeamModel | undefined> {
     const { rows } = await client.query('SELECT * FROM teams WHERE id=$1', [id])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      name: row.name,
-      members: row.members,
-    }))[0]
+    return this.convertPgTeamIntoTeam(rows)[0]
   }
 
   async getAllTeams(params: HTTPPaginationAndOrderParams): Promise<TeamModel[]> {
@@ -53,12 +67,7 @@ export class PgTeamRepository implements Team {
         OFFSET $2::integer * $1::integer
       `, [params.limit, params.offset])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      name: row.name,
-      members: row.members,
-    }))
+    return this.convertPgTeamIntoTeam(rows)
   }
 
   async setTeamByID(id: string, data: UpdateTeamParams): Promise<TeamModel | undefined> {
@@ -74,11 +83,6 @@ export class PgTeamRepository implements Team {
       COALESCE(members, ARRAY[]::text[]) AS members
     `, [id, data.name, data.members])
 
-    // eslint-disable-next-line
-    return rows.map(({ created_at, ...team }) => ({
-      ...team,
-      // eslint-disable-next-line
-      createdAt: created_at,
-    }))[0]
+    return this.convertPgTeamIntoTeam(rows)[0]
   }
 }

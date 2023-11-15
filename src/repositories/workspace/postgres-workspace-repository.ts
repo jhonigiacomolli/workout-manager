@@ -3,7 +3,35 @@ import { Workspace } from '@/protocols/use-cases/workspace'
 import { HTTPRequestParams } from '@/protocols/models/http'
 import { CreateWorkspaceModel, UpdateWorkspaceModel, WorkspaceModel } from '@/protocols/models/workspace'
 
+type PostgresWorkspaceModel = Omit<WorkspaceModel, 'createdAt' | 'profileImage' | 'coverImage'> & {
+  created_at: string
+  profileimage: string
+  coverimage: string
+}
 export class PgWorkspaceReposytory implements Workspace {
+  /* eslint-disable camelcase */
+  private convertPgWorkspaceIntoWorkspace = (elements: PostgresWorkspaceModel[]): WorkspaceModel[] => {
+    return elements.map(({
+      id = '',
+      created_at = '',
+      title = '',
+      description = '',
+      boards = [],
+      members = [],
+      profileimage = '',
+      coverimage = '',
+    }) => ({
+      id,
+      createdAt: created_at,
+      title,
+      description,
+      boards,
+      members,
+      profileImage: profileimage,
+      coverImage: coverimage,
+    }))
+  }
+
   async create(workspace: CreateWorkspaceModel): Promise<WorkspaceModel> {
     const { rows } = await client.query(`INSERT INTO workspaces(
       title,
@@ -31,14 +59,7 @@ export class PgWorkspaceReposytory implements Workspace {
       workspace.coverImage,
     ])
 
-    // eslint-disable-next-line
-    return rows.map(({ created_at, coverimage, profileimage, ...workspace }) => ({
-      ...workspace,
-      // eslint-disable-next-line
-      createdAt: created_at,
-      coverImage: coverimage,
-      profileImage: profileimage,
-    }))[0]
+    return this.convertPgWorkspaceIntoWorkspace(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -59,22 +80,14 @@ export class PgWorkspaceReposytory implements Workspace {
       LIMIT $1
       OFFSET $2:: integer * $1:: integer;
     `, [params.limit, params.offset])
-    return rows
+
+    return this.convertPgWorkspaceIntoWorkspace(rows)
   }
 
   async getById(id: string): Promise<WorkspaceModel | undefined> {
     const { rows } = await client.query('SELECT * FROM workspaces WHERE id=$1', [id])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      title: row.title,
-      description: row.description,
-      boards: row.boards,
-      members: row.members,
-      coverImage: row.coverimage,
-      profileImage: row.profileimage,
-    }))[0]
+    return this.convertPgWorkspaceIntoWorkspace(rows)[0]
   }
 
   async setById(id: string, data: UpdateWorkspaceModel): Promise<WorkspaceModel> {
@@ -98,15 +111,6 @@ export class PgWorkspaceReposytory implements Workspace {
       COALESCE(coverimage, '') as coverimage
     `, [id, data.title, data.description, data.members, data.boards, data.profileImage, data.coverImage])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      title: row.title,
-      description: row.description,
-      boards: row.boards,
-      members: row.members,
-      coverImage: row.coverimage,
-      profileImage: row.profileimage,
-    }))[0]
+    return this.convertPgWorkspaceIntoWorkspace(rows)[0]
   }
 }

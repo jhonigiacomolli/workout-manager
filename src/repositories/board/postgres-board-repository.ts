@@ -3,7 +3,22 @@ import { BoardModel } from '@/protocols/models/board'
 import { HTTPRequestParams } from '@/protocols/models/http'
 import { Board, CreateBoardParams } from '@/protocols/use-cases/board'
 
+type PostgresBoardModel = Omit<BoardModel, 'createdAt'> & {
+  created_at: string
+}
 export class PgBoardReposytory implements Board {
+  private convertPgBoardIntoBoard = (elements: PostgresBoardModel[]): BoardModel[] => {
+    /* eslint-disable-next-line camelcase */
+    return elements.map(({ id = '', created_at = '', title = '', format = 'kanban', groups = [] }) => ({
+      id,
+      /* eslint-disable-next-line camelcase */
+      createdAt: created_at,
+      title,
+      format,
+      groups,
+    }))
+  }
+
   async create(board: CreateBoardParams): Promise<BoardModel> {
     const { rows } = await client.query(`INSERT INTO boards(
       title,
@@ -22,13 +37,7 @@ export class PgBoardReposytory implements Board {
       board.groups,
     ])
 
-    return rows.map(board => ({
-      id: board.id,
-      createdAt: board.created_at,
-      title: board.title,
-      format: board.format,
-      groups: board.groups,
-    }))[0]
+    return this.convertPgBoardIntoBoard(rows)[0]
   }
 
   async delete(id: string): Promise<boolean> {
@@ -50,13 +59,7 @@ export class PgBoardReposytory implements Board {
       OFFSET $2:: integer * $1:: integer;
     `, [params.limit, params.offset])
 
-    return rows.map(board => ({
-      id: board.id,
-      createdAt: board.created_at,
-      title: board.title,
-      format: board.format,
-      groups: board.groups,
-    }))
+    return this.convertPgBoardIntoBoard(rows)
   }
 
   async getById(id: string): Promise<BoardModel | undefined> {
@@ -86,12 +89,6 @@ export class PgBoardReposytory implements Board {
       COALESCE(groups, ARRAY[]::text[]) AS groups
     `, [id, data.title, data.format, data.groups])
 
-    return rows.map(row => ({
-      id: row.id,
-      createdAt: row.created_at,
-      title: row.title,
-      format: row.format,
-      groups: row.groups,
-    }))[0]
+    return this.convertPgBoardIntoBoard(rows)[0]
   }
 }
