@@ -17,7 +17,7 @@ export class PgTeamRepository implements Team {
       members = [],
     }) => ({
       id,
-      createdAt: created_at,
+      createdAt: created_at || '',
       name,
       members,
     }))

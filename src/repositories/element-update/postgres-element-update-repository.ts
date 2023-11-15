@@ -21,8 +21,8 @@ export class PgElementUpdateRepository implements ElementUpdate {
       user = '',
     }) => ({
       id,
-      createdAt: created_at,
-      updatedAt: updated_at,
+      createdAt: created_at || '',
+      updatedAt: updated_at || '',
       attachments,
       content,
       elementId,

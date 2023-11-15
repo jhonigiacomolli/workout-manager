@@ -16,7 +16,7 @@ export class PgGroupRepository implements Group {
       elements = [],
     }) => ({
       id,
-      createdAt: created_at,
+      createdAt: created_at || '',
       title,
       elements,
     }))

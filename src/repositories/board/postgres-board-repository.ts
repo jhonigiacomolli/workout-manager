@@ -12,7 +12,7 @@ export class PgBoardReposytory implements Board {
     return elements.map(({ id = '', created_at = '', title = '', format = 'kanban', groups = [] }) => ({
       id,
       /* eslint-disable-next-line camelcase */
-      createdAt: created_at,
+      createdAt: created_at || '',
       title,
       format,
       groups,

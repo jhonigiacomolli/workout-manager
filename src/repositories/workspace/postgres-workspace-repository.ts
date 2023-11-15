@@ -22,7 +22,7 @@ export class PgWorkspaceReposytory implements Workspace {
       coverimage = '',
     }) => ({
       id,
-      createdAt: created_at,
+      createdAt: created_at || '',
       title,
       description,
       boards,
