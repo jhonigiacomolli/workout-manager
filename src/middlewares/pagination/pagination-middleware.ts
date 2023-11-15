@@ -1,8 +1,11 @@
-import { validateNumberParams, validateOrderParams, validateTextParams } from '@/helpers/sanitize'
 import { NextFunction, Request, Response } from 'express'
+import { validateNumberParams, validateOrderParams, validateTextParams } from '@/helpers/sanitize'
 
 export const pagination = async (request: Request, response: Response, next: NextFunction): Promise<void> => {
-  const offset = (Number(request.query.page) - 1) * Number(request.query.limit) || '0'
+  const numericPage = Number(request.query.page)
+  const page = (numericPage === 0) ? 0 : (numericPage - 1)
+  const limit = Number(request.query.limit)
+  const offset = page * limit || '0'
 
   request.query.pagination = {
     limit: validateNumberParams(request.query.limit, '10'),
