@@ -5,9 +5,9 @@ import { PgElementRepository, PostgresElementModel } from './postgres-element-re
 const makeFakePostgresElement = (): PostgresElementModel => ({
   id: 'any-id',
   created_at: '12/10/2023',
-  end_date: '',
-  start_date: '',
-  expected_date: '',
+  end_date: null,
+  start_date: null,
+  expected_date: null,
   status: 'waiting',
   group: 'any-group',
   members: [],
@@ -39,14 +39,14 @@ const fakeRequestParams = {
 const querySql = `
       SELECT
         id,
-        COALESCE(created_at, TIMESTAMP '1970-01-01 00:00:00') as created_at,
+        COALESCE(created_at, null) as created_at,
         COALESCE(title, '') as title,
         COALESCE("group", '') as "group",
         COALESCE(members, ARRAY[]::text[]) AS members,
         COALESCE(status, '') as status,
-        COALESCE(expected_date, TIMESTAMP '1970-01-01 00:00:00') as expected_date,
-        COALESCE(start_date, TIMESTAMP '1970-01-01 00:00:00') as start_date,
-        COALESCE(end_date, TIMESTAMP '1970-01-01 00:00:00') as end_date,
+        COALESCE(expected_date, null) as expected_date,
+        COALESCE(start_date, null) as start_date,
+        COALESCE(end_date, null) as end_date,
         COALESCE(updates, ARRAY[]::text[]) AS updates
       FROM elements
       ORDER BY name DESC
@@ -124,6 +124,24 @@ describe('Postgres Element Repository', () => {
       const newResult = await sut.getAll(fakeRequestParams)
       expect(newResult).toEqual([makeFakeElement()])
     })
+
+    test('Should return empty string case creatred_at is null', async () => {
+      const { sut } = makeSut()
+
+      jest.spyOn(client, 'query').mockImplementationOnce(() => ({
+        rows: [{
+          ...makeFakePostgresElement(),
+          created_at: null,
+        }],
+      }))
+
+      const newResult = await sut.getAll(fakeRequestParams)
+      expect(newResult).toEqual([{
+        ...makeFakeElement(),
+        createdAt: '',
+      }])
+    })
+
     test('Should query is called with correct values', async () => {
       const { sut } = makeSut()
 

@@ -58,12 +58,14 @@ describe('PostgresWorkspaceReposytory', () => {
       const result = await sut.create(params)
       return expect(result).toBeUndefined()
     })
+
     test('Should throws when workspace register throws', async () => {
       const { sut, params } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
       const result = sut.create(params)
       return expect(result).rejects.toThrow()
     })
+
     test('Should return workspace model if register succeeds', async () => {
       const { sut, params } = makeSut()
       const result = await sut.create(params)
@@ -76,11 +78,13 @@ describe('PostgresWorkspaceReposytory', () => {
       const result = await sut.delete(paramsWithId.id)
       expect(result).toBeTruthy()
     })
+
     test('Should return false id id is not provided', async () => {
       const { sut } = makeSut()
       const result = await sut.delete('')
       expect(result).toBeFalsy()
     })
+
     test('Should return 500 when team remove fails', async () => {
       const { sut, paramsWithId } = makeSut()
       jest.spyOn(client, 'query').mockImplementationOnce(() => { throw new Error() })
@@ -95,8 +99,9 @@ describe('PostgresWorkspaceReposytory', () => {
       jest.spyOn(client, 'query').mockImplementationOnce(() => ({ rows: [makeFakePostgressWorkspace()] }))
 
       const newResult = await sut.getAll(fakeRequestParams)
-      expect(newResult).toEqual([makeFakePostgressWorkspace()])
+      expect(newResult).toEqual([makeFakeWorkspace()])
     })
+
     test('Should query is called with correct values', async () => {
       const { sut } = makeSut()
 
@@ -126,6 +131,7 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySql, ['10', '40'])
     })
+
     test('Should query is called with correct values if invalid orderby field is provided', async () => {
       const { sut } = makeSut()
 
@@ -137,6 +143,7 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(querySpy).toHaveBeenCalledWith(querySqlOrderByCreatedAt, ['10', '0'])
     })
+
     test('Should thorws an erro when account query fails', async () => {
       const { sut } = makeSut()
 
@@ -156,6 +163,7 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(newResult).toEqual(paramsWithId)
     })
+
     test('Should throws when team query fails', async () => {
       const { sut, paramsWithId } = makeSut()
 
@@ -173,6 +181,7 @@ describe('PostgresWorkspaceReposytory', () => {
 
       expect(newResult).toEqual(paramsWithId)
     })
+
     test('Should throws when team query fails', async () => {
       const { sut, params, paramsWithId } = makeSut()
 

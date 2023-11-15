@@ -56,7 +56,7 @@ describe('Postgres Team Repository', () => {
     test('Should return true when team register succeeds', async () => {
       const { sut, params } = makeSut()
       const result = await sut.create(params)
-      expect(result).toEqual(makeFakePostgresTeam())
+      expect(result).toEqual(makeFakeTeam())
     })
     test('Should return 500 when team register fails', async () => {
       const { sut, params } = makeSut()
